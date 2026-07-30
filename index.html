@@ -18,7 +18,7 @@
     <nav class="landing-nav">
       <a class="landing-brand" href="#inicio"><img src="luarlogo.png?v=2" alt="LUAR"><strong>LUAR</strong></a>
       <div><a href="#experiencia">Como funciona</a><a href="#recursos">Recursos</a><a href="#planos">Planos</a><a href="#vitalicio">Vitalício</a></div>
-      <div class="landing-nav-actions"><button class="landing-login" data-auth-open="login">Entrar</button><button class="landing-cta small" data-auth-open="signup">Criar conta grátis</button></div>
+      <div class="landing-nav-actions"><button class="landing-login" onclick="openAuth('login')" data-auth-open="login">Entrar</button><button class="landing-cta small" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis</button></div>
     </nav>
 
     <main class="landing-main">
@@ -27,7 +27,7 @@
         <span class="landing-pill">✦ Sua vida inteira, em uma única órbita.</span>
         <h1>Organize seu dinheiro,<br><em>hábitos, tarefas e metas</em><br>em um só lugar.</h1>
         <p>O LUAR conecta produtividade, finanças e evolução pessoal para você acompanhar sua vida com mais clareza e tranquilidade.</p>
-        <div class="landing-hero-actions"><button class="landing-cta" data-auth-open="signup">Criar conta grátis <b>↗</b></button><a href="#experiencia">Ver demonstração ↓</a></div>
+        <div class="landing-hero-actions"><button class="landing-cta" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis <b>↗</b></button><a href="#experiencia">Ver demonstração ↓</a></div>
         <small class="hero-reassurance">Sem cartão <i>•</i> Cadastro em menos de 1 minuto</small>
         <div class="landing-orbit" aria-hidden="true"><i class="landing-sun"></i><i class="landing-moon"></i><span></span></div>
       </section>
@@ -81,7 +81,7 @@
           <article class="plan-free">
             <header><span>LUAR GRATUITO</span><b>R$ 0<small>para começar</small></b></header>
             <ul><li>Até 3 hábitos</li><li>Até 20 tarefas</li><li>1 meta financeira</li><li>Até 3 compromissos</li><li>Até 5 notas</li><li>Controle financeiro básico</li><li>Modo foco de 5, 25 e 60 minutos</li><li>Diário de humor</li></ul>
-            <button class="plan-button secondary" data-auth-open="signup">Criar conta grátis</button>
+            <button class="plan-button secondary" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis</button>
             <small>Nenhum cartão necessário.</small>
           </article>
           <article class="plan-lifetime">
@@ -107,7 +107,7 @@
       </section>
 
       <section class="landing-flow" id="seguranca">
-        <div><span class="landing-pill">Sua conta, seus dados</span><h2>Segurança explicada.<br><em>Sem promessas vazias.</em></h2><p>O LUAR usa conexão HTTPS, autenticação segura pelo Supabase, recuperação de senha e backup exportável. Seus registros ficam ligados ao seu perfil.</p><ul><li><b>01</b> Senhas protegidas pela autenticação do Supabase.</li><li><b>02</b> Recuperação de acesso pelo seu e-mail.</li><li><b>03</b> Backup para exportar e importar quando quiser.</li></ul><button class="landing-cta" data-auth-open="signup">Criar conta grátis</button></div>
+        <div><span class="landing-pill">Sua conta, seus dados</span><h2>Segurança explicada.<br><em>Sem promessas vazias.</em></h2><p>O LUAR usa conexão HTTPS, autenticação segura pelo Supabase, recuperação de senha e backup exportável. Seus registros ficam ligados ao seu perfil.</p><ul><li><b>01</b> Senhas protegidas pela autenticação do Supabase.</li><li><b>02</b> Recuperação de acesso pelo seu e-mail.</li><li><b>03</b> Backup para exportar e importar quando quiser.</li></ul><button class="landing-cta" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis</button></div>
         <div class="security-orbit" aria-hidden="true"><span></span><i></i><b>✓<small>Dados protegidos</small></b></div>
       </section>
 
@@ -123,7 +123,7 @@
         </div>
       </section>
 
-      <section class="landing-final"><img src="luarlogo.png?v=2" alt="Logo LUAR"><span>PRONTO PARA COMEÇAR?</span><h2>Seu primeiro passo<br><em>começa agora.</em></h2><p>Crie sua conta, registre sua primeira atividade e veja sua vida entrar em órbita.</p><button class="landing-cta" data-auth-open="signup">Criar conta grátis ↗</button><a href="#experiencia">Ver como funciona</a><small>Sem cartão • Cadastro em menos de 1 minuto</small></section>
+      <section class="landing-final"><img src="luarlogo.png?v=2" alt="Logo LUAR"><span>PRONTO PARA COMEÇAR?</span><h2>Seu primeiro passo<br><em>começa agora.</em></h2><p>Crie sua conta, registre sua primeira atividade e veja sua vida entrar em órbita.</p><button class="landing-cta" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis ↗</button><a href="#experiencia">Ver como funciona</a><small>Sem cartão • Cadastro em menos de 1 minuto</small></section>
 
       <section class="zakom-mini" id="zakom">
         <div class="zakom-mini-mark" aria-hidden="true">Z</div>
@@ -141,7 +141,7 @@
 
       <footer class="landing-footer"><a class="landing-brand" href="#inicio"><img src="luarlogo.png?v=2" alt=""><strong>LUAR</strong></a><p>Organização, tranquilidade e evolução constante.</p><span class="landing-creator-link">Projeto criado por ZAKOM <b>• 2026</b> <i>↗</i></span></footer>
     </main>
-    <button class="mobile-signup-cta" data-auth-open="signup">Criar conta grátis <i>↗</i></button>
+    <button class="mobile-signup-cta" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis <i>↗</i></button>
   </section>
 
   <div class="auth-layer" id="authLayer" aria-hidden="true">
