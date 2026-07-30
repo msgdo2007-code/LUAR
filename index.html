@@ -17,7 +17,7 @@
   <section class="landing" id="landing">
     <nav class="landing-nav">
       <a class="landing-brand" href="#inicio"><img src="luarlogo.png?v=2" alt="LUAR"><strong>LUAR</strong></a>
-      <div><a href="#recursos">Recursos</a><a href="#experiencia">Experiência</a><a href="#seguranca">Segurança</a></div>
+      <div><a href="#recursos">Recursos</a><a href="#experiencia">Experiência</a><a href="#vitalicio">Vitalício</a><a href="#seguranca">Segurança</a></div>
       <div class="landing-nav-actions"><button class="landing-login" data-auth-open="login">Entrar</button><button class="landing-cta small" data-auth-open="signup">Criar conta</button></div>
     </nav>
 
@@ -64,6 +64,18 @@
         </div>
       </section>
 
+      <section class="lifetime-offer" id="vitalicio">
+        <div class="lifetime-copy">
+          <span class="landing-pill">✦ Uma vez. Para sempre.</span>
+          <h2>Desbloqueie toda<br><em>a sua órbita.</em></h2>
+          <p>Sem mensalidade. Um único pagamento libera sincronização na nuvem e todos os recursos premium do LUAR para sua conta.</p>
+          <ul><li>Registros ilimitados</li><li>Calendário anual e feriados estaduais</li><li>Playlists do Spotify e YouTube</li><li>Foco personalizado</li><li>Cores e personalização premium</li><li>Sincronização vitalícia na nuvem</li></ul>
+        </div>
+        <article class="lifetime-price-card">
+          <span>LUAR VITALÍCIO</span><div><small>R$</small><b>39</b><em>,90</em></div><p>Pagamento único via Pix</p><button class="landing-cta" data-upgrade>Conseguir vitalício ↗</button><small>✓ Sem renovação ✓ Acesso permanente</small>
+        </article>
+      </section>
+
       <section class="landing-flow" id="seguranca">
         <div><span class="landing-pill">Sua conta, seus dados</span><h2>Entre de qualquer lugar.<br><em>Continue de onde parou.</em></h2><p>Conta protegida, recuperação de senha, salvamento automático e backup completo para exportar ou importar quando quiser.</p><ul><li><b>01</b> Crie sua conta em poucos segundos.</li><li><b>02</b> Seus registros ficam ligados ao seu perfil.</li><li><b>03</b> Exporte um backup sempre que desejar.</li></ul><button class="landing-cta" data-auth-open="signup">Criar minha órbita</button></div>
         <div class="security-orbit" aria-hidden="true"><span></span><i></i><b>✓<small>Dados protegidos</small></b></div>
@@ -82,6 +94,7 @@
         <div class="auth-heading"><span id="authKicker">BEM-VINDO DE VOLTA</span><h2 id="authTitle">Entrar no LUAR</h2><p id="authSubtitle">Use seu e-mail e senha para continuar.</p></div>
         <form id="authForm">
           <label class="auth-name">Nome<input name="name" autocomplete="name" placeholder="Como devemos chamar você?"></label>
+          <label class="auth-state">Estado<select name="state" aria-label="Seu estado"><option value="">Selecione seu estado</option><option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AP">Amapá</option><option value="AM">Amazonas</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MT">Mato Grosso</option><option value="MS">Mato Grosso do Sul</option><option value="MG">Minas Gerais</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PR">Paraná</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RS">Rio Grande do Sul</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="SC">Santa Catarina</option><option value="SP">São Paulo</option><option value="SE">Sergipe</option><option value="TO">Tocantins</option></select></label>
           <label>E-mail<input name="email" type="email" autocomplete="email" required placeholder="voce@email.com"></label>
           <label class="auth-password">Senha<input name="password" type="password" autocomplete="current-password" minlength="6" placeholder="Mínimo de 6 caracteres"></label>
           <button class="landing-cta auth-submit">Entrar</button>
@@ -90,6 +103,20 @@
         <p class="auth-switch" id="authSwitch">Ainda não tem uma conta? <button data-auth-mode="signup">Criar conta</button></p>
         <div class="auth-status" id="authStatus"></div>
       </div>
+    </section>
+  </div>
+
+  <div class="payment-layer" id="paymentLayer" aria-hidden="true">
+    <section class="payment-card">
+      <button class="payment-close" id="paymentClose" aria-label="Fechar">×</button>
+      <header><img src="luarlogo.png?v=2" alt="LUAR"><div><span>LUAR VITALÍCIO</span><h2>Uma órbita sem limites.</h2><p>Pagamento único de <b>R$ 39,90</b> via Pix.</p></div></header>
+      <div class="payment-loading" id="paymentLoading"><i></i><b>Gerando seu Pix…</b><small>Conectando com a Pushin Pay.</small></div>
+      <div class="payment-pix" id="paymentPix">
+        <img id="paymentQr" alt="QR Code Pix">
+        <div><span>PIX COPIA E COLA</span><textarea id="paymentCode" readonly></textarea><button class="primary" id="copyPayment">Copiar código Pix</button><button class="secondary" id="checkPayment">Já paguei, verificar</button></div>
+      </div>
+      <div class="payment-status" id="paymentStatus"></div>
+      <footer>Pagamento processado pela Pushin Pay. A Pushin Pay atua exclusivamente como processadora da cobrança e não é responsável pelo produto, conteúdo ou suporte do LUAR. Suporte: ZAKOM • WhatsApp (21) 99390-2153.</footer>
     </section>
   </div>
 
@@ -120,6 +147,7 @@
       <button class="icon menu" id="menuBtn" data-icon="menu" aria-label="Menu"></button>
       <div class="search global-search" data-icon="search"><input id="search" autocomplete="off" placeholder="Buscar tarefas, hábitos, agenda, metas..."><kbd>⌘ K</kbd><div class="global-search-results" id="globalSearchResults"></div></div>
       <div class="actions">
+        <button class="icon upgrade-button" id="upgradeBtn" aria-label="Conseguir LUAR Vitalício" title="Conseguir LUAR Vitalício">↑<i></i></button>
         <button class="icon" id="themeBtn" data-icon="sun" aria-label="Tema"></button>
         <button class="icon bell" id="bellBtn" data-icon="bell" aria-label="Notificações"><i></i></button>
         <button class="profile" data-page="settings"><span>LU</span><b>Seu nome<small>Nível 1</small></b><i data-icon="chevron"></i></button>
@@ -194,7 +222,7 @@
 
     <section class="page focus-page" id="focus">
       <span>SEU MOMENTO</span><h1>Entre em órbita.</h1><p>Silencie o mundo por alguns minutos.</p>
-      <div class="focus-box"><div class="timer"><svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="135"/><circle class="timer-progress" cx="150" cy="150" r="135"/></svg><i class="timer-moon" aria-hidden="true"></i><div><b id="timerDisplay">25:00</b><span>FOCO</span></div></div><div class="presets"><button data-minutes="5">5 min</button><button data-minutes="15">15 min</button><button class="active" data-minutes="25">25 min</button><button data-minutes="60">1 hora</button></div><button class="primary" id="timerStart" data-icon="play">Iniciar sessão</button><div class="sounds"><span>Ambiente</span><button data-sound="rain" aria-pressed="false">🌧️ Chuva</button><button data-sound="forest" aria-pressed="false">🌲 Floresta</button><button data-sound="lofi" aria-pressed="false">🎧 Lo-fi</button><button data-sound="white" aria-pressed="false">◌ Ruído branco</button><label class="sound-volume" title="Volume do ambiente">🔊 <input id="ambientVolume" type="range" min="0" max="100" value="32" aria-label="Volume do ambiente"></label><small id="soundStatus">Escolha um som para acompanhar sua sessão.</small></div></div>
+      <div class="focus-box"><div class="timer"><svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="135"/><circle class="timer-progress" cx="150" cy="150" r="135"/></svg><i class="timer-moon" aria-hidden="true"></i><div><b id="timerDisplay">25:00</b><span>FOCO</span></div></div><div class="presets"><button data-minutes="5">5 min</button><button class="active" data-minutes="25">25 min</button><button data-minutes="60">1 hora</button><button class="premium-preset" id="customFocusBtn">🔒 Personalizado</button></div><div class="custom-focus-time" id="customFocusTime"><input id="customFocusMinutes" type="number" min="1" max="480" value="45"><button>Usar minutos</button></div><button class="primary" id="timerStart" data-icon="play">Iniciar sessão</button><div class="sounds"><span>Ambiente</span><button data-sound="rain" aria-pressed="false">🌧️ Chuva</button><button data-sound="forest" aria-pressed="false">🌲 Floresta</button><button data-sound="lofi" aria-pressed="false">🎧 Lo-fi</button><button data-sound="white" aria-pressed="false">◌ Ruído branco</button><label class="sound-volume" title="Volume do ambiente">🔊 <input id="ambientVolume" type="range" min="0" max="100" value="32" aria-label="Volume do ambiente"></label><small id="soundStatus">Escolha um som para acompanhar sua sessão.</small></div><div class="playlist-premium"><header><span>PLAYLIST PERSONALIZADA</span><b>🔒 Vitalício</b></header><div><input id="playlistUrl" type="url" placeholder="Cole uma playlist do Spotify ou YouTube"><button id="playPlaylist">Tocar</button></div><div class="custom-player" id="customPlayer"></div></div></div>
       <div class="stats three focus-stats"><article class="stat"><div><small>Hoje</small><b>0min</b></div></article><article class="stat"><div><small>Esta semana</small><b>0min</b></div></article><article class="stat"><div><small>Este mês</small><b>0min</b></div></article></div>
     </section>
     <section class="page generic" id="investments" data-title="Investimentos" data-sub="Uma visão completa da sua carteira."></section>
