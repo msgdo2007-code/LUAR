@@ -745,6 +745,7 @@ body.app-mode .timer-moon,body.app-mode .ring,body.app-mode .level>i b,body.app-
 body.app-mode .premium-feature-list>span.requested,body.app-mode .color-choice.active{border-color:var(--green)}
 body.app-mode .nav.active,body.app-mode .primary,body.app-mode .habit-complete:hover,body.app-mode .task-drop-hint:hover{border-color:var(--green)}
 body.app-mode #goals .goal-showcase,body.app-mode #dashboardGoals .dashboard-goal-card{--goal:var(--green)}
+.compact-goals #dashboardGoals>.dashboard-goal-card:nth-child(n+2){display:grid}
 body.app-mode #goals .goal-overview>i,body.app-mode #dashboardGoals .dashboard-goal-card>i{color:var(--green);background:var(--greenfade)}
 body.app-mode #goals .goal-progress i,body.app-mode #dashboardGoals .dashboard-goal-card em u{background:linear-gradient(90deg,var(--green),color-mix(in srgb,var(--green) 45%,white));box-shadow:0 0 10px rgba(var(--green-rgb),.35)}
  .cloud-actions{grid-column:2;grid-row:1/6;display:grid;gap:8px;min-width:210px}.cloud-actions button{min-height:40px}.cloud-backup-card.locked .cloud-actions button{background:rgba(255,255,255,.04);color:#ffd463}
