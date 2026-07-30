@@ -67,12 +67,19 @@
       </div>
       <div class="main-grid">
         <div class="day-stack">
-          <article class="card today-card">
-            <div class="panel-head"><div><span>HOJE</span><h3>Seu dia em órbita</h3></div><button data-page="tasks">Ver tudo →</button></div>
-            <div class="daily"><div class="ring" style="--p:0"><b>0<small>%</small></b></div><div><b>Sua órbita começa aqui</b><p id="dailyCount">0 de 0 atividades concluídas</p><i><b id="dailyBar" style="width:0"></b></i></div></div>
-            <div class="activities" id="dashboardActivities"><div class="empty"><span>✦</span><b>Nenhuma atividade para hoje</b><small>Crie sua primeira tarefa ou hábito.</small></div></div>
-            <button class="dashed" data-modal="tarefa">＋ Adicionar nova tarefa</button>
-          </article>
+          <div class="orbit-goals-row">
+            <article class="card today-card compact-orbit">
+              <div class="panel-head"><div><span>HOJE</span><h3>Seu dia em órbita</h3></div><button data-page="tasks">Ver tudo →</button></div>
+              <div class="daily"><div class="ring" style="--p:0"><b>0<small>%</small></b></div><div><b>Sua órbita começa aqui</b><p id="dailyCount">0 de 0 atividades concluídas</p><i><b id="dailyBar" style="width:0"></b></i></div></div>
+              <div class="activities" id="dashboardActivities"><div class="empty"><span>✦</span><b>Nenhuma atividade para hoje</b><small>Crie sua primeira tarefa ou hábito.</small></div></div>
+              <button class="dashed" data-modal="tarefa">＋ Adicionar nova tarefa</button>
+            </article>
+            <article class="card goals compact-goals">
+              <div class="panel-head"><div><span>OBJETIVOS</span><h3>Metas financeiras</h3></div><button data-page="goals">Ver tudo →</button></div>
+              <div id="dashboardGoals"><div class="empty compact"><span>🎯</span><b>Suas metas aparecerão aqui</b><small>Defina um valor e acompanhe o progresso.</small></div></div>
+              <button class="secondary full" data-modal="meta">＋ Nova meta</button>
+            </article>
+          </div>
           <div class="wellness-row">
             <article class="focus-banner overview-focus compact-focus">
               <div><span>MODO FOCO</span><h3>Entre em órbita.</h3><p>Um momento sem distrações.</p><button data-page="focus" data-icon="play">Iniciar sessão</button></div>
@@ -80,11 +87,6 @@
             </article>
             <article class="card mood-card compact-mood"><div class="panel-head"><div><span>BEM-ESTAR</span><h3>Como você está hoje?</h3></div></div><div class="moods"><button data-mood="Muito triste">😞</button><button data-mood="Triste">😕</button><button data-mood="Normal">😐</button><button data-mood="Feliz">🙂</button><button data-mood="Muito feliz">🤩</button></div><p id="moodText">Reserve um momento para você.</p></article>
           </div>
-          <article class="card goals">
-            <div class="panel-head"><div><span>OBJETIVOS</span><h3>Metas financeiras</h3></div><button data-page="goals">↗</button></div>
-            <div id="dashboardGoals"><div class="empty compact"><span>🎯</span><b>Suas metas aparecerão aqui</b><small>Defina um valor e acompanhe o progresso.</small></div></div>
-            <button class="secondary full" data-modal="meta">＋ Nova meta</button>
-          </article>
         </div>
         <div class="side-stack">
           <article class="card streak">
