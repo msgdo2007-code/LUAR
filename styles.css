@@ -87,6 +87,24 @@ body.light{--bg:#eef2ee;--surface:#fff;--surface2:#f7faf7;--border:rgba(18,30,22
 .investment-kpis,
 .portfolio-big{display:none!important}
 
+.landing-nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px)}
+.hero-lifetime-note{display:block;margin-top:10px;color:var(--green);font-size:12px}
+.comparison-section{max-width:1100px;margin:70px auto;padding:30px 22px;text-align:center}
+.comparison-section h2{font:700 clamp(28px,4vw,52px) var(--display);letter-spacing:-.04em;margin:18px 0 32px}
+.comparison-section h2 em{color:var(--green);font-style:normal}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;text-align:left}
+.comparison-grid article{padding:24px;border:1px solid var(--border);border-radius:20px;background:rgba(255,255,255,.025)}
+.comparison-grid h3{margin:0 0 15px;font:700 18px var(--display)}
+.comparison-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;color:var(--muted)}
+.comparison-grid li:before{content:'—';margin-right:10px;color:var(--red)}
+.comparison-positive{border-color:rgba(50,255,126,.24)!important;background:rgba(50,255,126,.045)!important}
+.comparison-positive li:before{content:'✓';color:var(--green)}
+.demo-controls{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.demo-controls button{border:1px solid rgba(50,255,126,.2);background:rgba(50,255,126,.08);color:var(--green);border-radius:8px;padding:7px 9px;font-size:9px;cursor:pointer}
+.demo-controls button.done{background:var(--green);color:#061008}
+.demo-feedback{display:none;margin:8px 0;color:var(--green);font-size:11px}.demo-feedback.show{display:block}.demo-feedback button{border:0;background:none;color:var(--text);text-decoration:underline;cursor:pointer}
+@media(max-width:700px){.comparison-grid{grid-template-columns:1fr}.landing-nav>div:nth-child(2){display:none}}
+
 /* Ajuste final de posiÃ§Ãµes da visÃ£o geral */
 .hero-grid{grid-template-columns:minmax(190px,.48fr) minmax(440px,1.4fr) minmax(330px,.9fr)}.overview-stats{order:1}.balance{order:2}.portfolio-hero{order:3}.main-grid{grid-template-columns:minmax(0,1.12fr) minmax(400px,.88fr);margin-top:16px}.day-stack{display:grid;gap:15px;align-content:start}.compact-focus{min-height:138px;height:138px;padding:18px 21px}.compact-focus h3{font-size:17px;margin:5px 0 2px}.compact-focus p{margin:3px 0 9px}.compact-focus button{padding:7px 11px}.compact-focus .moon{width:112px;height:112px;right:22px;top:12px}.compact-focus .moon>i{width:74px;height:74px;top:18px;left:17px}.compact-focus .moon>b{left:40px;top:39px;font-size:18px}.compact-mood{min-height:142px;padding:16px 19px}.compact-mood .panel-head h3{font-size:14px}.compact-mood .moods{max-width:390px;margin:12px auto 7px}.compact-mood .moods button{width:34px;height:34px;font-size:16px}.compact-mood>p{margin:5px 0 0}.side-stack .streak{min-height:405px}.calendar-title{margin:2px 0 5px;padding-top:8px;border-top:1px solid var(--border)}.calendar-title h3{font-size:15px}.calendar-title button{font-size:8px}.side-stack .goals{min-height:205px}
 @media(max-width:1280px){.hero-grid{grid-template-columns:minmax(180px,.46fr) minmax(410px,1.3fr) minmax(310px,.82fr)}}
