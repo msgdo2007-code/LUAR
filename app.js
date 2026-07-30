@@ -132,6 +132,16 @@ async function hydrateMarketQuotes(rows){
  await Promise.all(globals.map(async row=>{try{let quote=await fetch(`https://api.twelvedata.com/quote?symbol=${encodeURIComponent(row.ticker)}&apikey=${encodeURIComponent(key)}`).then(r=>r.json());row.price=+(quote.close||quote.price)||row.price||0;row.change=+(quote.percent_change||quote.change_percent)||row.change||0}catch(error){console.warn('CotaÃ§Ã£o global indisponÃ­vel',error)}}));
  return rows
 }
+async function hydrateMarketQuotes(rows){
+  rows.forEach(x=>{let saved=state.investments.find(i=>(i.ticker||'').toUpperCase()===(x.ticker||'').toUpperCase());if(saved&&!x.price)x.price=+saved.currentPrice||+saved.averagePrice||0});
+  let brazil=rows.filter(x=>x.provider==='brapi'&&x.ticker).slice(0,30);
+  if(brazil.length)try{let response=await fetch(`/api/market-quotes?provider=brapi&symbols=${encodeURIComponent(brazil.map(x=>x.ticker).join(','))}`),json=await response.json();(json.quotes||[]).forEach(q=>{let row=brazil.find(x=>x.ticker===q.symbol);if(row){row.price=+q.price||row.price||0;row.change=+q.change||0}})}catch(error){console.warn('BRAPI indisponÃ­vel',error)}
+  let alpaca=rows.filter(x=>x.provider==='twelve'&&x.ticker&&!x.ticker.includes('/')).slice(0,30);
+  if(alpaca.length)try{let response=await fetch(`/api/market-quotes?provider=alpaca&symbols=${encodeURIComponent(alpaca.map(x=>x.ticker).join(','))}`),json=await response.json();(json.quotes||[]).forEach(q=>{let row=alpaca.find(x=>x.ticker===q.symbol);if(row){row.price=+q.price||row.price||0;row.change=+q.change||0}})}catch(error){console.warn('Alpaca indisponÃ­vel',error)}
+  let crypto=rows.filter(x=>x.provider==='twelve'&&x.ticker&&x.ticker.includes('/')).slice(0,10),key=CFG.market?.twelveDataKey||'demo';
+  await Promise.all(crypto.map(async row=>{try{let quote=await fetch(`https://api.twelvedata.com/quote?symbol=${encodeURIComponent(row.ticker)}&apikey=${encodeURIComponent(key)}`).then(r=>r.json());row.price=+(quote.close||quote.price)||row.price||0;row.change=+(quote.percent_change||quote.change_percent)||row.change||0}catch(error){console.warn('Twelve Data indisponÃ­vel',error)}}));
+  return rows
+}
 searchMarket=async function(q){
  let box=document.getElementById('marketResults');box.innerHTML='<div class="loader">Buscando cotaÃ§Ãµes de hoje<span></span></div>';
  let rows=[],token=CFG.market?.brapiToken||'',twelve=CFG.market?.twelveDataKey||'demo',brTabs=['br','fii','bdr'],globalTabs=['us','reit','crypto'];
