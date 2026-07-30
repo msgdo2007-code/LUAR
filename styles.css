@@ -257,7 +257,7 @@ body{font-size:16px}
 
 /* Quadro de tarefas por arrastar e soltar */
 .task[draggable="true"]{user-select:none;transition:opacity .2s,transform .2s,border-color .2s,box-shadow .2s}
-.task[draggable="true"]:after{content:"⋮⋮";position:absolute;right:13px;top:12px;color:#667069;font-size:13px;letter-spacing:-3px}
+.task[draggable="true"]:after{display:none;content:none}
 .task.dragging{opacity:.3;transform:scale(.97)}
 .task-drop-hint{height:0;overflow:hidden;display:grid;place-items:center;border:1px dashed transparent;border-radius:11px;color:var(--green);font-size:10px;transition:.22s}
 [data-task-column].drag-over{border-color:rgba(50,255,126,.36);background:rgba(50,255,126,.035)}
@@ -444,3 +444,197 @@ body{font-size:16px}
 @media(max-width:1100px){.agenda-year-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:780px){.global-search-results{position:fixed;left:12px;right:12px;top:72px}.agenda-year-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.goal-overview{grid-template-columns:50px minmax(0,1fr)}.goal-overview>i{width:50px;height:50px}.goal-overview>.row-actions{grid-column:1/3}.goal-controls{flex-wrap:wrap}.goal-controls>small{width:100%;margin-left:0}.year-event-tooltip{width:220px}}
 @media(max-width:520px){.agenda-year-grid{grid-template-columns:1fr}.goal-deposit-summary,.goal-statement-summary{grid-template-columns:1fr}.goal-overview{padding:14px!important}.goal-controls>.primary,.goal-controls>.secondary{flex:1}}
+
+/* Dashboard: hábitos e metas sempre visíveis */
+.compact-orbit .activities{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+.compact-orbit .activities .activity{min-width:0;padding:7px 8px;gap:7px;border-radius:10px}
+.compact-orbit .activities .activity>span{width:27px;height:27px;font-size:14px}
+.compact-orbit .activities .activity>b{min-width:0;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.compact-orbit .activities .activity small,.compact-orbit .activities .row-actions{display:none}
+.compact-orbit .activities .check-action{width:24px;height:24px}
+.dashboard-goal-card{width:100%;display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:9px;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.02);color:var(--text);text-align:left}
+.dashboard-goal-card:hover{border-color:color-mix(in srgb,var(--goal) 38%,transparent);background:color-mix(in srgb,var(--goal) 6%,transparent)}
+.dashboard-goal-card>i{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:color-mix(in srgb,var(--goal) 12%,transparent);font-style:normal;font-size:17px}
+.dashboard-goal-card>span{display:flex;min-width:0;flex-direction:column}
+.dashboard-goal-card b{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dashboard-goal-card small{margin:2px 0 5px;color:var(--muted);font-size:8px}
+.dashboard-goal-card em{height:4px;border-radius:5px;background:rgba(255,255,255,.06);overflow:hidden}
+.dashboard-goal-card em u{display:block;height:100%;border-radius:inherit;background:var(--goal);text-decoration:none}
+.dashboard-goal-card strong{color:var(--goal);font-size:9px}
+.compact-goals #dashboardGoals{overflow:visible}
+.compact-goals #dashboardGoals>.dashboard-goal-card:nth-child(n+3){display:none}
+
+/* Metas menores e organizadas */
+.goal-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.goal-showcase{border-radius:15px;overflow:hidden}
+.goal-overview{grid-template-columns:44px minmax(0,1fr) auto;padding:12px!important;gap:10px}
+.goal-overview>i{width:44px;height:44px;border-radius:13px;font-size:22px}
+.goal-overview h3{font-size:13px;margin:2px 0 5px}
+.goal-overview>div>small{color:var(--goal);font-size:8px;text-transform:uppercase}
+.goal-numbers b{font-size:12px}.goal-numbers em{font-size:8px}
+.goal-progress{height:5px;margin:7px 0 5px}
+.goal-overview footer{font-size:8px}
+.goal-cover>span b{font-size:13px}.goal-cover>span small{font-size:8px}
+.goal-controls{padding:9px 11px;gap:6px}
+.goal-controls>.primary,.goal-controls>.secondary{height:32px;padding:0 10px;font-size:8px}
+.goal-controls>small{font-size:8px}
+
+/* Diário de humor mensal */
+.mood-page-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:15px}
+.mood-calendar-card,.mood-entry-card{padding:22px}
+.mood-month-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.mood-month-calendar>i,.mood-month-calendar>button{min-height:78px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.018);color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.mood-month-calendar>i{border-color:transparent;background:transparent}
+.mood-month-calendar>button small{font-size:9px;color:var(--muted)}
+.mood-month-calendar>button b{min-height:25px;font-size:21px}
+.mood-month-calendar>button.has-mood{background:rgba(50,255,126,.045);border-color:rgba(50,255,126,.18)}
+.mood-month-calendar>button.selected{border-color:var(--green);box-shadow:0 0 18px rgba(50,255,126,.09)}
+.mood-month-calendar>button.today small{color:var(--green);font-weight:800}
+.mood-entry-card>span{color:var(--green);font-size:9px;font-weight:800;letter-spacing:.13em}
+.mood-entry-card>h3{margin:5px 0 7px;font:700 18px var(--display);text-transform:capitalize}
+.mood-entry-card>p{margin:0;color:var(--muted);font-size:10px}
+.mood-entry-options{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:18px 0}
+.mood-entry-options button{min-width:0;height:62px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.02);font-size:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.mood-entry-options button small{color:var(--muted);font-size:6px;white-space:nowrap}
+.mood-entry-options button:hover,.mood-entry-options button.active{border-color:var(--green);background:var(--greenfade);transform:translateY(-2px)}
+#moodSelectedSummary article{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:start;padding:13px;border:1px solid var(--border);border-radius:13px;background:rgba(255,255,255,.02)}
+#moodSelectedSummary article>i{font-style:normal;font-size:28px}
+#moodSelectedSummary article b{font-size:11px}#moodSelectedSummary article p{margin:5px 0 0;color:var(--muted);font-size:9px;line-height:1.45}
+#moodSelectedSummary article>button{border:0;background:var(--greenfade);color:var(--green);border-radius:8px;padding:6px 8px;font-size:8px}
+.mood-modal-choice{display:flex!important;grid-template-columns:none!important;align-items:center;gap:12px;margin:15px 0}
+.mood-modal-choice>span{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;background:var(--greenfade);font-size:28px}
+.mood-modal-choice>div{display:flex;flex-direction:column}.mood-modal-choice b{font-size:13px}.mood-modal-choice small{color:var(--muted);font-size:9px;margin-top:3px}
+.modal form>label textarea{width:100%;min-height:100px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.03);color:var(--text);padding:11px;outline:0;resize:vertical}
+
+/* Notas quadradas com emoji e cor */
+.notes-board{padding:22px;min-height:540px}
+.notes-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:20px}
+.note-square{aspect-ratio:1/1;min-height:210px;padding:16px;border:1px solid color-mix(in srgb,var(--note) 22%,var(--border));border-radius:17px;background:radial-gradient(circle at 100% 0,color-mix(in srgb,var(--note) 15%,transparent),transparent 48%),rgba(255,255,255,.02);display:flex;flex-direction:column;transition:.22s;overflow:hidden}
+.note-square:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--note) 48%,transparent);box-shadow:0 15px 34px rgba(0,0,0,.2)}
+.note-square>header{display:flex;align-items:flex-start;justify-content:space-between}.note-square>header>i{font-style:normal;font-size:27px}
+.note-square>small{margin-top:14px;color:var(--note);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
+.note-square h3{margin:5px 0 8px;font:700 15px var(--display)}
+.note-square p{margin:0;color:var(--muted);font-size:10px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.note-square footer{margin-top:auto;padding-top:10px;color:var(--note);font-size:8px}
+.note-square.favorite{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--note) 20%,transparent)}
+
+/* Lembretes diários de hábitos */
+.drawer>#notificationList{display:grid;gap:9px;margin-top:20px;padding:0;border:0}
+.habit-notification{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:13px;background:rgba(255,255,255,.02)}
+.habit-notification>i{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:var(--greenfade);font-style:normal;font-size:20px}
+.habit-notification>div{min-width:0}.habit-notification b{font-size:11px}.habit-notification small{display:block;color:var(--green);font-size:8px}.habit-notification p{margin:4px 0 0;color:var(--muted);font-size:8px;line-height:1.35}
+.habit-notification>button{border:0;border-radius:8px;background:var(--green);color:#071009;padding:7px 8px;font-size:8px;font-weight:800}
+.notification-clear{display:flex;align-items:center;gap:10px;padding:17px;border:1px solid var(--border);border-radius:13px}.notification-clear>i{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:var(--green);color:#071009;font-style:normal}.notification-clear>b{display:flex;flex-direction:column;font-size:11px}.notification-clear small{margin-top:3px;color:var(--muted);font-size:8px}
+
+/* Experiência mobile simplificada */
+@media(max-width:780px){
+ html,body,main{width:100%;max-width:100%;overflow-x:hidden}
+ .page,.page>*{max-width:100%;min-width:0}
+ #dashboard .hero-grid>*,#dashboard .main-grid>*,#dashboard .overview-stats,#dashboard .overview-stats>*{min-width:0;max-width:100%;width:100%}
+ #dashboard .overview-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #dashboard .overview-stats .stat{overflow:hidden;padding:12px 10px}
+ #dashboard .overview-stats .stat>i{width:34px;height:34px;flex:0 0 34px}
+ #dashboard .overview-stats .stat b{font-size:14px}
+ main>header .global-search{display:flex;position:absolute;left:66px;right:176px;width:auto;height:39px}
+ main>header .global-search kbd{display:none}
+ main>header .global-search input{font-size:10px}
+ .page{padding:20px 12px 84px}
+ .page-head{margin-bottom:18px}.page-head p{font-size:10px;line-height:1.4}.page-head h1{font-size:22px}
+ #dashboard .hero-grid,#dashboard .main-grid,#dashboard .day-stack,#dashboard .side-stack,.orbit-goals-row{display:grid;grid-template-columns:1fr;height:auto}
+ #dashboard .day-stack{grid-template-rows:auto}
+ #dashboard .hero-grid{gap:10px}.orbit-goals-row{gap:10px}
+ .orbit-goals-row>.card{min-height:0;height:auto;padding:16px}
+ .compact-orbit .daily{margin-top:12px;padding:12px}.compact-orbit .ring{width:58px;height:58px;flex-basis:58px}
+ .compact-orbit .activities{grid-template-columns:1fr 1fr}
+ #dashboard .wellness-row{height:auto;grid-template-columns:1fr;gap:10px}
+ #dashboard .wellness-row .compact-focus,#dashboard .wellness-row .compact-mood{height:132px;min-height:132px}
+ #dashboard .side-stack .streak{min-height:0;height:auto;padding:17px}
+ .goal-page-grid,.habit-page-grid,.mood-page-grid{grid-template-columns:1fr}
+ .goal-page-grid,.habit-page-grid,.mood-page-grid,.mood-calendar-card,.mood-entry-card,.goal-gallery-card,.notes-board{width:100%;min-width:0}
+ .goal-evolution,.habit-evolution{display:none}
+ .goal-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ .goal-summary>.card:last-child{grid-column:1/3}
+ .habit-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .goal-summary>.card,.habit-stats>.card{min-width:0;overflow:hidden}
+ .goal-summary>.card,.habit-stats>.card{padding:11px 9px}.goal-summary small,.habit-stats small{font-size:8px}.goal-summary b,.habit-stats b{font-size:13px}
+ .goal-gallery-card,.habit-library,.mood-calendar-card,.mood-entry-card,.notes-board{padding:14px;min-height:0}
+ .goal-gallery{grid-template-columns:1fr 1fr;gap:8px}
+ .goal-overview{grid-template-columns:35px minmax(0,1fr);padding:9px!important}.goal-overview>i{width:35px;height:35px;font-size:18px}.goal-overview>.row-actions{grid-column:1/3}
+ .goal-overview footer,.goal-controls>small{display:none}.goal-controls{padding:7px;flex-wrap:wrap}.goal-controls>.primary,.goal-controls>.secondary{flex:1;padding:0 5px;font-size:7px}
+ .habit-grid{grid-template-columns:1fr}.habit-card{min-height:0;padding:14px}.habit-card h3{margin-top:10px}
+ .agenda-calendar-card{padding:12px;overflow:visible}.agenda-weekdays,.agenda-big-calendar{min-width:0;gap:3px}.agenda-weekdays b{font-size:7px;padding:4px}.agenda-day{min-height:56px;padding:4px;border-radius:8px}.agenda-day>b{width:21px;height:21px;font-size:8px}.agenda-day>div{display:none}.agenda-toolbar{margin-bottom:10px}.agenda-toolbar h2{font-size:18px}
+ .agenda-day-panel{padding:14px;min-height:0}.agenda-year-card{padding:14px}.agenda-year-grid{grid-template-columns:1fr 1fr;gap:7px}
+ .mood-month-calendar{width:100%;min-width:0;gap:3px}.mood-month-calendar>i,.mood-month-calendar>button{min-width:0;min-height:52px;padding:0;border-radius:8px}.mood-month-calendar>button b{font-size:17px;min-height:20px}
+ .mood-entry-options{grid-template-columns:repeat(5,minmax(0,1fr));width:100%;min-width:0;gap:3px}.mood-entry-options button{min-width:0;height:54px;padding:0;font-size:18px;overflow:hidden}.mood-entry-options button small{display:none}
+ .notes-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.note-square{min-height:0;padding:12px;border-radius:13px}.note-square h3{font-size:12px}.note-square p{font-size:9px;-webkit-line-clamp:4}
+ .modal{align-self:end;width:100%;max-height:88vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px}.backdrop{padding:0}
+ .drawer{padding:18px}.habit-notification{grid-template-columns:38px 1fr}.habit-notification>button{grid-column:2;width:max-content}.habit-notification>i{width:38px;height:38px}
+}
+@media(max-width:440px){
+ main>header .global-search{right:153px}
+ .actions{gap:4px}.actions>.profile{display:none}
+ .goal-gallery{grid-template-columns:1fr}
+ .goal-showcase{display:grid;grid-template-columns:1fr 1.15fr}.goal-overview{grid-column:1/3}.goal-cover{grid-column:1;grid-row:2}.goal-controls{grid-column:2;grid-row:2;align-content:center}.goal-controls>.primary,.goal-controls>.secondary{flex-basis:100%}
+ .notes-card-grid{grid-template-columns:1fr 1fr}.note-square{aspect-ratio:auto;min-height:170px}
+ .agenda-year-grid{grid-template-columns:1fr}
+ .compact-orbit .activities{grid-template-columns:1fr}
+}
+
+/* Calendários e feriados no tema LUAR */
+input[type="date"]{color-scheme:dark;accent-color:var(--green)}
+input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;filter:invert(78%) sepia(88%) saturate(630%) hue-rotate(82deg) brightness(105%);opacity:.9}
+body.light input[type="date"]{color-scheme:light}
+body.light input[type="date"]::-webkit-calendar-picker-indicator{filter:none}
+.holiday-toggle{align-self:center;height:36px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.025);color:var(--muted);font-size:9px;font-weight:700}
+.holiday-toggle.active{border-color:rgba(255,197,92,.35);background:rgba(255,197,92,.09);color:#ffc55c}
+.agenda-day.holiday{border-color:rgba(255,197,92,.32);background:rgba(255,197,92,.045)}
+.agenda-day .holiday-label{background:rgba(255,197,92,.12);color:#ffd178}
+.year-days>button.holiday{position:relative;background:rgba(255,197,92,.16);color:#ffd178;font-weight:800;box-shadow:inset 0 0 0 1px rgba(255,197,92,.22)}
+.year-days>button.holiday:hover .year-event-tooltip{display:grid;gap:8px}
+.year-event-tooltip .holiday-detail b{color:#ffd178}
+.holiday-event{border-color:rgba(255,197,92,.22);background:rgba(255,197,92,.045)}
+.holiday-event>i{width:24px;height:24px;margin:0;background:none;box-shadow:none;font-style:normal}
+body.focus-running main>header{z-index:45;border-bottom-color:rgba(50,255,126,.22);box-shadow:0 8px 30px rgba(0,0,0,.22)}
+body.focus-running #themeBtn{position:relative;z-index:46;border-color:rgba(50,255,126,.32);box-shadow:0 0 18px rgba(50,255,126,.12)}
+@media(max-width:780px){.holiday-toggle{height:32px;padding:0 8px;font-size:8px}.agenda-year-card>.panel-head{gap:10px}}
+
+/* Créditos e outros projetos */
+.creator-card,.projects-card{grid-column:span 1}
+.creator-profile{display:flex;align-items:center;gap:13px;margin:15px 0}
+.creator-profile>i{width:52px;height:52px;display:grid;place-items:center;border-radius:16px;background:var(--greenfade);box-shadow:inset 0 0 0 1px rgba(50,255,126,.18);font-style:normal;font-size:25px}
+.creator-profile h3{margin:0 0 3px}.creator-profile p{margin:0!important}
+.creator-contacts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.creator-contacts>a,.creator-contacts>span{display:flex;flex-direction:column;gap:4px;padding:12px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.02);color:var(--muted);font-size:9px;text-decoration:none}
+.creator-contacts>a:hover{border-color:rgba(50,255,126,.3);color:var(--green)}
+.creator-contacts b{color:var(--text);font-size:10px}
+.other-projects{display:grid;gap:8px;margin-top:15px}
+.other-projects>a,.other-projects>article{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.02);text-decoration:none;color:var(--text)}
+.other-projects>a:hover{border-color:rgba(50,255,126,.3);background:var(--greenfade)}
+.other-projects i{width:40px;height:40px;display:grid;place-items:center;border-radius:11px;background:var(--greenfade);color:var(--green);font-style:normal;font-size:10px;font-weight:800}
+.other-projects div{display:flex;flex-direction:column}.other-projects b{font-size:11px}.other-projects small{margin-top:2px;color:var(--muted);font-size:8px}
+.other-projects em{color:var(--muted);font-size:8px;font-style:normal}
+@media(max-width:520px){.creator-contacts{grid-template-columns:1fr}.creator-card,.projects-card{grid-column:1}}
+
+/* Visões mais diretas: os registros são o foco, sem cards orbitais repetidos. */
+.generic-grid>.insight-card,
+.habit-evolution,
+.goal-evolution,
+.agenda-mini-progress{display:none!important}
+.generic-grid,
+.habit-page-grid,
+.goal-page-grid{grid-template-columns:minmax(0,1fr)!important}
+
+/* A carteira abre diretamente no conteúdo, sem uma segunda navegação redundante. */
+.investment-toolbar nav{display:none!important}
+.investment-toolbar{justify-content:flex-end}
+
+/* Progresso orbital: a lua verde é a âncora; somente a orbe preta viaja. */
+.orbital-art .progress-moon,
+.insight-card:hover .progress-moon{
+ transform:translate(-50%,-50%)!important;
+ filter:none!important;
+ transition:filter .4s ease!important
+}
+.orbital-art .progress-satellite{
+ transition:transform .9s cubic-bezier(.2,.85,.2,1),box-shadow .5s ease
+}
