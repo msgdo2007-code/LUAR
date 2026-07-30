@@ -753,4 +753,5 @@ body.app-mode #goals .goal-progress i,body.app-mode #dashboardGoals .dashboard-g
 @media(max-width:560px){body.app-mode .template-note{font-size:10px}}
 /* A landing mantÃ©m sempre a identidade verde original, independente do template escolhido no app. */
 .landing{--green:#32ff7e;--greenfade:rgba(50,255,126,.11)}
+.market-fundamentals{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0 5px;padding:10px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.025)}.market-fundamentals span{display:flex;flex-direction:column;gap:2px}.market-fundamentals b{font-size:8px;color:var(--muted)}.market-fundamentals em{font-size:11px;font-style:normal;color:var(--text)}.market-fundamentals a{grid-column:1/-1;color:var(--green);font-size:9px;text-decoration:none;margin-top:3px}.market-fundamentals a:hover{text-decoration:underline}
 .tradingview-widget-container{width:100%;height:300px;margin:10px 0 4px;overflow:hidden;border-radius:12px}.tradingview-widget-container__widget{width:100%;height:100%}.tradingview-widget-container iframe{border:0;border-radius:12px}
