@@ -48,7 +48,7 @@
     </header>
 
     <section class="page active" id="dashboard">
-      <div class="page-head"><div><span id="todayLabel">HOJE</span><h1>Boa noite, <b id="greetingName">viajante</b> <i>✦</i></h1><p>Comece sua jornada. Cada pequeno passo conta.</p></div><button class="primary" data-modal="registro" data-icon="plus">Adicionar registro</button></div>
+      <div class="page-head"><div><span id="todayLabel">HOJE</span><h1><span id="greetingPeriod">Boa noite</span>, <b id="greetingName">viajante</b> <i>✦</i></h1><p>Comece sua jornada. Cada pequeno passo conta.</p></div><button class="primary" data-modal="registro" data-icon="plus">Adicionar registro</button></div>
       <div class="hero-grid">
         <article class="card balance">
           <div class="card-head"><div><small>Patrimônio total</small><h2 id="totalWealth">R$ 0,00</h2></div><em class="up" id="wealthTrend">Comece hoje</em></div>
@@ -126,7 +126,7 @@
     <section class="page generic" id="notes" data-title="Notas" data-sub="Um espaço calmo para todas as suas ideias."></section>
     <section class="page generic" id="settings" data-title="Configurações" data-sub="Deixe o LUAR do seu jeito."></section>
   </main>
-  <aside class="drawer" id="drawer"><header><h3>Notificações</h3><button id="closeDrawer">×</button></header><div class="empty"><i>✦</i><b>Tudo tranquilo por aqui<small>Seus próximos lembretes aparecerão neste espaço.</small></b></div></aside>
+  <aside class="drawer" id="drawer"><header><h3>Notificações</h3><button id="closeDrawer">×</button></header><div id="notificationList"></div></aside>
   <div class="backdrop" id="backdrop"><section class="modal"><header><div><span id="modalKicker">NOVO REGISTRO</span><h3 id="modalTitle">Adicionar à sua órbita</h3></div><button id="closeModal">×</button></header><form id="entityForm"></form></section></div>
   <div class="toast" id="toast"><i>✓</i><b>Feito!<small>Seu progresso foi salvo.</small></b></div>
   <script src="config.js"></script>
