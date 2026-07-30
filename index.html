@@ -211,7 +211,25 @@
 
     <section class="page" id="finance">
       <div class="page-head"><div><span>CONTROLE FINANCEIRO</span><h1>Seu dinheiro, com clareza.</h1><p>Acompanhe entradas, saídas e o ritmo da sua vida financeira.</p></div><button class="primary" data-modal="lançamento" data-icon="plus">Novo lançamento</button></div>
-      <div class="stats three"><article class="stat"><i class="green" data-icon="arrowup"></i><div><small>Receitas</small><b id="financeIncome">R$ 0,00</b></div></article><article class="stat"><i class="red" data-icon="arrowdown"></i><div><small>Despesas</small><b id="financeExpense">R$ 0,00</b></div></article><article class="stat"><i class="blue" data-icon="wallet"></i><div><small>Saldo do mês</small><b id="financeBalance">R$ 0,00</b></div></article></div>
+      <div class="stats three"><article class="stat"><i class="green" data-icon="arrowup"></i><div><small>Receitas</small><b id="financeIncome">R$ 0,00</b></div></article><article class="stat"><i class="red" data-icon="arrowdown"></i><div><small>Despesas e compras</small><b id="financeExpense">R$ 0,00</b></div></article><article class="stat"><i class="blue" data-icon="wallet"></i><div><small>Saldo do mês</small><b id="financeBalance">R$ 0,00</b></div></article></div>
+      <article class="card finance-evolution">
+        <div class="panel-head finance-chart-head"><div><span>EVOLUÇÃO FINANCEIRA</span><h3>Para onde seu dinheiro está indo</h3><p>Registre, por exemplo, “R$ 30 com comida” e acompanhe o impacto no patrimônio.</p></div><div class="finance-line-mode"><button class="active" data-finance-lines="combined">Uma linha</button><button data-finance-lines="separate">🔒 Separar linhas</button></div></div>
+        <div class="finance-chart-wrap">
+          <svg id="financeEvolutionChart" viewBox="0 0 900 300" preserveAspectRatio="none" aria-label="Evolução de ganhos, gastos, compras e investimentos">
+            <defs><linearGradient id="financeAreaGradient" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#32ff7e" stop-opacity=".28"/><stop offset="1" stop-color="#32ff7e" stop-opacity="0"/></linearGradient></defs>
+            <path class="finance-grid-line" d="M0 50H900M0 120H900M0 190H900M0 260H900"/>
+            <path class="finance-area"/>
+            <path class="finance-line finance-combined"/>
+            <path class="finance-line finance-income"/>
+            <path class="finance-line finance-expense"/>
+            <path class="finance-line finance-purchase"/>
+            <path class="finance-line finance-invested"/>
+            <circle class="finance-hover-point" r="7"/>
+          </svg>
+          <div class="finance-chart-tooltip" id="financeChartTooltip"></div>
+        </div>
+        <footer class="finance-chart-footer"><div class="finance-legend"><span class="combined">● Patrimônio</span><span class="income">● Ganhos</span><span class="expense">● Gastos</span><span class="purchase">● Compras</span><span class="invested">● Total investido</span></div><div class="finance-periods"><button data-finance-period="30D" class="active">30D</button><button data-finance-period="3M">3M</button><button data-finance-period="1A">1A</button><button data-finance-period="Tudo">Tudo</button></div></footer>
+      </article>
       <article class="card table"><div class="panel-head"><div><span>HISTÓRICO</span><h3>Seus lançamentos</h3></div><button class="secondary">Filtrar</button></div><div class="transactions" id="transactionList"><div class="empty"><span>↗</span><b>Nenhum lançamento</b><small>Registre um ganho ou gasto para começar.</small></div></div></article>
     </section>
 
