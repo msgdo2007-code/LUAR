@@ -747,6 +747,8 @@ body.app-mode .nav.active,body.app-mode .primary,body.app-mode .habit-complete:h
 body.app-mode #goals .goal-showcase,body.app-mode #dashboardGoals .dashboard-goal-card{--goal:var(--green)}
 body.app-mode #goals .goal-overview>i,body.app-mode #dashboardGoals .dashboard-goal-card>i{color:var(--green);background:var(--greenfade)}
 body.app-mode #goals .goal-progress i,body.app-mode #dashboardGoals .dashboard-goal-card em u{background:linear-gradient(90deg,var(--green),color-mix(in srgb,var(--green) 45%,white));box-shadow:0 0 10px rgba(var(--green-rgb),.35)}
+ .cloud-actions{grid-column:2;grid-row:1/6;display:grid;gap:8px;min-width:210px}.cloud-actions button{min-height:40px}.cloud-backup-card.locked .cloud-actions button{background:rgba(255,255,255,.04);color:#ffd463}
+@media(max-width:700px){.cloud-actions{width:100%;min-width:0}.cloud-actions button{width:100%}}
 @media(max-width:560px){body.app-mode .template-note{font-size:10px}}
 /* A landing mantém sempre a identidade verde original, independente do template escolhido no app. */
 .landing{--green:#32ff7e;--greenfade:rgba(50,255,126,.11)}
