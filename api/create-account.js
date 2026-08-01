@@ -1,63 +1,42 @@
-const recentAttempts = new Map();
-
-function allowAttempt(ip) {
-  const now = Date.now();
-  const attempts = (recentAttempts.get(ip) || []).filter(time => now - time < 15 * 60 * 1000);
-  if (attempts.length >= 8) return false;
-  attempts.push(now);
-  recentAttempts.set(ip, attempts);
-  return true;
-}
+const { json, readBody, requireSameOrigin, rateLimit } = require('./_lib');
 
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido.' });
-
-  const expectedHost = String(req.headers.host || '').toLowerCase();
-  const requestOrigin = String(req.headers.origin || '');
   try {
-    if (requestOrigin && expectedHost && new URL(requestOrigin).host.toLowerCase() !== expectedHost) {
-      return res.status(403).json({ error: 'Origem não autorizada.' });
-    }
-  } catch {
-    return res.status(403).json({ error: 'Origem não autorizada.' });
-  }
+    if (req.method !== 'POST') return json(res, 405, { error: 'Método não permitido.' });
+    requireSameOrigin(req);
+    rateLimit(req, 'create-account', 8, 15 * 60 * 1000);
+    const body = await readBody(req, 8_192);
+    const email = String(body.email || '').trim().toLowerCase().slice(0, 254);
+    const password = String(body.password || '');
+    const name = String(body.name || '').trim().replace(/[\u0000-\u001f\u007f]/g, '').slice(0, 80);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json(res, 400, { error: 'Informe um e-mail válido.' });
+    if (password.length < 8 || password.length > 128) return json(res, 400, { error: 'A senha deve ter entre 8 e 128 caracteres.' });
+    if (!name) return json(res, 400, { error: 'Informe seu nome.' });
 
-  const ip = String(req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim();
-  if (!allowAttempt(ip)) return res.status(429).json({ error: 'Muitas tentativas. Aguarde alguns minutos.' });
+    const url = process.env.SUPABASE_URL;
+    const anonKey = process.env.SUPABASE_ANON_KEY;
+    if (!url || !anonKey) return json(res, 503, { error: 'Cadastro temporariamente indisponível.' });
+    const publicSite = new URL(process.env.PUBLIC_SITE_URL || 'https://luarhub.site');
+    if (publicSite.protocol !== 'https:') throw new Error('SERVER_CONFIG');
 
-  const email = String(req.body?.email || '').trim().toLowerCase();
-  const password = String(req.body?.password || '');
-  const name = String(req.body?.name || '').trim().slice(0, 80);
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Informe um e-mail válido.' });
-  if (password.length < 6 || password.length > 128) return res.status(400).json({ error: 'A senha deve ter entre 6 e 128 caracteres.' });
-  if (!name) return res.status(400).json({ error: 'Informe seu nome.' });
-
-  const url = process.env.SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !serviceKey) return res.status(503).json({ error: 'Cadastro temporariamente indisponível.' });
-
-  const response = await fetch(`${url}/auth/v1/admin/users`, {
-    method: 'POST',
-    headers: {
-      apikey: serviceKey,
-      Authorization: `Bearer ${serviceKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { name, onboarding_completed: false }
-    })
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const detail = String(data.msg || data.message || data.error_description || '');
-    const duplicate = response.status === 422 || /already|registered|exists/i.test(detail);
-    return res.status(duplicate ? 409 : 400).json({
-      error: duplicate ? 'Este e-mail já possui uma conta no LUAR.' : 'Não foi possível criar a conta.'
+    const response = await fetch(`${url}/auth/v1/signup?redirect_to=${encodeURIComponent(publicSite.origin)}`, {
+      method: 'POST',
+      headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, data: { name, onboarding_completed: false } }),
     });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const detail = String(data.msg || data.message || data.error_description || '');
+      const duplicate = response.status === 422 || /already|registered|exists/i.test(detail);
+      return json(res, duplicate ? 409 : 400, { error: duplicate ? 'Este e-mail já possui uma conta no LUAR.' : 'Não foi possível criar a conta.' });
+    }
+    const duplicate = Array.isArray(data.user?.identities) && data.user.identities.length === 0;
+    if (duplicate) return json(res, 409, { error: 'Este e-mail já possui uma conta no LUAR.' });
+    return json(res, 201, { created: true, requiresConfirmation: !data.access_token });
+  } catch (error) {
+    if (error.message === 'ORIGIN_INVALID') return json(res, 403, { error: 'Origem não autorizada.' });
+    if (error.message === 'RATE_LIMITED') return json(res, 429, { error: 'Muitas tentativas. Aguarde alguns minutos.' });
+    if (error.message === 'BODY_TOO_LARGE' || error.message === 'BODY_INVALID') return json(res, 400, { error: 'Requisição inválida.' });
+    return json(res, 500, { error: 'Cadastro temporariamente indisponível.' });
   }
-
-  return res.status(201).json({ created: true, userId: data.id });
 };

@@ -1,12 +1,16 @@
 const crypto = require("crypto");
-const { json, requireUser, signPayload } = require("./_lib");
+const { json, requireUser, requireSameOrigin, rateLimit, signPayload } = require("./_lib");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return json(res, 405, { error: "Método não permitido." });
   try {
+    requireSameOrigin(req);
+    rateLimit(req, "create-payment", 6, 10 * 60 * 1000);
+    if (!process.env.PUSHINPAY_TOKEN) throw new Error("SERVER_CONFIG");
     const user = await requireUser(req);
-    const host = req.headers["x-forwarded-host"] || req.headers.host;
-    const protocol = req.headers["x-forwarded-proto"] || "https";
+    const publicSite = new URL(process.env.PUBLIC_SITE_URL || "https://luarhub.site");
+    if (publicSite.protocol !== "https:") throw new Error("SERVER_CONFIG");
+    const now = Date.now();
     const response = await fetch("https://api.pushinpay.com.br/api/pix/cashIn", {
       method: "POST",
       headers: {
@@ -17,7 +21,7 @@ module.exports = async (req, res) => {
       },
       body: JSON.stringify({
         value: 3990,
-        webhook_url: `${protocol}://${host}/api/payment-webhook`,
+        webhook_url: `${publicSite.origin}/api/payment-webhook`,
         split_rules: [],
       }),
     });
@@ -32,9 +36,11 @@ module.exports = async (req, res) => {
       value: payment.value,
       qrCode: payment.qr_code,
       qrCodeBase64: payment.qr_code_base64,
-      checkoutToken: signPayload({ type: "checkout", uid: user.id, transactionId: payment.id }),
+      checkoutToken: signPayload({ type: "checkout", uid: user.id, transactionId: payment.id, issuedAt: now, expiresAt: now + 2 * 60 * 60 * 1000 }),
     });
   } catch (error) {
+    if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
+    if (error.message === "RATE_LIMITED") return json(res, 429, { error: "Muitas tentativas. Aguarde antes de gerar outro Pix." });
     const auth = String(error.message).startsWith("AUTH_");
     return json(res, auth ? 401 : 500, { error: auth ? "Entre na sua conta para continuar." : "Falha ao iniciar pagamento." });
   }
