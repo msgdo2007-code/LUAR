@@ -69,6 +69,40 @@ const requireUser = async (req) => {
   return response.json();
 };
 
+const canonicalEmail = (user) => {
+  const email = String(user?.email || "").trim().toLowerCase();
+  if (!email || !user?.email_confirmed_at) throw new Error("EMAIL_REQUIRED");
+  return email;
+};
+
+const adminRequest = async (path, options = {}) => {
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) throw new Error("SERVER_CONFIG");
+  const response = await fetch(`${url}/rest/v1/${path}`, {
+    ...options,
+    headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "Content-Type": "application/json", ...(options.headers || {}) },
+  });
+  const text = await response.text();
+  let body = null;
+  try { body = text ? JSON.parse(text) : null; } catch { body = text; }
+  if (!response.ok) {
+    console.error("Supabase admin request failed", response.status, typeof body === "string" ? body.slice(0, 300) : body?.code || body?.message || "unknown");
+    throw new Error("STORAGE_ERROR");
+  }
+  return body;
+};
+
+const getLuarAccount = async (email) => {
+  const rows = await adminRequest(`luar_accounts?email=eq.${encodeURIComponent(email)}&select=*&limit=1`);
+  return Array.isArray(rows) ? rows[0] || null : null;
+};
+
+const upsertLuarAccount = async (account) => {
+  const rows = await adminRequest("luar_accounts?on_conflict=email", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=representation" }, body: JSON.stringify(account) });
+  return Array.isArray(rows) ? rows[0] || null : null;
+};
+
 const encode = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
 const signingSecret = () => {
   const secret = process.env.LIFETIME_SIGNING_SECRET || "";
@@ -96,4 +130,4 @@ const verifyPayload = (token) => {
   }
 };
 
-module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload };
+module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, adminRequest, getLuarAccount, upsertLuarAccount };
