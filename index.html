@@ -234,6 +234,19 @@
         <img id="paymentQr" alt="QR Code Pix">
         <div><span>PIX COPIA E COLA</span><textarea id="paymentCode" aria-label="Código Pix copia e cola" readonly></textarea><button class="primary" id="copyPayment">Copiar código Pix</button><button class="secondary" id="checkPayment">Já paguei, verificar</button></div>
       </div>
+      <div class="lifetime-welcome" id="lifetimeWelcome" hidden>
+        <div class="lifetime-welcome-orbit" aria-hidden="true"><i></i><b>✓</b></div>
+        <span>PAGAMENTO CONFIRMADO</span>
+        <h2>Sua órbita inteira foi desbloqueada.</h2>
+        <p>O LUAR Vitalício já está ativo nesta conta. Uma vez. Para sempre.</p>
+        <div class="lifetime-welcome-benefits">
+          <span>∞<b>Registros sem limites</b></span><span>⌁<b>Planejamento completo</b></span>
+          <span>▥<b>Relatórios, PDF e CSV</b></span><span>☁<b>Sincronização na nuvem</b></span>
+          <span>♫<b>Foco e playlists</b></span><span>●<b>Temas e cores premium</b></span>
+          <span>▦<b>Calendário completo</b></span><span>◇<b>Experiência sem anúncios</b></span>
+        </div>
+        <button class="primary" id="enterLifetime">Explorar meu LUAR completo →</button>
+      </div>
       <div class="payment-status" id="paymentStatus"></div>
       <footer>Pagamento processado pela Pushin Pay. A Pushin Pay atua exclusivamente como processadora da cobrança e não é responsável pelo produto, conteúdo ou suporte do LUAR. Suporte: ZAKOM • WhatsApp (21) 99390-2153.</footer>
     </section>
@@ -270,6 +283,15 @@
       <div class="search global-search" data-icon="search"><input id="search" aria-label="Buscar no LUAR" autocomplete="off" placeholder="Buscar tarefas, hábitos, agenda, metas..."><kbd>⌘ K</kbd><div class="global-search-results" id="globalSearchResults"></div></div>
       <div class="actions">
         <button class="icon upgrade-button" id="upgradeBtn" aria-label="Conseguir LUAR Vitalício" title="Conseguir LUAR Vitalício">↑<i></i></button>
+        <div class="focus-header-widget" id="focusHeaderWidget">
+          <button class="focus-header-main" type="button" data-page="focus" aria-label="Abrir modo foco">
+            <i aria-hidden="true"><u></u></i><span><b>00:00:00</b><small>Cronômetro de foco</small></span>
+          </button>
+          <div class="focus-header-controls">
+            <button type="button" id="focusHeaderPause" aria-label="Pausar cronômetro" title="Pausar">Ⅱ</button>
+            <button type="button" id="focusHeaderReset" aria-label="Reiniciar cronômetro" title="Reiniciar">↻</button>
+          </div>
+        </div>
         <button class="icon" id="themeBtn" data-icon="sun" aria-label="Tema"></button>
         <button class="icon bell" id="bellBtn" data-icon="bell" aria-label="Notificações"><i></i></button>
         <button class="profile" data-page="settings"><span>LU</span><b>Seu nome<small>Nível 1</small></b><i data-icon="chevron"></i></button>
@@ -290,14 +312,14 @@
           <article class="stat"><i class="purple" data-icon="briefcase"></i><div><small>Economia do mês</small><b id="totalInvested">R$ 0,00</b><em class="up">Saldo livre mensal</em></div></article>
           <article class="stat"><i class="blue" data-icon="coins"></i><div><small>Saldo disponível</small><b id="currentBalance">R$ 0,00</b><em id="currentBalanceHint">Todo o histórico</em></div></article>
         </div>
-        <article class="card portfolio portfolio-hero finance-plan-preview">
+        <article class="card portfolio portfolio-hero finance-plan-preview overview-summary-card">
           <div class="panel-head"><div><span>PLANEJAMENTO DO MÊS</span><h3>Seu orçamento em órbita</h3></div><button data-page="finance">Ver detalhes →</button></div>
           <div class="portfolio-hero-value"><div><small>Disponível após gastos</small><h2 id="budgetAvailable">R$ 0,00</h2></div><em class="up" id="budgetStatus">Comece registrando seu orçamento</em></div>
           <div class="budget-preview-bars"><span><b>Receitas</b><i><u id="budgetIncomeBar"></u></i><em id="budgetIncomeValue">R$ 0,00</em></span><span><b>Gastos</b><i><u id="budgetExpenseBar"></u></i><em id="budgetExpenseValue">R$ 0,00</em></span><span><b>Metas</b><i><u id="budgetGoalsBar"></u></i><em id="budgetGoalsValue">R$ 0,00</em></span></div>
         </article>
-        <article class="card subscription-vault-preview">
+        <article class="card subscription-vault-preview overview-summary-card">
           <div class="panel-head"><div><span>COFRE DE ASSINATURAS</span><h3>Recorrências sob controle</h3></div><button data-page="finance">Ver financeiro →</button></div>
-          <div class="subscription-preview-grid" id="dashboardSubscriptionPreview"><div class="empty compact"><span>⌁</span><b>Nenhuma assinatura</b><small>Adicione uma assinatura no Financeiro.</small></div></div>
+          <div class="subscription-preview-grid" id="dashboardSubscriptionPreview"><div class="empty compact"><span>⌁</span><b>Nenhuma assinatura</b><small>Adicione sua primeira assinatura no Financeiro.</small></div></div>
           <footer id="dashboardSubscriptionTotals"><span>Total mensal <b>R$ 0,00</b></span><span>Estimativa anual <b>R$ 0,00</b></span></footer>
         </article>
       </div>
@@ -371,7 +393,7 @@
 
     <section class="page focus-page" id="focus">
       <span>SEU MOMENTO</span><h1>Entre em órbita.</h1><p>Silencie o mundo por alguns minutos.</p>
-      <div class="focus-box"><div class="timer"><svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="135"/><circle class="timer-progress" cx="150" cy="150" r="135"/></svg><i class="timer-moon" aria-hidden="true"></i><div><b id="timerDisplay">25:00</b><span>FOCO</span></div></div><div class="presets"><button data-minutes="5">5 min</button><button class="active" data-minutes="25">25 min</button><button data-minutes="60">1 hora</button><button class="premium-preset" id="customFocusBtn">🔒 Personalizado</button></div><div class="custom-focus-time" id="customFocusTime"><input id="customFocusMinutes" aria-label="Minutos da sessão personalizada" type="number" min="1" max="480" value="45"><button>Usar minutos</button></div><button class="primary" id="timerStart" data-icon="play">Iniciar sessão</button><div class="sounds"><span>Ambiente</span><button data-sound="rain" aria-pressed="false">🌧️ Chuva</button><button data-sound="forest" aria-pressed="false">🌲 Floresta</button><button data-sound="lofi" aria-pressed="false">🎧 Lo-fi</button><button data-sound="white" aria-pressed="false">◌ Ruído branco</button><label class="sound-volume" title="Volume do ambiente">🔊 <input id="ambientVolume" type="range" min="0" max="100" value="32" aria-label="Volume do ambiente"></label><small id="soundStatus">Escolha um som para acompanhar sua sessão.</small></div><div class="playlist-premium"><header><span>PLAYLIST PERSONALIZADA</span><b>🔒 Vitalício</b></header><div><input id="playlistUrl" aria-label="Link da playlist do Spotify ou YouTube" type="url" placeholder="Cole uma playlist do Spotify ou YouTube"><button id="playPlaylist">Tocar</button></div><div class="custom-player" id="customPlayer"></div></div></div>
+      <div class="focus-box"><div class="timer"><svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="135"/><circle class="timer-progress" cx="150" cy="150" r="135"/></svg><i class="timer-moon" aria-hidden="true"></i><div><b id="timerDisplay">25:00</b><span>FOCO</span></div></div><div class="presets"><button data-minutes="5">5 min</button><button class="active" data-minutes="25">25 min</button><button data-minutes="60">1 hora</button><button class="premium-preset" id="customFocusBtn">🔒 Personalizado</button></div><div class="custom-focus-time" id="customFocusTime"><input id="customFocusMinutes" aria-label="Minutos da sessão personalizada" type="number" min="1" max="480" value="45"><button>Usar minutos</button></div><button class="primary" id="timerStart" data-icon="play">Iniciar sessão</button><div class="sounds"><span>Ambiente</span><button data-sound="rain" aria-pressed="false">🌧️ Chuva</button><button data-sound="forest" aria-pressed="false">🌲 Floresta</button><button data-sound="lofi" aria-pressed="false">🎧 Lo-fi</button><button data-sound="white" aria-pressed="false">◌ Ruído branco</button><label class="sound-volume" title="Volume do ambiente">🔊 <input id="ambientVolume" type="range" min="0" max="100" value="32" aria-label="Volume do ambiente"></label><small id="soundStatus">Escolha um som para acompanhar sua sessão.</small></div><div class="playlist-premium"><header><span>PLAYLIST PERSONALIZADA</span><b>🔒 Vitalício</b></header><div><input id="playlistUrl" aria-label="Link da playlist do Spotify ou YouTube" type="url" placeholder="Cole uma playlist do Spotify ou YouTube"><button id="playPlaylist">Tocar</button></div><div class="custom-player" id="customPlayer"></div></div><section class="focus-stopwatch-card" id="focusStopwatchCard"><header><div><span>CRONÔMETRO DE FOCO</span><h3>Foque sem definir um limite.</h3><p>O tempo acumulado entra no seu histórico de foco.</p></div><button class="secondary" id="enableStopwatch" type="button">Habilitar cronômetro</button></header><div class="focus-stopwatch-panel" id="focusStopwatchPanel" hidden><div class="stopwatch-orbit" aria-hidden="true"><i></i><u></u><b>✦</b></div><div class="stopwatch-readout"><span>TEMPO EM ÓRBITA</span><strong id="stopwatchDisplay">00:00:00</strong><small id="stopwatchStatus">Cronômetro em andamento</small></div><div class="stopwatch-actions"><button class="primary" id="pauseStopwatch" type="button">Pausar</button><button class="secondary" id="restartStopwatch" type="button">Reiniciar</button></div></div></section></div>
       <div class="stats three focus-stats"><article class="stat"><div><small>Hoje</small><b>0min</b></div></article><article class="stat"><div><small>Esta semana</small><b>0min</b></div></article><article class="stat"><div><small>Este mês</small><b>0min</b></div></article></div>
     </section>
     <section id="investments" hidden aria-hidden="true"></section>
