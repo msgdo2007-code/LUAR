@@ -71,3 +71,10 @@ on conflict (email) do update set
 update public.luar_accounts
 set plan = 'lifetime', lifetime_paid_at = coalesce(lifetime_paid_at, now()), updated_at = now()
 where email = 'msgdo.2007@gmail.com';
+
+-- O estado e os backups antigos já estão em luar_accounts. Removê-los do JWT
+-- evita cabeçalhos de autenticação grandes demais para Vercel e navegadores.
+update auth.users
+set raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb) - 'luar_state' - 'luar_backups',
+    updated_at = now()
+where raw_user_meta_data ? 'luar_state' or raw_user_meta_data ? 'luar_backups';
