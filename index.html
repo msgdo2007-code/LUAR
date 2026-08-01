@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+  <script async data-luar-adsense src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2822119220449543" crossorigin="anonymous"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0b0b0b">
@@ -15,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="public-mode">
+<body class="public-mode ads-auth-pending">
   <section class="landing" id="landing">
     <nav class="landing-nav">
       <a class="landing-brand" href="#inicio"><img src="luarlogo.png?v=2" alt="LUAR"><strong>LUAR</strong></a>
@@ -286,8 +287,8 @@
         <div class="stats overview-stats">
           <article class="stat"><i class="green" data-icon="arrowup"></i><div><small>Ganhos do mês</small><b id="monthIncome">R$ 0,00</b><em class="up">Entradas</em></div></article>
           <article class="stat"><i class="red" data-icon="arrowdown"></i><div><small>Gastos do mês</small><b id="monthExpense">R$ 0,00</b><em class="down">Saídas</em></div></article>
-          <article class="stat"><i class="purple" data-icon="briefcase"></i><div><small>Economia do mês</small><b id="totalInvested">R$ 0,00</b><em class="up">Balanço</em></div></article>
-          <article class="stat"><i class="blue" data-icon="coins"></i><div><small>Saldo atual</small><b id="currentBalance">R$ 0,00</b><em>Disponível</em></div></article>
+          <article class="stat"><i class="purple" data-icon="briefcase"></i><div><small>Economia do mês</small><b id="totalInvested">R$ 0,00</b><em class="up">Saldo livre mensal</em></div></article>
+          <article class="stat"><i class="blue" data-icon="coins"></i><div><small>Saldo disponível</small><b id="currentBalance">R$ 0,00</b><em id="currentBalanceHint">Todo o histórico</em></div></article>
         </div>
         <article class="card portfolio portfolio-hero finance-plan-preview">
           <div class="panel-head"><div><span>PLANEJAMENTO DO MÊS</span><h3>Seu orçamento em órbita</h3></div><button data-page="finance">Ver detalhes →</button></div>
@@ -411,6 +412,18 @@
     <div><b>Cookies e privacidade</b><p>Usamos armazenamento essencial para manter sua sessão. Com sua permissão, recursos de medição e publicidade também poderão ser carregados.</p><nav><a href="/cookies.html">Política de Cookies</a><a href="/privacidade.html">Privacidade</a></nav></div>
     <div class="cookie-actions"><button class="secondary" id="cookieEssential">Somente essenciais</button><button class="primary" id="cookieAccept">Aceitar opcionais</button></div>
   </aside>
+  <div class="adblock-layer" id="adblockLayer" role="alertdialog" aria-modal="true" aria-labelledby="adblockTitle" aria-describedby="adblockCopy" aria-hidden="true">
+    <section class="adblock-card">
+      <div class="adblock-orbit" aria-hidden="true"><i></i><b>◇</b><span></span></div>
+      <span>PUBLICIDADE E ACESSO GRATUITO</span>
+      <h2 id="adblockTitle">Bloqueador de anúncios detectado</h2>
+      <p id="adblockCopy">Nossa órbita é mantida com a ajuda de publicidades e do plano Vitalício. Para continuar navegando gratuitamente, desative seu AdBlock e recarregue a página.</p>
+      <div class="adblock-steps"><span><i>1</i>Pause o bloqueador para <b>luarhub.site</b></span><span><i>2</i>Recarregue para confirmar</span></div>
+      <button class="primary" id="adblockReload">Já desativei — recarregar página ↻</button>
+      <button class="secondary" id="adblockLogin">Já tenho o Vitalício — entrar na conta</button>
+      <small>O LUAR Vitalício permanece sem anúncios.</small>
+    </section>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
