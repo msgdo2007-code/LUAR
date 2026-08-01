@@ -1,0 +1,10 @@
+.vercel
+.env*
+.chrome-*
+qa-*
+preview-*.png
+audit-*.png
+reported-*
+validation-*
+*.log
+*.local

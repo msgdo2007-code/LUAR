@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0b0b">
+  <meta name="description" content="Organize tarefas, hábitos, metas, finanças e bem-estar em uma única órbita.">
+  <title>LUAR — Sua vida em órbita</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="luarlogo.png?v=2">
+  <link rel="shortcut icon" type="image/png" href="luarlogo.png?v=2">
+  <link rel="apple-touch-icon" href="luarlogo.png?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="public-mode">
+  <section class="landing" id="landing">
+    <nav class="landing-nav">
+      <a class="landing-brand" href="#inicio"><img src="luarlogo.png?v=2" alt="LUAR"><strong>LUAR</strong></a>
+      <div><a href="#recursos">Recursos</a><a href="#experiencia">Experiência</a><a href="#como-funciona">Como funciona</a><a href="#vitalicio">Vitalício</a><a href="#seguranca">Segurança</a></div>
+      <div class="landing-nav-actions"><button class="landing-login" onclick="openAuth('login')" data-auth-open="login">Entrar</button><button class="landing-cta small" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis</button></div>
+    </nav>
+
+    <main class="landing-main">
+      <section class="landing-hero" id="inicio">
+        <div class="landing-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <span class="landing-pill">Organização, dinheiro e bem-estar em uma única órbita.</span>
+        <h1>Coloque sua vida<br><em>em órbita.</em></h1>
+        <p>Organize tarefas, hábitos, metas, finanças e momentos importantes em uma plataforma feita para acompanhar sua evolução.</p>
+        <div class="landing-hero-actions"><button class="landing-cta" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis <b>↗</b></button><a href="#experiencia">Ver demonstração ↓</a></div>
+        <small class="hero-reassurance">Sem cartão. Cadastro rápido. Comece gratuitamente.</small>
+        <div class="landing-orbit" aria-hidden="true"><i class="landing-sun"></i><i class="landing-moon"></i><span></span></div>
+      </section>
+
+      <section class="landing-results" aria-label="Principais resultados">
+        <article><i>01</i><span>CLAREZA FINANCEIRA</span><h3>Entenda para onde seu dinheiro vai.</h3><p>Registre ganhos, gastos, metas e orçamento em uma visão simples.</p></article>
+        <article><i>02</i><span>ROTINA CONSISTENTE</span><h3>Transforme intenção em progresso.</h3><p>Hábitos, tarefas, foco e sequência diária trabalhando juntos.</p></article>
+        <article><i>03</i><span>EVOLU&Ccedil;&Atilde;O VIS&Iacute;VEL</span><h3>Veja cada pequeno passo crescer.</h3><p>Acompanhe gráficos, metas, XP e conquistas sem perder a tranquilidade.</p></article>
+      </section>
+
+      <section class="landing-product" id="experiencia">
+        <div class="landing-proof"><span></span><p>Uma plataforma para transformar pequenos passos em evolução constante.</p><span></span></div>
+        <div class="product-window">
+          <header><i></i><i></i><i></i><div>luarhub.com / visão geral</div><b>✦</b></header>
+          <div class="product-shell">
+            <aside><div><img src="luarlogo.png?v=2" alt=""><b>LUAR</b></div><span class="active">▦ Visão geral</span><span>▱ Financeiro</span><span>⌁ Assinaturas</span><small>ORGANIZAÇÃO</small><span>✓ Tarefas</span><span>✦ Hábitos</span><span>□ Agenda</span><span>◎ Metas</span></aside>
+            <section>
+              <div class="product-greeting"><div><small>HOJE, SUA JORNADA</small><h2>Boa tarde, viajante ✦</h2><p>Cada pequeno passo conta.</p></div><button data-demo-action="task">＋ Adicionar registro</button></div>
+              <div class="demo-controls" aria-label="Demonstração interativa"><button data-demo-action="task">✓ Concluir tarefa</button><button data-demo-action="habit">✦ Completar hábito</button><button data-demo-action="goal">＋ Adicionar R$100</button><button data-demo-action="focus">◷ Iniciar foco</button><button data-demo-action="theme">☼ Alternar tema</button></div><p class="demo-feedback" id="demoFeedback">Gostou da experiência? Crie sua própria órbita gratuitamente. <button data-auth-open="signup">Criar minha conta</button></p>
+              <div class="product-overview">
+                <article class="mock-chart"><small>PATRIMÔNIO DISPONÍVEL</small><b>R$ 4.875,00</b><svg viewBox="0 0 520 150" preserveAspectRatio="none"><path d="M0 128 C55 120 72 132 115 104 S180 114 225 83 S300 102 345 64 S430 78 520 20"/><path class="mock-area" d="M0 128 C55 120 72 132 115 104 S180 114 225 83 S300 102 345 64 S430 78 520 20 L520 150 L0 150Z"/></svg></article>
+                <div class="mock-stats"><article><small>Ganhos do mês</small><b>R$ 2.420</b><em>Entradas</em></article><article><small>Gastos do mês</small><b>R$ 1.320</b><em>R$ 1.100 livres</em></article><article><small>Hábitos hoje</small><b>7 de 9</b><em>78% concluído</em></article></div>
+              </div>
+              <div class="mock-bottom"><article><small>SEU DIA EM ÓRBITA</small><h3>Rotina em movimento</h3><div><i style="--p:78">78%</i><p><b>7 atividades concluídas</b><span>Continue assim. Sua sequência está crescendo.</span></p></div></article><article><small>ORÇAMENTO</small><h3>Finanças em equilíbrio</h3><div class="mock-donut"></div></article><article><small>FOCO</small><h3>25:00</h3><p>Pronto para uma nova sessão.</p></article></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="comparison-section" id="como-funciona"><span class="landing-pill">Por que o LUAR?</span><h2>Sua vida não precisa ficar espalhada<br><em>em vários aplicativos.</em></h2><p class="comparison-intro">Troque a confusão de ferramentas separadas por uma visão clara, conectada e tranquila da sua rotina.</p><div class="comparison-grid"><article class="comparison-before"><span class="comparison-tag">ANTES DO LUAR</span><h3>Muitas ferramentas.<br>Pouca clareza.</h3><ul><li><i>×</i>Tarefas esquecidas.</li><li><i>×</i>Gastos sem controle.</li><li><i>×</i>Metas abandonadas.</li><li><i>×</i>Falta de constância.</li><li><i>×</i>Informações espalhadas.</li><li><i>×</i>Aplicativos diferentes para tudo.</li></ul></article><div class="comparison-transition"><i>→</i><span>UMA ÚNICA ÓRBITA</span></div><article class="comparison-positive"><span class="comparison-tag">COM O LUAR</span><h3>Tudo conectado.<br>Evolução visível.</h3><ul><li><i>✓</i>Tudo em um único lugar.</li><li><i>✓</i>Progresso visível.</li><li><i>✓</i>Rotina organizada.</li><li><i>✓</i>Finanças mais claras.</li><li><i>✓</i>Metas acompanhadas.</li><li><i>✓</i>Evolução constante.</li></ul></article></div></section>
+
+      <section class="landing-orbit-lab" aria-labelledby="orbitLabTitle">
+        <div class="orbit-lab-heading"><span class="landing-pill">Experimente a ideia</span><h2 id="orbitLabTitle">Monte sua primeira órbita.<br><em>Veja o valor antes de decidir.</em></h2><p>Escolha o que deseja organizar e veja como o LUAR conecta o próximo passo. Sem promessa exagerada e sem cobrança escondida.</p></div>
+        <div class="orbit-lab-grid">
+          <article class="orbit-choice-card">
+            <span>1 · ESCOLHA SEU FOCO</span><h3>O que faria diferença agora?</h3>
+            <div class="orbit-choice-buttons" role="group" aria-label="Escolha uma área"><button class="active" data-orbit-choice="Rotina">Rotina</button><button data-orbit-choice="Dinheiro">Dinheiro</button><button data-orbit-choice="Metas">Metas</button><button data-orbit-choice="Foco">Foco</button></div>
+            <div class="orbit-preview" id="orbitPreview"><i>✦</i><div><small>SUA ÓRBITA DE ROTINA</small><h4>Um dia mais claro começa com três prioridades.</h4><ul><li>✓ Ver tarefas e hábitos de hoje</li><li>✓ Acompanhar a constância sem pressão</li><li>✓ Encerrar o dia sabendo o que avançou</li></ul></div></div>
+            <button class="landing-cta orbit-free-cta" data-auth-open="signup">Criar minha órbita grátis →</button><small>Nenhum cartão necessário.</small>
+          </article>
+          <article class="value-calculator">
+            <span>2 · COMPARE COM TRANSPARÊNCIA</span><h3>Quanto várias assinaturas podem custar?</h3><p>Use seus próprios valores. A simulação não pressupõe que você já paga por outros aplicativos.</p>
+            <label>Gasto mensal estimado <b id="monthlyAppValue">R$ 20,00</b><input id="monthlyAppRange" type="range" min="0" max="100" step="5" value="20"></label>
+            <label>Período da comparação <b id="comparisonMonthsValue">12 meses</b><input id="comparisonMonthsRange" type="range" min="3" max="36" step="3" value="12"></label>
+            <div class="calculator-result"><div><small>Outros apps no período</small><strong id="recurringAppsTotal">R$ 240,00</strong></div><i>versus</i><div class="lifetime-value"><small>LUAR Vitalício</small><strong>R$ 39,90</strong><em>uma única vez</em></div></div>
+            <p class="calculator-saving" id="calculatorSaving">Diferença estimada: <b>R$ 200,10</b> no período escolhido.</p>
+            <button class="plan-button primary" data-upgrade>Desbloquear minha órbita →</button><small>Pagamento único via Pix · sem renovação · continue grátis se preferir.</small>
+          </article>
+        </div>
+      </section>
+
+      <section class="landing-section" id="recursos">
+        <span class="landing-pill">Tudo conectado</span>
+        <h2>Uma plataforma completa.<br><em>Sem perder a tranquilidade.</em></h2>
+        <p class="section-copy">Cada área do LUAR conversa com as outras para mostrar com clareza onde você está e quanto já evoluiu.</p>
+        <div class="feature-bento">
+          <article class="feature-large"><i>⌁</i><span>PLANEJAMENTO FINANCEIRO</span><h3>Seu dinheiro contado como uma história.</h3><p>Ganhos, gastos, metas, assinaturas e orçamento conectados em gráficos que respondem a cada movimento.</p><div class="feature-chart"><b>+18,6%<small>Evolução do saldo</small></b><svg viewBox="0 0 500 130"><defs><linearGradient id="landingFeatureArea" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#32ff7e" stop-opacity=".3"/><stop offset="1" stop-color="#32ff7e" stop-opacity="0"/></linearGradient></defs><path class="feature-area" d="M0 112C70 99 89 118 150 77S245 93 305 52 405 75 500 17L500 130L0 130Z"/><path d="M0 112C70 99 89 118 150 77S245 93 305 52 405 75 500 17"/></svg><div><span>Ganhos</span><span>Gastos</span><span>Economia</span><span>Saldo</span></div></div></article>
+          <article><i>✓</i><span>PRODUTIVIDADE</span><h3>Tarefas que fluem.</h3><p>Organize e arraste atividades entre etapas, sem atrito.</p></article>
+          <article><i>✦</i><span>HÁBITOS</span><h3>Constância visível.</h3><p>Sequência diária, XP justo e progresso que não pode ser burlado.</p></article>
+          <article><i>◷</i><span>MODO FOCO</span><h3>Silêncio para avançar.</h3><p>Pomodoro, sons ambientes e uma lua completando sua órbita.</p></article>
+          <article><i>☻</i><span>BEM-ESTAR</span><h3>Entenda seus ciclos.</h3><p>Humor diário, notas e calendário emocional mensal.</p></article>
+          <article><i>◎</i><span>METAS</span><h3>Sonhos com direção.</h3><p>Imagens, extratos, depósitos e previsão de conclusão.</p></article>
+          <article><i>◷</i><span>AGENDA</span><h3>Tempo bem organizado.</h3><p>Compromissos recorrentes, feriados e visão anual.</p></article>
+        </div>
+      </section>
+
+      <section class="plans-section" id="planos">
+        <div class="landing-advanced-showcase">
+          <span class="landing-pill">Evolução com contexto</span>
+          <h2>Não mostre apenas números.<br><em>Entenda o próximo passo.</em></h2>
+          <div>
+            <article><i>✓</i><h3>Desafios com direção</h3><p>Categorias, dificuldade, sequência, recompensa em XP, missões diárias, desafios personalizados e trilhas progressivas.</p></article>
+            <article><i>⌁</i><h3>Relatórios inteligentes</h3><p>Comparações, constância, destaques, pontos de atenção e ações recomendadas para a próxima semana.</p></article>
+            <article><i>▥</i><h3>Gráficos que explicam</h3><p>Evolução diária, gastos por categoria, distribuição do foco e variação do humor em uma visão tranquila.</p></article>
+            <article><i>◎</i><h3>Finanças conectadas</h3><p>Assinaturas pagas entram automaticamente nos gastos e seu orçamento mostra a distribuição em porcentagens.</p></article>
+          </div>
+        </div>
+        <div class="plans-heading">
+          <span class="landing-pill">Comece sem pagar</span>
+          <h2>Experimente primeiro.<br><em>Evolua quando fizer sentido.</em></h2>
+          <p>O plano gratuito permite completar sua primeira órbita. O Vitalício remove os limites com um único pagamento.</p>
+        </div>
+        <div class="plans-comparison">
+          <article class="plan-free">
+            <header><span>LUAR GRATUITO</span><b>R$ 0<small>para começar</small></b></header>
+            <ul><li>Até 3 hábitos</li><li>Até 20 tarefas</li><li>1 meta financeira</li><li>Até 3 compromissos</li><li>Até 5 notas</li><li>Controle financeiro básico</li><li>Modo foco de 5, 25 e 60 minutos</li><li>Diário de humor</li></ul>
+            <button class="plan-button secondary" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis</button>
+            <small>Nenhum cartão necessário.</small>
+          </article>
+          <article class="plan-lifetime">
+            <strong>MAIS COMPLETO</strong>
+            <header><span>LUAR VITALÍCIO</span><b>R$ 39,90<small>pagamento único</small></b></header>
+            <ul><li>Hábitos, tarefas, metas e notas ilimitados</li><li>Histórico e calendário anual completos</li><li>Planejamento financeiro pessoal</li><li>Gráficos financeiros avançados</li><li>Personalização completa</li><li>Backup, exportação e nuvem</li><li>Spotify, YouTube e foco personalizado</li><li>Sem anúncios e sem mensalidade</li></ul>
+            <button class="plan-button primary" data-upgrade>Desbloquear LUAR Vitalício</button>
+            <small>Pix seguro e liberação automática.</small>
+          </article>
+        </div>
+      </section>
+
+      <section class="lifetime-offer" id="vitalicio">
+        <div class="lifetime-copy">
+          <span class="landing-pill lifetime-pill">✦ Oferta de lançamento</span>
+          <h2>Toda a sua organização.<br><em>Um único pagamento.</em></h2>
+          <p>Desbloqueie o LUAR completo por R$ 39,90. Sem mensalidade, sem renovação e sem anúncios.</p>
+          <ul><li>Hábitos, tarefas, agenda, metas e notas ilimitados</li><li>Calendário anual e feriados estaduais</li><li>Relatórios financeiros completos</li><li>Gráficos financeiros com linhas separadas</li><li>Playlists do Spotify e YouTube</li><li>Foco personalizado</li><li>Templates de cores e personalização</li><li>Sincronização vitalícia na nuvem</li><li>Experiência sem anúncios</li></ul>
+        </div>
+        <article class="lifetime-price-card">
+          <span>LUAR VITALÍCIO</span><strong class="ad-free-seal">◇ EXPERIÊNCIA SEM ANÚNCIOS</strong><div><small>R$</small><b>39</b><em>,90</em></div><p>Pagamento único via Pix</p><button class="landing-cta" data-upgrade>Desbloquear LUAR Vitalício ↗</button><small>Pix seguro • Liberação automática</small>
+        </article>
+      </section>
+
+      <section class="landing-flow" id="seguranca">
+        <div><span class="landing-pill">Sua conta, seus dados</span><h2>Segurança explicada.<br><em>Sem promessas vazias.</em></h2><p>O LUAR usa conexão HTTPS, autenticação segura pelo Supabase, recuperação de senha e backup exportável. Seus registros ficam ligados ao seu perfil.</p><ul><li><b>01</b> Senhas protegidas pela autenticação do Supabase.</li><li><b>02</b> Recuperação de acesso pelo seu e-mail.</li><li><b>03</b> Backup para exportar e importar quando quiser.</li></ul><button class="landing-cta" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis</button></div>
+        <div class="security-orbit" aria-hidden="true"><span></span><i></i><b>✓<small>Dados protegidos</small></b></div>
+      </section>
+
+      <section class="landing-faq">
+        <span class="landing-pill">Dúvidas frequentes</span>
+        <h2>Antes de entrar em órbita.</h2>
+        <div>
+          <details><summary>Preciso pagar para começar?<i>＋</i></summary><p>Não. Você pode criar sua conta grátis, experimentar os principais recursos e continuar usando o plano gratuito.</p></details>
+          <details><summary>O Vitalício tem mensalidade?<i>＋</i></summary><p>Não. O valor de R$ 39,90 é cobrado uma única vez via Pix para liberar os recursos descritos no plano adquirido.</p></details>
+          <details><summary>Quando os recursos são liberados?<i>＋</i></summary><p>A liberação acontece automaticamente após a confirmação do pagamento pela processadora.</p></details>
+          <details><summary>Posso fazer backup dos meus dados?<i>＋</i></summary><p>Sim. O LUAR permite exportar e importar um arquivo de backup. Contas Vitalícias também possuem salvamento em nuvem.</p></details>
+          <details><summary>Como recebo suporte?<i>＋</i></summary><p>O suporte é realizado por ZAKOM pelo WhatsApp (21) 99390-2153.</p></details>
+        </div>
+      </section>
+
+      <section class="landing-final"><img src="luarlogo.png?v=2" alt="Logo LUAR"><span>PRONTO PARA COMEÇAR?</span><h2>Seu primeiro passo<br><em>começa agora.</em></h2><p>Crie sua conta, registre sua primeira atividade e veja sua vida entrar em órbita.</p><button class="landing-cta" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis ↗</button><a href="#experiencia">Ver como funciona</a><small>Sem cartão • Cadastro em menos de 1 minuto</small></section>
+
+      <section class="zakom-mini" id="zakom">
+        <div class="zakom-mini-mark" aria-hidden="true">Z</div>
+        <div class="zakom-mini-copy">
+          <span>DEV · DESIGN · MARKETING</span>
+          <h2>Olá, eu sou o <em>ZAKOM.</em></h2>
+          <p>Transformo ideias em experiências digitais completas, unindo desenvolvimento de sites, identidade visual, marketing e criativos. O LUAR é um dos projetos que criei para tornar tecnologia e evolução pessoal parte da mesma órbita.</p>
+          <div class="zakom-mini-tags"><b>Desenvolvimento web</b><b>Design gráfico</b><b>Marketing digital</b></div>
+        </div>
+        <div class="zakom-mini-actions">
+          <a href="https://wa.me/5521993902153" target="_blank" rel="noopener">Falar comigo <i>↗</i></a>
+          <a href="#recursos">Conhecer o LUAR <i>↑</i></a>
+        </div>
+      </section>
+
+      <footer class="landing-footer"><a class="landing-brand" href="#inicio"><img src="luarlogo.png?v=2" alt=""><strong>LUAR</strong></a><p>Organização, tranquilidade e evolução constante.</p><span class="landing-creator-link">Projeto criado por ZAKOM <b>• 2026</b> <i>↗</i></span></footer>
+    </main>
+    <button class="mobile-signup-cta" onclick="openAuth('signup')" data-auth-open="signup">Criar conta grátis <i>↗</i></button>
+  </section>
+
+  <div class="auth-layer" id="authLayer" aria-hidden="true">
+    <section class="auth-card">
+      <button class="auth-close" id="authClose" aria-label="Fechar">×</button>
+      <div class="auth-visual"><img src="luarlogo.png?v=2" alt="LUAR"><span>ENTRE EM ÓRBITA</span><h2>Seu progresso acompanha você.</h2><p>Organize seus dias e veja seu patrimônio crescer em um espaço só seu.</p><div class="auth-eclipse"><i></i><b></b></div></div>
+      <div class="auth-content">
+        <div class="auth-heading"><span id="authKicker">BEM-VINDO DE VOLTA</span><h2 id="authTitle">Entrar no LUAR</h2><p id="authSubtitle">Use seu e-mail e senha para continuar.</p></div>
+        <form id="authForm">
+          <label class="auth-name">Nome<input name="name" autocomplete="name" placeholder="Como devemos chamar você?"></label>
+          <label>E-mail<input name="email" type="email" autocomplete="email" required placeholder="voce@email.com"></label>
+          <label class="auth-password">Senha<input name="password" type="password" autocomplete="current-password" minlength="6" placeholder="Mínimo de 6 caracteres"></label>
+          <button class="landing-cta auth-submit">Entrar</button>
+        </form>
+        <button class="auth-forgot" id="authForgot">Esqueci minha senha</button>
+        <p class="auth-switch" id="authSwitch">Ainda não tem uma conta? <button data-auth-mode="signup">Criar conta</button></p>
+        <div class="auth-status" id="authStatus"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="payment-layer" id="paymentLayer" aria-hidden="true">
+    <section class="payment-card">
+      <button class="payment-close" id="paymentClose" aria-label="Fechar">×</button>
+      <header><img src="luarlogo.png?v=2" alt="LUAR"><div><span>LUAR VITALÍCIO</span><h2>Uma órbita sem limites.</h2><p>Pagamento único de <b>R$ 39,90</b> via Pix.</p></div></header>
+      <div class="payment-benefits" id="paymentBenefits">
+        <div class="payment-benefit-grid">
+          <span>∞<b>Registros ilimitados</b><small>Hábitos, tarefas, agenda, metas e notas.</small></span>
+          <span>⌕<b>Relatórios completos</b><small>Acompanhe seu orçamento e suas metas.</small></span>
+          <span>▥<b>Gráficos avançados</b><small>Linhas financeiras separadas e coloridas.</small></span>
+          <span>☁<b>Nuvem Vitalícia</b><small>Seus dados sincronizados na sua conta.</small></span>
+          <span>▦<b>Calendário completo</b><small>Visão anual e feriados estaduais.</small></span>
+          <span>♫<b>Foco personalizado</b><small>Tempo livre e playlists Spotify/YouTube.</small></span>
+          <span>●<b>Templates de cores</b><small>Personalize a identidade do seu LUAR.</small></span>
+          <span>◇<b>Sem anúncios</b><small>Uma experiência limpa e sem distrações.</small></span>
+        </div>
+        <div class="payment-review"><div><small>TOTAL • PAGAMENTO ÚNICO</small><strong>R$ 39,90</strong><em>Sem mensalidade e sem renovação.</em></div><button class="primary" id="startPayment">Fazer pagamento via Pix →</button></div>
+      </div>
+      <div class="payment-loading" id="paymentLoading"><i></i><b>Gerando seu Pix…</b><small>Conectando com a Pushin Pay.</small></div>
+      <div class="payment-pix" id="paymentPix">
+        <img id="paymentQr" alt="QR Code Pix">
+        <div><span>PIX COPIA E COLA</span><textarea id="paymentCode" aria-label="Código Pix copia e cola" readonly></textarea><button class="primary" id="copyPayment">Copiar código Pix</button><button class="secondary" id="checkPayment">Já paguei, verificar</button></div>
+      </div>
+      <div class="payment-status" id="paymentStatus"></div>
+      <footer>Pagamento processado pela Pushin Pay. A Pushin Pay atua exclusivamente como processadora da cobrança e não é responsável pelo produto, conteúdo ou suporte do LUAR. Suporte: ZAKOM • WhatsApp (21) 99390-2153.</footer>
+    </section>
+  </div>
+
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" id="appLogoHome" href="#inicio" aria-label="Abrir a landing page do LUAR"><img class="brand-logo" src="luarlogo.png?v=2" alt="Logo LUAR"><strong>LUAR</strong></a>
+    <nav>
+      <button class="nav active" data-page="dashboard" data-icon="grid">Visão geral</button>
+      <button class="nav" data-page="today" data-icon="sun">Meu dia</button>
+      <button class="nav" data-page="finance" data-icon="wallet">Financeiro</button>
+      <p>ORGANIZAÇÃO</p>
+      <button class="nav" data-page="tasks" data-icon="check">Tarefas <em id="taskBadge">0</em></button>
+      <button class="nav" data-page="habits" data-icon="spark">Hábitos</button>
+      <button class="nav" data-page="calendar" data-icon="calendar">Agenda</button>
+      <button class="nav" data-page="goals" data-icon="target">Metas</button>
+      <p>BEM-ESTAR</p>
+      <button class="nav" data-page="focus" data-icon="timer">Modo foco</button>
+      <button class="nav" data-page="mood" data-icon="smile">Humor</button>
+      <button class="nav" data-page="notes" data-icon="note">Notas</button>
+      <p>EVOLUÇÃO</p>
+      <button class="nav" data-page="challenges" data-icon="spark">Desafios</button>
+      <button class="nav" data-page="reports" data-icon="chart">Relatórios</button>
+      <button class="nav" data-page="templates" data-icon="grid">Templates</button>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="level" id="levelBtn"><span><b>Nível 1</b><small>0 XP</small></span><i><b style="width:0"></b></i><p>100 XP para o próximo nível</p></button>
+      <button class="nav" data-page="settings" data-icon="settings">Configurações</button>
+    </div>
+  </aside>
+  <main>
+    <header>
+      <button class="icon menu" id="menuBtn" data-icon="menu" aria-label="Menu"></button>
+      <div class="search global-search" data-icon="search"><input id="search" aria-label="Buscar no LUAR" autocomplete="off" placeholder="Buscar tarefas, hábitos, agenda, metas..."><kbd>⌘ K</kbd><div class="global-search-results" id="globalSearchResults"></div></div>
+      <div class="actions">
+        <button class="icon upgrade-button" id="upgradeBtn" aria-label="Conseguir LUAR Vitalício" title="Conseguir LUAR Vitalício">↑<i></i></button>
+        <button class="icon" id="themeBtn" data-icon="sun" aria-label="Tema"></button>
+        <button class="icon bell" id="bellBtn" data-icon="bell" aria-label="Notificações"><i></i></button>
+        <button class="profile" data-page="settings"><span>LU</span><b>Seu nome<small>Nível 1</small></b><i data-icon="chevron"></i></button>
+      </div>
+    </header>
+
+    <section class="page active" id="dashboard">
+      <div class="page-head"><div><span id="todayLabel">HOJE</span><h1><span id="greetingPeriod">Boa noite</span>, <b id="greetingName">viajante</b> <i>✦</i></h1><p>Comece sua jornada. Cada pequeno passo conta.</p></div><button class="primary" data-modal="registro" data-icon="plus">Adicionar registro</button></div>
+      <div class="hero-grid">
+        <article class="card balance">
+          <div class="card-head"><div><small>Patrimônio total</small><h2 id="totalWealth">R$ 0,00</h2></div><em class="up" id="wealthTrend">Comece hoje</em></div>
+          <svg class="chart" viewBox="0 0 700 220" preserveAspectRatio="none" aria-label="Evolução do patrimônio"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#32ff7e" stop-opacity=".34"/><stop offset="1" stop-color="#32ff7e" stop-opacity="0"/></linearGradient></defs><path class="chart-grid" d="M0 48H700M0 100H700M0 152H700M0 208H700"/><path class="area"/><path class="line"/><circle class="last-point" r="5"/><circle class="hover-point" r="9"/></svg>
+          <div class="chart-foot"><span><i></i> Patrimônio <b id="chartDelta">Sem movimentações</b></span><div id="periods"><button>7D</button><button class="active">30D</button><button>3M</button><button>6M</button><button>1A</button><button>Tudo</button></div></div>
+        </article>
+        <div class="stats overview-stats">
+          <article class="stat"><i class="green" data-icon="arrowup"></i><div><small>Ganhos do mês</small><b id="monthIncome">R$ 0,00</b><em class="up">Entradas</em></div></article>
+          <article class="stat"><i class="red" data-icon="arrowdown"></i><div><small>Gastos do mês</small><b id="monthExpense">R$ 0,00</b><em class="down">Saídas</em></div></article>
+          <article class="stat"><i class="purple" data-icon="briefcase"></i><div><small>Economia do mês</small><b id="totalInvested">R$ 0,00</b><em class="up">Balanço</em></div></article>
+          <article class="stat"><i class="blue" data-icon="coins"></i><div><small>Saldo atual</small><b id="currentBalance">R$ 0,00</b><em>Disponível</em></div></article>
+        </div>
+        <article class="card portfolio portfolio-hero finance-plan-preview">
+          <div class="panel-head"><div><span>PLANEJAMENTO DO MÊS</span><h3>Seu orçamento em órbita</h3></div><button data-page="finance">Ver detalhes →</button></div>
+          <div class="portfolio-hero-value"><div><small>Disponível após gastos</small><h2 id="budgetAvailable">R$ 0,00</h2></div><em class="up" id="budgetStatus">Comece registrando seu orçamento</em></div>
+          <div class="budget-preview-bars"><span><b>Receitas</b><i><u id="budgetIncomeBar"></u></i><em id="budgetIncomeValue">R$ 0,00</em></span><span><b>Gastos</b><i><u id="budgetExpenseBar"></u></i><em id="budgetExpenseValue">R$ 0,00</em></span><span><b>Metas</b><i><u id="budgetGoalsBar"></u></i><em id="budgetGoalsValue">R$ 0,00</em></span></div>
+        </article>
+        <article class="card subscription-vault-preview">
+          <div class="panel-head"><div><span>COFRE DE ASSINATURAS</span><h3>Recorrências sob controle</h3></div><button data-page="finance">Ver financeiro →</button></div>
+          <div class="subscription-preview-grid" id="dashboardSubscriptionPreview"><div class="empty compact"><span>⌁</span><b>Nenhuma assinatura</b><small>Adicione uma assinatura no Financeiro.</small></div></div>
+          <footer id="dashboardSubscriptionTotals"><span>Total mensal <b>R$ 0,00</b></span><span>Estimativa anual <b>R$ 0,00</b></span></footer>
+        </article>
+      </div>
+      <div class="main-grid">
+        <div class="day-stack">
+          <div class="orbit-goals-row">
+            <article class="card today-card compact-orbit">
+              <div class="panel-head"><div><span>HOJE</span><h3>Seu dia em órbita</h3></div><button data-page="tasks">Ver tudo →</button></div>
+              <div class="daily"><div class="ring" style="--p:0"><b>0<small>%</small></b></div><div><b>Sua órbita começa aqui</b><p id="dailyCount">0 de 0 atividades concluídas</p><i><b id="dailyBar" style="width:0"></b></i></div></div>
+              <div class="activities" id="dashboardActivities"><div class="empty"><span>✦</span><b>Nenhuma atividade para hoje</b><small>Crie sua primeira tarefa ou hábito.</small></div></div>
+              <button class="dashed" data-modal="tarefa">＋ Adicionar nova tarefa</button>
+            </article>
+            <article class="card goals compact-goals">
+              <div class="panel-head"><div><span>OBJETIVOS</span><h3>Metas financeiras</h3></div><button data-page="goals">Ver tudo →</button></div>
+              <div id="dashboardGoals"><div class="empty compact"><span>🎯</span><b>Suas metas aparecerão aqui</b><small>Defina um valor e acompanhe o progresso.</small></div></div>
+              <button class="secondary full" data-modal="meta">＋ Nova meta</button>
+            </article>
+          </div>
+          <div class="wellness-row">
+            <article class="focus-banner overview-focus compact-focus">
+              <div><span>MODO FOCO</span><h3>Entre em órbita.</h3><p>Um momento sem distrações.</p><button data-page="focus" data-icon="play">Iniciar sessão</button></div>
+              <div class="moon"><i></i><b>25<small>min</small></b></div>
+            </article>
+            <article class="card mood-card compact-mood"><div class="panel-head"><div><span>BEM-ESTAR</span><h3>Como você está hoje?</h3></div></div><div class="moods"><button data-mood="Muito triste">😞</button><button data-mood="Triste">😕</button><button data-mood="Normal">😐</button><button data-mood="Feliz">🙂</button><button data-mood="Muito feliz">🤩</button></div><p id="moodText">Reserve um momento para você.</p></article>
+          </div>
+        </div>
+        <div class="side-stack">
+          <article class="card streak">
+            <div><b class="fire">🌙</b><em>Recorde: 0</em></div><section><small>Sua sequência atual</small><h2><b id="streakValue">0</b> dias</h2><p id="streakMessage">Conclua todos os hábitos de hoje para começar.</p></section>
+            <div class="panel-head calendar-title"><div><span>ORGANIZAÇÃO</span><h3>Calendário</h3></div><button data-page="calendar">Abrir agenda →</button></div>
+            <div class="month-calendar" id="weekRow"></div>
+            <footer><i><b style="width:0"></b></i><small id="habitDayProgress">0 de 0 hábitos hoje</small></footer>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="finance">
+      <div class="page-head"><div><span>CONTROLE FINANCEIRO</span><h1>Seu dinheiro, com clareza.</h1><p>Acompanhe entradas, saídas e o ritmo da sua vida financeira.</p></div><button class="primary" data-modal="lançamento" data-icon="plus">Novo lançamento</button></div>
+      <div class="stats"><article class="stat"><i class="green" data-icon="arrowup"></i><div><small>Receitas</small><b id="financeIncome">R$ 0,00</b></div></article><article class="stat"><i class="red" data-icon="arrowdown"></i><div><small>Despesas e compras</small><b id="financeExpense">R$ 0,00</b></div></article><article class="stat finance-invested-stat"><i class="purple" data-icon="target"></i><div><small>Guardado em metas</small><b id="financeInvested">R$ 0,00</b><em>Objetivos pessoais</em></div></article><article class="stat"><i class="blue" data-icon="wallet"></i><div><small>Saldo do mês</small><b id="financeBalance">R$ 0,00</b></div></article></div>
+      <article class="card finance-evolution">
+        <div class="panel-head finance-chart-head"><div><span>EVOLUÇÃO FINANCEIRA</span><h3>Para onde seu dinheiro está indo</h3><p>Registre, por exemplo, “R$ 30 com comida” e acompanhe o impacto no patrimônio.</p></div><div class="finance-line-mode"><button class="active" data-finance-lines="combined">Uma linha</button><button data-finance-lines="separate">🔒 Separar linhas</button></div></div>
+        <div class="finance-chart-wrap">
+          <svg id="financeEvolutionChart" viewBox="0 0 900 300" preserveAspectRatio="none" aria-label="Evolução de ganhos, gastos, compras e metas">
+            <defs><linearGradient id="financeAreaGradient" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#32ff7e" stop-opacity=".28"/><stop offset="1" stop-color="#32ff7e" stop-opacity="0"/></linearGradient></defs>
+            <path class="finance-grid-line" d="M0 50H900M0 120H900M0 190H900M0 260H900"/>
+            <path class="finance-area"/>
+            <path class="finance-line finance-combined"/>
+            <path class="finance-line finance-income"/>
+            <path class="finance-line finance-expense"/>
+            <path class="finance-line finance-purchase"/>
+            <path class="finance-line finance-invested"/>
+            <circle class="finance-hover-point" r="7"/>
+          </svg>
+          <div class="finance-chart-tooltip" id="financeChartTooltip"></div>
+        </div>
+        <footer class="finance-chart-footer"><div class="finance-legend"><span class="combined">● Patrimônio</span><span class="income">● Ganhos</span><span class="expense">● Gastos</span><span class="purchase">● Compras</span><span class="invested">● Total investido</span></div><div class="finance-periods"><button data-finance-period="30D" class="active">30D</button><button data-finance-period="3M">3M</button><button data-finance-period="1A">1A</button><button data-finance-period="Tudo">Tudo</button></div></footer>
+      </article>
+      <article class="card table"><div class="panel-head"><div><span>HISTÓRICO</span><h3>Seus lançamentos</h3></div><button class="secondary">Filtrar</button></div><div class="transactions" id="transactionList"><div class="empty"><span>↗</span><b>Nenhum lançamento</b><small>Registre um ganho ou gasto para começar.</small></div></div></article>
+      <div class="personal-finance-grid">
+        <article class="card subscription-vault"><div class="panel-head"><div><span>COFRE DE ASSINATURAS</span><h3>Recorrências sob controle</h3></div><button class="secondary" data-create="subscriptions">＋ Assinatura</button></div><div class="finance-mini-stats"><span><small>Total mensal</small><b id="subscriptionMonthly">R$ 0,00</b></span><span><small>Total anual estimado</small><b id="subscriptionAnnual">R$ 0,00</b></span><span><small>Próximo vencimento</small><b id="subscriptionNext">—</b></span></div><div class="personal-list" id="subscriptionList"></div></article>
+        <article class="card purchase-planner"><div class="panel-head"><div><span>QUERO COMPRAR</span><h3>Compre com intenção</h3></div><button class="secondary" data-create="wishlist">＋ Planejar compra</button></div><p class="finance-card-copy">Adicione um item, escolha um tempo de espera e reveja a decisão antes de comprar.</p><div class="personal-list" id="wishlistList"></div></article>
+      </div>
+    </section>
+
+    <section class="page" id="tasks">
+      <div class="page-head"><div><span>ORGANIZAÇÃO</span><h1>Tarefas</h1><p>Transforme intenção em progresso.</p></div><button class="primary" data-modal="tarefa" data-icon="plus">Nova tarefa</button></div>
+      <div class="board" id="taskBoard"><article><header>A FAZER <b>0</b></header><div class="empty"><span>✓</span><b>Nenhuma tarefa</b><small>Crie sua primeira tarefa.</small></div></article><article><header>EM PROGRESSO <b>0</b></header></article><article><header>CONCLUÍDAS <b>0</b></header></article></div>
+    </section>
+
+    <section class="page focus-page" id="focus">
+      <span>SEU MOMENTO</span><h1>Entre em órbita.</h1><p>Silencie o mundo por alguns minutos.</p>
+      <div class="focus-box"><div class="timer"><svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="135"/><circle class="timer-progress" cx="150" cy="150" r="135"/></svg><i class="timer-moon" aria-hidden="true"></i><div><b id="timerDisplay">25:00</b><span>FOCO</span></div></div><div class="presets"><button data-minutes="5">5 min</button><button class="active" data-minutes="25">25 min</button><button data-minutes="60">1 hora</button><button class="premium-preset" id="customFocusBtn">🔒 Personalizado</button></div><div class="custom-focus-time" id="customFocusTime"><input id="customFocusMinutes" aria-label="Minutos da sessão personalizada" type="number" min="1" max="480" value="45"><button>Usar minutos</button></div><button class="primary" id="timerStart" data-icon="play">Iniciar sessão</button><div class="sounds"><span>Ambiente</span><button data-sound="rain" aria-pressed="false">🌧️ Chuva</button><button data-sound="forest" aria-pressed="false">🌲 Floresta</button><button data-sound="lofi" aria-pressed="false">🎧 Lo-fi</button><button data-sound="white" aria-pressed="false">◌ Ruído branco</button><label class="sound-volume" title="Volume do ambiente">🔊 <input id="ambientVolume" type="range" min="0" max="100" value="32" aria-label="Volume do ambiente"></label><small id="soundStatus">Escolha um som para acompanhar sua sessão.</small></div><div class="playlist-premium"><header><span>PLAYLIST PERSONALIZADA</span><b>🔒 Vitalício</b></header><div><input id="playlistUrl" aria-label="Link da playlist do Spotify ou YouTube" type="url" placeholder="Cole uma playlist do Spotify ou YouTube"><button id="playPlaylist">Tocar</button></div><div class="custom-player" id="customPlayer"></div></div></div>
+      <div class="stats three focus-stats"><article class="stat"><div><small>Hoje</small><b>0min</b></div></article><article class="stat"><div><small>Esta semana</small><b>0min</b></div></article><article class="stat"><div><small>Este mês</small><b>0min</b></div></article></div>
+    </section>
+    <section id="investments" hidden aria-hidden="true"></section>
+    <section class="page generic" id="habits" data-title="Hábitos" data-sub="Consistência que transforma seus dias."></section>
+    <section class="page generic" id="calendar" data-title="Agenda" data-sub="Tudo no tempo certo, sem sobrecarregar sua mente."></section>
+    <section class="page generic" id="goals" data-title="Metas financeiras" data-sub="Transforme sonhos em números alcançáveis."></section>
+    <section class="page generic" id="mood" data-title="Diário de humor" data-sub="Entenda seus ciclos e cuide de você."></section>
+    <section class="page generic" id="notes" data-title="Notas" data-sub="Um espaço calmo para todas as suas ideias."></section>
+    <section class="page generic" id="today"></section>
+    <section class="page generic" id="challenges"></section>
+    <section class="page generic" id="reports"></section>
+    <section class="page generic" id="templates"></section>
+    <section class="page generic" id="settings" data-title="Configurações" data-sub="Deixe o LUAR do seu jeito."></section>
+  </main>
+  <aside class="drawer" id="drawer"><header><h3>Notificações</h3><button id="closeDrawer">×</button></header><div id="notificationList"></div></aside>
+  <div class="backdrop" id="backdrop"><section class="modal"><header><div><span id="modalKicker">NOVO REGISTRO</span><h3 id="modalTitle">Adicionar à sua órbita</h3></div><button id="closeModal">×</button></header><form id="entityForm"></form></section></div>
+  <div class="onboarding-layer" id="onboardingLayer" aria-hidden="true">
+    <section class="onboarding-card">
+      <header><img src="luarlogo.png?v=2" alt="LUAR"><div><span>PRIMEIRA ÓRBITA</span><b id="onboardingProgress">Passo 1 de 3</b></div></header>
+      <div class="onboarding-steps"><i class="active"></i><i></i><i></i></div>
+      <div class="onboarding-step active" data-onboarding-step="1">
+        <span>O QUE IMPORTA AGORA?</span><h2>O que você deseja<br>organizar primeiro?</h2><p>Isso ajuda o LUAR a preparar sua primeira experiência.</p>
+        <div class="onboarding-choices"><button data-onboarding-goal="routine">✓ <b>Minha rotina</b><small>Hábitos e tarefas</small></button><button data-onboarding-goal="money">⌁ <b>Meu dinheiro</b><small>Finanças e metas</small></button><button data-onboarding-goal="goals">◎ <b>Minhas metas</b><small>Objetivos claros</small></button><button data-onboarding-goal="all">✦ <b>Tudo junto</b><small>Minha vida completa</small></button></div>
+      </div>
+      <div class="onboarding-step" data-onboarding-step="2">
+        <span>SEU PRIMEIRO PASSO</span><h2>Qual hábito você<br>deseja começar?</h2><p>Escolha algo simples que você queira cumprir todos os dias.</p>
+        <label class="onboarding-habit"><span>✦</span><input id="onboardingHabit" maxlength="80" placeholder="Ex.: Beber água, estudar ou caminhar"></label>
+        <div class="onboarding-suggestions"><button>Beber água</button><button>Ler 10 minutos</button><button>Organizar meu dia</button></div>
+        <button class="onboarding-next" id="onboardingCreate">Criar meu primeiro hábito ↗</button>
+      </div>
+      <div class="onboarding-step onboarding-success" data-onboarding-step="3">
+        <div class="onboarding-eclipse"><i></i><b></b></div><span>PRIMEIRO RESULTADO</span><h2>Sua primeira atividade<br>já está em órbita. ✦</h2><p>Você já pode acompanhar seu progresso, concluir o hábito e construir sua sequência.</p>
+        <button class="onboarding-next" id="onboardingFinish">Ir para minha visão geral ↗</button>
+      </div>
+    </section>
+  </div>
+  <div class="toast" id="toast"><i>✓</i><b>Feito!<small>Seu progresso foi salvo.</small></b></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

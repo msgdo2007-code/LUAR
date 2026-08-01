@@ -1,0 +1,18 @@
+{
+  "name": "LUAR — Sua vida em órbita",
+  "short_name": "LUAR",
+  "description": "Organização pessoal, produtividade, planejamento financeiro e bem-estar.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070a08",
+  "theme_color": "#0b0b0b",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/luarlogo.png?v=2",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
