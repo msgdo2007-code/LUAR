@@ -6,8 +6,7 @@ window.LUAR_CONFIG = {
   adsense: {
     client: "ca-pub-2822119220449543",
     slots: {
-      overview: "",
-      today: ""
+      rotation: ["8266220985", "1795201461"]
     }
   }
 };
