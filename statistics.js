@@ -598,7 +598,7 @@
 
     const hero = create('header', 'ls-hero');
     const copy = create('div', 'ls-hero-copy');
-    append(copy, create('span', 'ls-kicker', 'ESTATÍSTICAS VITALÍCIO'), create('h1', '', 'Sua jornada em números.'), create('p', '', 'Produtividade, dinheiro, foco e evolução reunidos sem apagar o seu histórico.'));
+    append(copy, create('span', 'ls-kicker', 'SEU PERFIL'), create('h1', '', 'Sua identidade no LUAR.'), create('p', '', 'Seu universo, nível e personalização em um perfil que acompanha toda a sua jornada.'));
     const stage = create('div', 'ls-stage-pill');
     stage.dataset.statsStage = '';
     append(hero, copy, stage);
@@ -664,7 +664,10 @@
     append(calendarHeading, create('span', '', 'ATIVIDADE 365D'), create('h2', '', 'Um ano visto de cima'));
     append(calendar, calendarHeading, create('p', 'ls-calendar-copy', 'Cada quadrado representa um dia. Quanto mais intenso, mais registros foram feitos.'), create('div', 'ls-calendar-scroll'));
 
-    append(root, hero, quickNav, profile, mission, ...metricHosts, charts, calendar);
+    const premium = create('div', 'ls-premium-content');
+    premium.dataset.statsPremium = '';
+    append(premium, quickNav, mission, ...metricHosts, charts, calendar);
+    append(root, hero, profile, premium);
   }
 
   function renderMetricCards(host, items) {
@@ -802,15 +805,15 @@
     host.replaceChildren();
     host.dataset.profileCursor = cursorId;
     const card = create('article', `ls-profile-card frame-${frameId} effect-${effectId} animation-${animationId} theme-${themeId}`);
+    card.style.setProperty('--banner-a', banner.colors[0]);
+    card.style.setProperty('--banner-b', banner.colors[1]);
+    card.style.setProperty('--banner-c', banner.colors[2]);
     const cover = create('div', 'ls-profile-cover');
-    cover.style.setProperty('--banner-a', banner.colors[0]);
-    cover.style.setProperty('--banner-b', banner.colors[1]);
-    cover.style.setProperty('--banner-c', banner.colors[2]);
     if (customBanner) {
-      cover.classList.add('custom-banner');
-      cover.style.backgroundImage = `linear-gradient(180deg, rgba(3, 7, 5, 0.04), rgba(3, 7, 5, 0.36)), url(${JSON.stringify(customBanner)})`;
-      cover.style.backgroundPosition = 'center';
-      cover.style.backgroundSize = 'cover';
+      card.classList.add('custom-banner');
+      card.style.backgroundImage = `linear-gradient(180deg, rgba(3, 7, 5, 0.05), rgba(3, 7, 5, 0.72)), url(${JSON.stringify(customBanner)})`;
+      card.style.backgroundPosition = 'center';
+      card.style.backgroundSize = 'cover';
     }
     const bannerEdit = create('button', 'ls-cover-edit', customBanner ? '✎ Trocar banner' : '＋ Adicionar banner');
     bannerEdit.type = 'button';
@@ -846,9 +849,16 @@
     if (context?.lifetimeActive) badges.appendChild(create('span', 'lifetime', '✦ Vitalício'));
     badges.appendChild(create('span', '', `Nível ${xp.level}`));
     const visibleBadges = selectedBadge ? [selectedBadge, ...unlockedAchievements.filter(item => item.id !== selectedBadge.id)] : unlockedAchievements;
-    visibleBadges.slice(0, 4).forEach(item => {
-      const badge = create('span', 'achievement', `${item.badge || '★'} ${item.title || 'Conquista'}`);
-      badge.title = item.description || '';
+    const badgeColors = ['#67d6ff', '#ffd463', '#b68cff', '#ff79c6', '#ff9f43', '#ff8d86', '#65e6d4', '#d4ff67'];
+    visibleBadges.slice(0, 8).forEach((item, index) => {
+      const badge = create('span', `achievement${item.id === selectedBadgeId ? ' selected' : ''}`, item.badge || '★');
+      const tooltip = `${item.title || 'Conquista'}${item.description ? ` — ${item.description}` : ''}`;
+      badge.style.setProperty('--badge-color', badgeColors[index % badgeColors.length]);
+      badge.dataset.tooltip = tooltip;
+      badge.title = tooltip;
+      badge.tabIndex = 0;
+      badge.setAttribute('role', 'img');
+      badge.setAttribute('aria-label', tooltip);
       badges.appendChild(badge);
     });
     identityCopy.appendChild(badges);
@@ -1182,13 +1192,19 @@
   function render(root, context) {
     if (!root) return null;
     if (context?.lifetimeActive === false) {
-      root.replaceChildren();
-      root.classList.add('luar-statistics');
+      if (root.dataset.statisticsReady !== '1') staticPage(root);
+      bind(root, context || {});
+      renderProfile(root, context);
+      const premium = root.querySelector('[data-stats-premium]');
       const locked = create('section', 'ls-locked');
-      append(locked, create('i', '', '✦'), create('span', '', 'RECURSO VITALÍCIO'), create('h2', '', 'Estatísticas completas'), create('p', '', 'Ative o LUAR Vitalício para acompanhar toda a sua evolução e manter conquistas permanentes.'));
-      root.appendChild(locked);
+      append(locked, create('i', '', '✦'), create('span', '', 'ANÁLISES VITALÍCIO'), create('h2', '', 'Sua evolução completa'), create('p', '', 'Visão geral, produtividade, financeiro, metas, diário, conquistas, gráficos e atividade de 365 dias ficam disponíveis no LUAR Vitalício.'));
+      if (premium) {
+        premium.dataset.statsPremiumLocked = '1';
+        premium.replaceChildren(locked);
+      }
       return root;
     }
+    if (root.querySelector('[data-stats-premium-locked="1"]')) staticPage(root);
     if (root.dataset.statisticsReady !== '1') staticPage(root);
     bind(root, context || {});
     const accessChanged = registerAccess(context);
