@@ -7,3 +7,4 @@ validation-*
 supabase/.temp/
 *.log
 *.local
+*.sql

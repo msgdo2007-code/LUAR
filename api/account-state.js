@@ -1,17 +1,40 @@
-const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount } = require("./_lib");
+const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat } = require("./_lib");
 
 const cleanState = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
-const cleanBackups = (value) => Array.isArray(value) ? value.slice(0, 8) : [];
+const embeddedImage = (value) => /^data:image\/(?:png|jpe?g|webp);base64,/i.test(String(value || ""));
+const snapshotState = (value) => {
+  const state = cleanState(value);
+  const profile = cleanState(state.profile);
+  if (!embeddedImage(profile.avatar) && !embeddedImage(profile.customBanner)) return state;
+  const safeProfile = { ...profile };
+  if (embeddedImage(safeProfile.avatar)) delete safeProfile.avatar;
+  if (embeddedImage(safeProfile.customBanner)) delete safeProfile.customBanner;
+  return { ...state, profile: safeProfile };
+};
+const cleanBackups = (value) => {
+  if (!Array.isArray(value)) return [];
+  const kept = [];
+  let totalBytes = 0;
+  for (const candidate of value.slice(0, 8)) {
+    if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) continue;
+    const backup = { savedAt: candidate.savedAt || null, state: snapshotState(candidate.state) };
+    const bytes = Buffer.byteLength(JSON.stringify(backup));
+    if (bytes > 2_000_000 || totalBytes + bytes > 2_000_000) break;
+    kept.push(backup);
+    totalBytes += bytes;
+  }
+  return kept;
+};
 
 const ensureAccount = async (user) => {
   const email = canonicalEmail(user);
   const metadata = user.user_metadata || {};
   const legacyLicense = verifyPayload(metadata.luar_lifetime_license);
-  const legacyLifetime = Boolean(legacyLicense && legacyLicense.type === "lifetime" && legacyLicense.uid === user.id && legacyLicense.plan === "LUAR_VITALICIO");
+  const legacyLifetime = Boolean(legacyLicense && legacyLicense.type === "lifetime" && legacyLicense.uid === user.id && (!legacyLicense.email || String(legacyLicense.email).trim().toLowerCase() === email) && legacyLicense.plan === "LUAR_VITALICIO");
   let account = await getLuarAccount(email);
   const userIds = [...new Set([...(Array.isArray(account?.user_ids) ? account.user_ids : []), user.id])];
   if (!account || legacyLifetime || !account.user_ids?.includes(user.id)) {
-    account = await upsertLuarAccount({
+    account = await upsertLuarAccountCompat({
       email,
       user_ids: userIds,
       plan: account?.plan === "lifetime" || legacyLifetime ? "lifetime" : "free",
@@ -21,7 +44,7 @@ const ensureAccount = async (user) => {
       state_updated_at: account?.state_updated_at || metadata.luar_updated_at || null,
       backups: cleanBackups(account?.backups?.length ? account.backups : metadata.luar_backups),
       updated_at: new Date().toISOString(),
-    });
+    }, legacyLifetime ? { lifetime_source: "legacy" } : {});
   }
   return account;
 };

@@ -88,9 +88,36 @@ const adminRequest = async (path, options = {}) => {
   try { body = text ? JSON.parse(text) : null; } catch { body = text; }
   if (!response.ok) {
     console.error("Supabase admin request failed", response.status, typeof body === "string" ? body.slice(0, 300) : body?.code || body?.message || "unknown");
-    throw new Error("STORAGE_ERROR");
+    const error = new Error("STORAGE_ERROR");
+    error.storageStatus = response.status;
+    error.storageCode = typeof body === "object" && body ? body.code : "";
+    error.storageMessage = typeof body === "object" && body ? String(body.message || body.details || "") : String(body || "");
+    throw error;
   }
   return body;
+};
+
+const authenticatedRpcRequest = async (req, functionName, args = {}) => {
+  const url = process.env.SUPABASE_URL;
+  const anonKey = process.env.SUPABASE_ANON_KEY;
+  const authorization = String(req.headers.authorization || "");
+  if (!url || !anonKey) throw new Error("SERVER_CONFIG");
+  if (!authorization.startsWith("Bearer ")) throw new Error("AUTH_REQUIRED");
+  if (!/^[a-z0-9_]+$/.test(functionName)) throw new Error("RPC_INVALID");
+  const response = await fetch(`${url}/rest/v1/rpc/${functionName}`, {
+    method: "POST",
+    headers: {
+      apikey: anonKey,
+      authorization,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(args),
+  });
+  const text = await response.text();
+  let body = null;
+  try { body = text ? JSON.parse(text) : null; } catch { body = text; }
+  return { ok: response.ok, status: response.status, body };
 };
 
 const getLuarAccount = async (email) => {
@@ -101,6 +128,25 @@ const getLuarAccount = async (email) => {
 const upsertLuarAccount = async (account) => {
   const rows = await adminRequest("luar_accounts?on_conflict=email", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=representation" }, body: JSON.stringify(account) });
   return Array.isArray(rows) ? rows[0] || null : null;
+};
+
+const PROVENANCE_COLUMNS = ["lifetime_source", "lifetime_provider", "lifetime_granted_by", "lifetime_granted_at", "lifetime_revoked_at"];
+const missingProvenanceColumn = (error) => {
+  if (!error || !["PGRST204", "42703"].includes(error.storageCode)) return false;
+  const message = String(error.storageMessage || "").toLowerCase();
+  return PROVENANCE_COLUMNS.some((column) => message.includes(column));
+};
+
+const upsertLuarAccountCompat = async (account, provenance = {}) => {
+  const cleanProvenance = Object.fromEntries(Object.entries(provenance).filter(([key]) => PROVENANCE_COLUMNS.includes(key)));
+  if (!Object.keys(cleanProvenance).length) return upsertLuarAccount(account);
+  try {
+    return await upsertLuarAccount({ ...account, ...cleanProvenance });
+  } catch (error) {
+    // Permite publicar a API antes da migração sem interromper pagamentos.
+    if (!missingProvenanceColumn(error)) throw error;
+    return upsertLuarAccount(account);
+  }
 };
 
 const encode = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -130,4 +176,4 @@ const verifyPayload = (token) => {
   }
 };
 
-module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, adminRequest, getLuarAccount, upsertLuarAccount };
+module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat };

@@ -15,6 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="statistics.css">
 </head>
 <body class="public-mode ads-auth-pending">
   <section class="landing" id="landing">
@@ -272,6 +273,7 @@
       <p>EVOLUÇÃO</p>
       <button class="nav" data-page="challenges" data-icon="spark">Desafios</button>
       <button class="nav" data-page="reports" data-icon="chart">Relatórios</button>
+      <button class="nav" id="statisticsNav" data-page="statistics" data-icon="chart" hidden>Estatísticas</button>
     </nav>
     <div class="sidebar-foot">
       <button class="level" id="levelBtn"><span><b>Nível 1</b><small>0 XP</small></span><i><b style="width:0"></b></i><p>100 XP para o próximo nível</p></button>
@@ -295,7 +297,7 @@
         </div>
         <button class="icon" id="themeBtn" data-icon="sun" aria-label="Tema"></button>
         <button class="icon bell" id="bellBtn" data-icon="bell" aria-label="Notificações"><i></i></button>
-        <button class="profile" data-page="settings"><span>LU</span><b>Seu nome<small>Nível 1</small></b><i data-icon="chevron"></i></button>
+        <button class="profile" data-page="profile"><span>LU</span><b>Seu nome<small>Nível 1</small></b><i data-icon="chevron"></i></button>
       </div>
     </header>
 
@@ -406,6 +408,8 @@
     <section class="page generic" id="today"></section>
     <section class="page generic" id="challenges"></section>
     <section class="page generic" id="reports"></section>
+    <section class="page generic" id="statistics"></section>
+    <section class="page generic" id="profile"></section>
     <section class="page generic" id="settings" data-title="Configurações" data-sub="Deixe o LUAR do seu jeito."></section>
   </main>
   <aside class="drawer" id="drawer"><header><h3>Notificações</h3><button id="closeDrawer">×</button></header><div id="notificationList"></div></aside>
@@ -450,5 +454,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
+  <script src="statistics.js"></script>
 </body>
 </html>
