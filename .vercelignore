@@ -1,7 +1,9 @@
-.chrome-*
 qa-*
+.chrome-*
 preview-*.png
 audit-*.png
 reported-*
 validation-*
+supabase/.temp/
 *.log
+*.local
