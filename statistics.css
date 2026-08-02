@@ -181,7 +181,7 @@ body.light .luar-statistics {
   align-items: start;
   display: grid;
   gap: 16px;
-  grid-template-columns: minmax(390px, 1.05fr) minmax(390px, 1fr);
+  grid-template-columns: 1fr;
 }
 
 .ls-profile-card,
@@ -204,6 +204,7 @@ body.light .luar-statistics {
     radial-gradient(circle at 72% 22%, rgba(255, 255, 255, 0.1), transparent 2%),
     linear-gradient(145deg, var(--banner-a), var(--banner-b) 55%, var(--banner-c));
   overflow: hidden;
+  min-height: clamp(480px, 48vw, 620px);
   position: relative;
   width: 100%;
 }
@@ -213,7 +214,7 @@ body.light .luar-statistics {
   background: transparent;
   display: flex;
   justify-content: flex-end;
-  min-height: clamp(150px, 18vw, 190px);
+  min-height: clamp(260px, 30vw, 380px);
   padding: 18px;
   position: relative;
 }
@@ -276,7 +277,7 @@ body.light .luar-statistics {
   backdrop-filter: blur(10px);
   background: linear-gradient(180deg, rgba(7, 10, 9, 0.28), rgba(9, 12, 11, 0.9) 42%, rgba(9, 12, 11, 0.96));
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0 26px 26px;
+  padding: 0 clamp(26px, 4vw, 48px) clamp(30px, 4vw, 44px);
 }
 
 .ls-profile-identity {
@@ -299,10 +300,10 @@ body.light .luar-statistics {
   flex: 0 0 auto;
   font-size: 21px;
   font-weight: 850;
-  height: 86px;
+  height: clamp(96px, 9vw, 118px);
   justify-content: center;
   overflow: hidden;
-  width: 86px;
+  width: clamp(96px, 9vw, 118px);
 }
 
 button.ls-profile-avatar { cursor: pointer; font-family: var(--font); padding: 0; position: relative; }
