@@ -1,4 +1,4 @@
-const CACHE_NAME = "luar-shell-v36";
+const CACHE_NAME = "luar-shell-v37";
 const APP_SHELL = ["/", "/index.html", "/styles.css", "/statistics.css", "/app.js", "/statistics.js", "/config.js", "/legal.css", "/termos.html", "/privacidade.html", "/cookies.html", "/contato.html", "/404.html", "/pesquisa/", "/pesquisa/pesquisa.css", "/pesquisa/pesquisa.js", "/luarlogo.png?v=2"];
 
 self.addEventListener("install", (event) => {
