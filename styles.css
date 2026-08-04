@@ -1017,11 +1017,8 @@ body.light .payment-card .secondary{border-color:var(--border);background:#fff;c
 .settings-project-ad{grid-column:1/-1}
 .finance-end-ad{width:100%}
 .ad-card-frame{position:relative;overflow:hidden}
-.ad-card-frame>.adsbygoogle{position:relative;z-index:2;min-width:1px;min-height:90px}
 .ad-pending{position:absolute;z-index:1;inset:0;display:grid;place-content:center;padding:12px;text-align:center}
 .ad-pending b{color:var(--text);font-size:10px;letter-spacing:.1em}.ad-pending p{margin:6px 0 0;color:var(--muted);font-size:9px}
-.adsbygoogle[data-ad-status="filled"]+.ad-pending{display:none}
-.adsbygoogle[data-ad-status="unfilled"]{visibility:hidden}
 .focus-ad-layout{
   display:grid;
   grid-template-columns:minmax(145px,1fr) minmax(460px,680px) minmax(145px,1fr);
@@ -1053,7 +1050,6 @@ body.light .payment-card .secondary{border-color:var(--border);background:#fff;c
 
 /* Aviso de bloqueador de anúncios. */
 body.adblock-locked{overflow:hidden!important}
-.ads-auth-pending .google-auto-placed,.ads-auth-pending ins.adsbygoogle-noablate,.lifetime-user .google-auto-placed,.lifetime-user ins.adsbygoogle-noablate{display:none!important}
 .adblock-layer{
   position:fixed;
   z-index:2200;
@@ -1161,13 +1157,8 @@ html.animations-disabled{scroll-behavior:auto!important}
 .animations-disabled *,.animations-disabled *:before,.animations-disabled *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 @media(max-width:560px){.motion-preference{grid-template-columns:38px 1fr}.motion-preference button{grid-column:1/-1;width:100%}}
 
-/* Contas Vitalícias nunca exibem publicidade manual ou automática. */
-body.lifetime-user .free-ad-card,
-body.lifetime-user ins.adsbygoogle,
-body.lifetime-user .google-auto-placed,
-body.lifetime-user ins.adsbygoogle-noablate,
-body.lifetime-user iframe[id^="google_ads_iframe"],
-body.lifetime-user iframe[src*="googlesyndication"]{display:none!important;visibility:hidden!important;width:0!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important}
+/* Contas Vitalícias nunca exibem os espaços reservados para publicidade. */
+body.lifetime-user .free-ad-card{display:none!important}
 
 /* Cronômetro livre integrado ao Modo Foco e ao cabeçalho. */
 .focus-stopwatch-card{margin-top:17px;padding:17px;border:1px solid rgba(var(--theme-accent-rgb),.17);border-radius:16px;background:linear-gradient(145deg,rgba(var(--theme-accent-rgb),.055),rgba(255,255,255,.012));text-align:left}
@@ -1312,6 +1303,9 @@ body.printing-report #reports [data-report-chart]{display:block!important}
 .savings-lifetime-cta small{margin-top:9px;color:rgba(7,17,10,.72);font-size:8px;font-weight:800}.plan-feature-table{overflow:hidden;margin-top:44px;border:1px solid rgba(var(--theme-accent-rgb),.2);border-radius:24px;background:#101311;box-shadow:0 26px 75px rgba(0,0,0,.25)}.plan-feature-table>div{display:grid;grid-template-columns:minmax(260px,1.35fr) minmax(160px,.7fr) minmax(200px,.85fr);align-items:center;min-height:57px;border-bottom:1px solid rgba(255,255,255,.065)}.plan-feature-table>div:last-child{border-bottom:0}.plan-feature-table>div>*{height:100%;display:flex;align-items:center;padding:12px 20px;border-left:1px solid rgba(255,255,255,.055);font-size:10px}.plan-feature-table>div>*:first-child{border-left:0}.plan-feature-table>div>b{color:#aeb8b1;font-weight:650}.plan-feature-table>div>span{justify-content:center;color:#808a83}.plan-feature-table>div>strong{color:var(--theme-accent);background:rgba(var(--theme-accent-rgb),.035)}.plan-feature-table .plan-table-head{min-height:86px;background:rgba(255,255,255,.02)}.plan-table-head>b{color:#eef3ef!important;font:750 16px var(--display)!important}.plan-table-head :is(span,strong){display:flex;flex-direction:column;justify-content:center;font-weight:900;letter-spacing:.1em}.plan-table-head small{display:block;margin-top:4px;color:#717b74;font-size:8px;font-weight:600;letter-spacing:0}.plan-table-head strong small{color:#9fc9ad}.plan-feature-table .plan-no{color:#ff8d86}.plan-compare-actions{display:grid;grid-template-columns:1fr 210px 240px;align-items:center;gap:10px;margin-top:14px;padding:18px;border:1px solid rgba(255,255,255,.07);border-radius:18px;background:rgba(255,255,255,.018)}.plan-compare-actions>div{display:flex;flex-direction:column}.plan-compare-actions>div b{font:700 15px var(--display)}.plan-compare-actions>div span{margin-top:4px;color:#78827b;font-size:9px}.plan-compare-actions .plan-button{min-width:0}
 @media(max-width:850px){.trust-proof-grid{grid-template-columns:1fr}.landing-trust-proof{padding:35px 27px}.plan-feature-table{overflow-x:auto}.plan-feature-table>div{min-width:760px}.plan-compare-actions{grid-template-columns:1fr 1fr}.plan-compare-actions>div{grid-column:1/-1}}
 @media(max-width:620px){.hero-trust-line{max-width:320px;flex-direction:column;align-content:center;text-align:left}.landing-trust-proof{width:calc(100% - 24px);padding:29px 18px;margin-bottom:85px}.landing-trust-proof h2{font-size:31px}.plan-feature-table{margin-top:30px;border-radius:17px}.plan-feature-table>div{min-width:680px;grid-template-columns:260px 180px 240px}.plan-compare-actions{grid-template-columns:1fr;padding:15px}.plan-compare-actions>div{grid-column:1}.plan-compare-actions button{width:100%}}
+
+/* Convite para o diagnóstico personalizado da landing. */
+.landing-diagnosis-callout{width:min(1120px,calc(100% - 40px));margin:0 auto 110px;padding:48px;display:grid;grid-template-columns:1.15fr .7fr;align-items:center;gap:52px;border:1px solid rgba(var(--theme-accent-rgb),.22);border-radius:30px;background:radial-gradient(circle at 88% 12%,rgba(var(--theme-accent-rgb),.13),transparent 34%),linear-gradient(145deg,#141915,#0d100e);box-shadow:0 32px 90px rgba(0,0,0,.3)}.landing-diagnosis-callout>div>span{color:var(--theme-accent);font-size:8px;font-weight:900;letter-spacing:.15em}.landing-diagnosis-callout h2{margin:14px 0 15px;font:800 clamp(34px,4.5vw,57px)/1.02 var(--display);letter-spacing:-.055em}.landing-diagnosis-callout p{max-width:650px;margin:0;color:#89938c;font-size:12px;line-height:1.7}.landing-diagnosis-callout a{display:inline-flex;margin-top:25px;padding:15px 19px;border-radius:13px;background:var(--theme-accent);color:#061008;font-size:10px;font-weight:900;text-decoration:none;transition:.22s}.landing-diagnosis-callout a:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(var(--theme-accent-rgb),.2)}.landing-diagnosis-callout>aside{display:grid;grid-template-columns:auto 1fr;align-items:end;padding:25px;border:1px solid rgba(255,255,255,.08);border-radius:22px;background:rgba(5,8,6,.52)}.landing-diagnosis-callout>aside>i{color:var(--theme-accent);font:900 72px/.8 var(--display);font-style:normal}.landing-diagnosis-callout>aside>b{display:flex;flex-direction:column;color:#e7eee9;font:700 19px var(--display)}.landing-diagnosis-callout>aside>b small{margin-top:6px;color:#667169;font:600 7px var(--font);letter-spacing:.08em;text-transform:uppercase}.landing-diagnosis-callout>aside>div{grid-column:1/-1;display:grid;gap:9px;margin-top:28px}.landing-diagnosis-callout>aside>div span{position:relative;overflow:hidden;padding-bottom:9px;border-bottom:4px solid rgba(255,255,255,.06);color:#89938c;font-size:8px}.landing-diagnosis-callout>aside>div span:after{content:"";position:absolute;left:0;bottom:-4px;width:var(--score);height:4px;border-radius:4px;background:var(--theme-accent)}@media(max-width:760px){.landing-diagnosis-callout{width:calc(100% - 24px);grid-template-columns:1fr;padding:31px 20px;gap:28px;margin-bottom:80px}.landing-diagnosis-callout h2{font-size:34px}.landing-diagnosis-callout>aside>i{font-size:59px}}
 
 /* Aparência fica logo abaixo do cartão principal do Perfil. */
 .settings-section:has(#settingsAccountGrid:empty){display:none}.profile-settings-hub{width:100%}.profile-settings-hub>.settings-grid{display:grid;grid-template-columns:1fr;gap:15px}.profile-settings-hub .settings-card{min-width:0;padding:clamp(22px,3vw,32px)}.profile-settings-hub .appearance-card{grid-column:1}.lifetime-price-card>.landing-cta,.savings-lifetime-cta{position:relative;z-index:6;pointer-events:auto}.lifetime-price-card>.landing-cta:focus-visible,.savings-lifetime-cta:focus-visible{outline:3px solid rgba(var(--theme-accent-rgb),.55);outline-offset:4px}@media(max-width:620px){.profile-settings-hub .settings-card{padding:18px}}
