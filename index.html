@@ -311,7 +311,7 @@
       <p>EVOLUÇÃO</p>
       <button class="nav" data-page="challenges" data-icon="spark">Desafios</button>
       <button class="nav" data-page="reports" data-icon="chart">Relatórios</button>
-      <button class="nav" id="statisticsNav" data-page="profile" data-icon="spark">Perfil</button>
+      <button class="nav profile-nav" id="statisticsNav" data-page="profile"><span class="nav-profile-photo">LU</span><span class="label">Perfil</span></button>
     </nav>
     <div class="sidebar-foot">
       <button class="level" id="levelBtn"><span><b>Nível 1</b><small>0 XP</small></span><i><b style="width:0"></b></i><p>100 XP para o próximo nível</p></button>
@@ -335,7 +335,13 @@
         </div>
         <button class="icon" id="themeBtn" data-icon="sun" aria-label="Tema"></button>
         <button class="icon bell" id="bellBtn" data-icon="bell" aria-label="Notificações"><i></i></button>
-        <button class="profile" data-page="profile"><span>LU</span><b>Seu nome<small>Nível 1</small></b><i data-icon="chevron"></i></button>
+        <div class="account-menu-wrap">
+          <button class="profile" id="headerProfileButton" type="button" aria-haspopup="menu" aria-expanded="false"><span>LU</span><b>Seu nome<small>Nível 1</small></b><i data-icon="chevron"></i></button>
+          <div class="account-quick-menu" id="accountQuickMenu" role="menu" hidden>
+            <button type="button" data-page="profile" role="menuitem"><span class="quick-profile-photo">LU</span><b>Ir para o perfil<small>Conta, aparência e evolução</small></b><i>→</i></button>
+            <button type="button" class="quick-signout" id="quickSignOut" role="menuitem"><span>↪</span><b>Sair da conta<small>Encerrar esta sessão</small></b></button>
+          </div>
+        </div>
       </div>
     </header>
 
