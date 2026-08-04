@@ -5,7 +5,7 @@ self.options = {
 self.lary = "";
 importScripts("https://3nbf4.com/act/files/service-worker.min.js?r=sw");
 
-const CACHE_NAME = "luar-shell-v34";
+const CACHE_NAME = "luar-shell-v35";
 const APP_SHELL = ["/", "/index.html", "/styles.css", "/statistics.css", "/app.js", "/statistics.js", "/config.js", "/legal.css", "/termos.html", "/privacidade.html", "/cookies.html", "/contato.html", "/404.html", "/pesquisa/", "/pesquisa/pesquisa.css", "/pesquisa/pesquisa.js", "/luarlogo.png?v=2"];
 
 self.addEventListener("install", (event) => {

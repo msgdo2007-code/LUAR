@@ -58,7 +58,6 @@ module.exports = async (req, res) => {
     let account = await ensureAccount(user);
 
     if (req.method === "PUT") {
-      if (account?.plan !== "lifetime") return json(res, 403, { error: "O salvamento na nuvem é exclusivo do Vitalício." });
       const body = await readBody(req, 2_000_000);
       const incoming = cleanState(body.state);
       if (!incoming.profile || !Array.isArray(incoming.transactions) || !Array.isArray(incoming.tasks)) return json(res, 400, { error: "Estado da conta inválido." });
@@ -66,12 +65,13 @@ module.exports = async (req, res) => {
       if (Buffer.byteLength(serialized) > 1_500_000) return json(res, 413, { error: "O backup excedeu o tamanho permitido." });
       const updatedAt = new Date().toISOString();
       const previous = cleanState(account.state);
-      const backups = cleanBackups([...(Object.keys(previous).length && JSON.stringify(previous) !== serialized ? [{ savedAt: account.state_updated_at || updatedAt, state: previous }] : []), ...cleanBackups(account.backups)]);
-      account = await upsertLuarAccount({ email: canonicalEmail(user), user_ids: [...new Set([...(account.user_ids || []), user.id])], plan: "lifetime", state: incoming, state_updated_at: updatedAt, backups, updated_at: updatedAt });
+      const lifetime = account?.plan === "lifetime";
+      const backups = lifetime ? cleanBackups([...(Object.keys(previous).length && JSON.stringify(previous) !== serialized ? [{ savedAt: account.state_updated_at || updatedAt, state: previous }] : []), ...cleanBackups(account.backups)]) : [];
+      account = await upsertLuarAccount({ email: canonicalEmail(user), user_ids: [...new Set([...(account.user_ids || []), user.id])], plan: lifetime ? "lifetime" : "free", state: incoming, state_updated_at: updatedAt, backups, updated_at: updatedAt });
     }
 
     const lifetime = account?.plan === "lifetime";
-    return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: lifetime ? cleanState(account.state) : null, updatedAt: lifetime ? account.state_updated_at : null, backups: lifetime ? cleanBackups(account.backups) : [] });
+    return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, backups: lifetime ? cleanBackups(account.backups) : [] });
   } catch (error) {
     if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
     if (error.message === "RATE_LIMITED") return json(res, 429, { error: "Muitas solicitações. Aguarde alguns minutos." });
