@@ -18,7 +18,7 @@ const cleanBackups = (value) => {
   let totalBytes = 0;
   for (const candidate of value.slice(0, 8)) {
     if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) continue;
-    const backup = { savedAt: candidate.savedAt || null, state: snapshotState(candidate.state) };
+    const backup = { savedAt: candidate.savedAt || null, state: snapshotState(candidate.state), manual: candidate.manual === true };
     const bytes = Buffer.byteLength(JSON.stringify(backup));
     if (bytes > 2_000_000 || totalBytes + bytes > 2_000_000) break;
     kept.push(backup);
@@ -68,12 +68,13 @@ module.exports = async (req, res) => {
       const previous = cleanState(account.state);
       if (stateHasContent(previous) && !stateHasContent(incoming) && body.allowEmpty !== true) return json(res, 409, { error: "O salvamento vazio foi bloqueado para proteger seus dados." });
       const lifetime = account?.plan === "lifetime";
-      const backups = lifetime ? cleanBackups([...(Object.keys(previous).length && JSON.stringify(previous) !== serialized ? [{ savedAt: account.state_updated_at || updatedAt, state: previous }] : []), ...cleanBackups(account.backups)]) : [];
+      const existingBackups = cleanBackups(account.backups);
+      const backups = lifetime ? cleanBackups(body.createBackup === true ? [{ savedAt: updatedAt, state: incoming, manual: true }, ...existingBackups] : existingBackups) : [];
       account = await upsertLuarAccount({ email: canonicalEmail(user), user_ids: [...new Set([...(account.user_ids || []), user.id])], plan: lifetime ? "lifetime" : "free", state: incoming, state_updated_at: updatedAt, backups, updated_at: updatedAt });
     }
 
     const lifetime = account?.plan === "lifetime";
-    return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, backups: lifetime ? cleanBackups(account.backups) : [] });
+    return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, backups: lifetime ? cleanBackups(account.backups).filter((backup) => backup.manual) : [] });
   } catch (error) {
     if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
     if (error.message === "RATE_LIMITED") return json(res, 429, { error: "Muitas solicitações. Aguarde alguns minutos." });
