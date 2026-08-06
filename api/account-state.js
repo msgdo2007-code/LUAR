@@ -1,6 +1,7 @@
 const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat } = require("./_lib");
 
 const cleanState = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
+const stateHasContent = (state) => ["transactions", "tasks", "habits", "goals", "subscriptions", "wishlist", "investments", "events", "moods", "notes", "focusSessions"].some((key) => Array.isArray(state?.[key]) && state[key].length);
 const embeddedImage = (value) => /^data:image\/(?:png|jpe?g|webp);base64,/i.test(String(value || ""));
 const snapshotState = (value) => {
   const state = cleanState(value);
@@ -65,6 +66,7 @@ module.exports = async (req, res) => {
       if (Buffer.byteLength(serialized) > 1_500_000) return json(res, 413, { error: "O backup excedeu o tamanho permitido." });
       const updatedAt = new Date().toISOString();
       const previous = cleanState(account.state);
+      if (stateHasContent(previous) && !stateHasContent(incoming) && body.allowEmpty !== true) return json(res, 409, { error: "O salvamento vazio foi bloqueado para proteger seus dados." });
       const lifetime = account?.plan === "lifetime";
       const backups = lifetime ? cleanBackups([...(Object.keys(previous).length && JSON.stringify(previous) !== serialized ? [{ savedAt: account.state_updated_at || updatedAt, state: previous }] : []), ...cleanBackups(account.backups)]) : [];
       account = await upsertLuarAccount({ email: canonicalEmail(user), user_ids: [...new Set([...(account.user_ids || []), user.id])], plan: lifetime ? "lifetime" : "free", state: incoming, state_updated_at: updatedAt, backups, updated_at: updatedAt });
