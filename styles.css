@@ -1362,3 +1362,14 @@ body.printing-report #reports [data-report-chart]{display:block!important}
 @media(max-width:1100px){#dashboard .orbit-goals-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:900px){#dashboard .finance-plan-preview{grid-template-columns:1fr;min-height:0}#dashboard .finance-plan-preview>.budget-percent-chart.budget-orbit-chart{grid-template-columns:240px minmax(250px,1fr);gap:28px}}
 @media(max-width:700px){#dashboard .orbit-goals-row{grid-template-columns:1fr}#dashboard .orbit-goals-row>.subscription-vault-preview{min-height:230px}#dashboard .finance-plan-preview>.budget-percent-chart.budget-orbit-chart{grid-template-columns:1fr}.finance-plan-preview .budget-percent-chart.budget-orbit-chart>.budget-orbit-visual{width:min(240px,78vw)}.budget-orbit-legend>button{grid-template-columns:10px 1fr 48px}.budget-orbit-legend>button>u{grid-column:2/4}}
+
+/* Orçamento alinhado em faixas: resumo separado e donut sem texto sobreposto. */
+#dashboard .finance-plan-preview{display:flex!important;flex-direction:column;min-height:0;height:auto;padding:26px}
+#dashboard .finance-plan-preview>.panel-head{width:100%}
+#dashboard .finance-plan-preview>.portfolio-hero-value{width:100%;margin:20px 0 0;padding:18px 0 20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+#dashboard .finance-plan-preview>.portfolio-hero-value h2{font-variant-numeric:tabular-nums}
+#dashboard .finance-plan-preview>.budget-percent-chart.budget-orbit-chart{width:100%;grid-template-columns:minmax(220px,.65fr) minmax(420px,1.35fr);grid-row:auto;margin:0;padding:28px 0 4px;border:0;gap:52px}
+.finance-plan-preview .budget-percent-chart.budget-orbit-chart>.budget-orbit-visual:after{display:none}
+.budget-orbit-hole{position:absolute;inset:27%;border-radius:50%;background:var(--surface);box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)}
+@media(max-width:900px){#dashboard .finance-plan-preview{padding:22px}#dashboard .finance-plan-preview>.budget-percent-chart.budget-orbit-chart{grid-template-columns:220px minmax(300px,1fr);gap:30px}}
+@media(max-width:700px){#dashboard .finance-plan-preview{padding:18px}#dashboard .finance-plan-preview>.portfolio-hero-value{align-items:flex-start;flex-direction:column;gap:8px}#dashboard .finance-plan-preview>.budget-percent-chart.budget-orbit-chart{grid-template-columns:1fr;gap:22px;padding-top:24px}.budget-orbit-hole{inset:28%}}
