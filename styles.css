@@ -1327,3 +1327,15 @@ body.printing-report #reports [data-report-chart]{display:block!important}
 /* Navegação do calendário anual, incluindo anos futuros. */
 .agenda-year-card .panel-head{gap:14px;flex-wrap:wrap}.agenda-year-nav{display:flex;align-items:center;gap:6px;margin-left:auto}.agenda-year-nav button{min-width:34px;height:34px;padding:0 10px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.025);color:var(--text);font-size:9px;font-weight:750;cursor:pointer}.agenda-year-nav button:hover{border-color:var(--theme-accent);color:var(--theme-accent)}
 @media(max-width:700px){.finance-plan-preview .budget-percent-chart.budget-orbit-chart{grid-template-columns:1fr}.finance-plan-preview .budget-percent-chart.budget-orbit-chart>.budget-orbit-visual{grid-column:1;grid-row:auto;width:min(260px,86vw)}.budget-orbit-legend{width:100%}.agenda-year-nav{order:3;margin-left:0}.agenda-year-card .holiday-toggle{margin-left:auto}}
+
+/* O orçamento ocupa uma linha inteira para o gráfico não ser recortado. */
+#dashboard .finance-plan-preview{grid-column:1/-1;grid-row:2;display:grid!important;grid-template-columns:minmax(250px,.8fr) minmax(480px,1.2fr);grid-template-rows:auto auto 1fr;column-gap:34px;align-items:start;height:auto;min-height:520px;padding:26px;overflow:hidden}
+#dashboard .finance-plan-preview>.panel-head{grid-column:1/-1;grid-row:1}
+#dashboard .finance-plan-preview>.portfolio-hero-value{grid-column:1;grid-row:2;margin-top:24px}
+#dashboard .finance-plan-preview>.budget-preview-bars{grid-column:1;grid-row:3;align-self:start;margin-top:24px;gap:16px}
+#dashboard .finance-plan-preview>.budget-percent-chart.budget-orbit-chart{grid-column:2;grid-row:2/4;align-self:center;margin:0;padding:6px 0 0;border-top:0}
+#dashboard .subscription-vault-preview{grid-column:1/-1;grid-row:3;height:auto;min-height:320px}
+#dashboard .finance-plan-preview .budget-preview-bars>span{grid-template-columns:82px minmax(90px,1fr) auto;gap:12px}
+#dashboard .finance-plan-preview .budget-preview-bars i{height:9px}
+@media(max-width:900px){#dashboard .finance-plan-preview{grid-template-columns:1fr;grid-template-rows:auto;min-height:0;padding:22px}#dashboard .finance-plan-preview>.panel-head,#dashboard .finance-plan-preview>.portfolio-hero-value,#dashboard .finance-plan-preview>.budget-preview-bars,#dashboard .finance-plan-preview>.budget-percent-chart.budget-orbit-chart{grid-column:1;grid-row:auto}#dashboard .finance-plan-preview>.budget-percent-chart.budget-orbit-chart{margin-top:26px;padding-top:24px;border-top:1px solid var(--border)}#dashboard .subscription-vault-preview{grid-row:auto}}
+@media(max-width:520px){#dashboard .finance-plan-preview{padding:18px}#dashboard .finance-plan-preview .portfolio-hero-value>em{max-width:100%;text-align:left}#dashboard .finance-plan-preview .budget-preview-bars>span{grid-template-columns:68px minmax(70px,1fr)}#dashboard .finance-plan-preview .budget-preview-bars em{grid-column:2;text-align:left}#dashboard .finance-plan-preview>.budget-percent-chart.budget-orbit-chart{overflow:visible}}
