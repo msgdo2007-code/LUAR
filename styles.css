@@ -627,6 +627,16 @@ body.light input[type="date"]::-webkit-calendar-picker-indicator{filter:none}
 .year-event-tooltip .holiday-detail b{color:#ffd178}
 .holiday-event{border-color:rgba(255,197,92,.22);background:rgba(255,197,92,.045)}
 .holiday-event>i{width:24px;height:24px;margin:0;background:none;box-shadow:none;font-style:normal}
+.agenda-day.special{border-color:rgba(100,181,255,.3);background:rgba(100,181,255,.045)}
+.agenda-day.holiday.special{border-color:rgba(255,197,92,.38);background:linear-gradient(135deg,rgba(255,197,92,.07),rgba(100,181,255,.065))}
+.agenda-day .special-label{background:rgba(100,181,255,.11);color:#8dcbff}
+.year-days>button.special{position:relative;background:rgba(100,181,255,.14);color:#8dcbff;font-weight:800;box-shadow:inset 0 0 0 1px rgba(100,181,255,.2)}
+.year-days>button.holiday.special{background:linear-gradient(135deg,rgba(255,197,92,.18),rgba(100,181,255,.16));color:#f4d797}
+.year-days>button.special:hover .year-event-tooltip{display:grid;gap:8px}
+.year-event-tooltip{max-height:310px;overflow:auto}
+.year-event-tooltip .special-detail b{color:#8dcbff}
+.special-event{border-color:rgba(100,181,255,.23);background:rgba(100,181,255,.045)}
+.special-event>i{width:24px;height:24px;margin:0;background:rgba(100,181,255,.1);color:#8dcbff;box-shadow:none;font-style:normal}
 body.focus-running main>header{z-index:45;border-bottom-color:rgba(var(--theme-accent-rgb),.22);box-shadow:0 8px 30px rgba(0,0,0,.22)}
 body.focus-running #themeBtn{position:relative;z-index:46;border-color:rgba(var(--theme-accent-rgb),.32);box-shadow:0 0 18px rgba(var(--theme-accent-rgb),.12)}
 @media(max-width:780px){.holiday-toggle{height:32px;padding:0 8px;font-size:8px}.agenda-year-card>.panel-head{gap:10px}}
