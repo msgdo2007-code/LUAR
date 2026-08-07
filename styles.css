@@ -1424,3 +1424,35 @@ body.printing-report #reports [data-report-chart]{display:block!important}
   }
   #dashboard .budget-orbit-legend>button>u{grid-column:2/4}
 }
+
+/* Tooltip interativo da distribuição mensal. */
+#dashboard .finance-plan-preview .budget-orbit-visual{cursor:pointer}
+.budget-orbit-tooltip{
+  position:absolute;
+  z-index:4;
+  display:grid;
+  gap:4px;
+  width:168px;
+  padding:11px 13px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:12px;
+  background:rgba(10,13,11,.96);
+  color:#f4f7f5;
+  box-shadow:0 16px 40px rgba(0,0,0,.38);
+  pointer-events:none;
+  transform:translate(-50%,calc(-100% - 12px));
+  animation:budgetTooltipIn .16s ease both;
+  backdrop-filter:blur(14px);
+}
+.budget-orbit-tooltip[hidden]{display:none!important}
+.budget-orbit-tooltip[data-placement="below"]{transform:translate(-50%,12px)}
+.budget-orbit-tooltip>span{display:flex;align-items:center;gap:7px;color:#aab4ad;font-size:8px;font-weight:750}
+.budget-orbit-tooltip>span i{width:8px;height:8px;border-radius:2px;box-shadow:0 0 12px currentColor}
+.budget-orbit-tooltip>b{font:800 15px/1.2 var(--display);font-variant-numeric:tabular-nums}
+.budget-orbit-tooltip>small{color:#78837c;font-size:7px;font-weight:600}
+.budget-orbit-visual.inspecting{filter:saturate(1.08) brightness(1.03)}
+.budget-orbit-visual:focus-visible{outline:2px solid var(--theme-accent);outline-offset:5px}
+body.light .budget-orbit-tooltip{border-color:rgba(20,40,27,.12);background:rgba(255,255,255,.97);color:#142018;box-shadow:0 16px 38px rgba(28,65,39,.18)}
+body.light .budget-orbit-tooltip>span{color:#5f6d63}
+body.light .budget-orbit-tooltip>small{color:#7a877d}
+@keyframes budgetTooltipIn{from{opacity:0}to{opacity:1}}
