@@ -8,22 +8,21 @@
     *{box-sizing:border-box}
     html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,sans-serif;background:#101411;color:#eaf2ec}
     body{display:grid;place-items:center}
-    main{position:absolute;inset:0;display:grid;place-content:center;gap:6px;padding:14px;text-align:center;border:1px solid rgba(50,255,126,.13);background:radial-gradient(circle at 50% 10%,rgba(50,255,126,.08),transparent 55%)}
-    span{color:#32ff7e;font-size:8px;font-weight:800;letter-spacing:.15em}
-    strong{font-size:12px}
-    small{color:#8f9a92;font-size:9px}
-    button{margin:6px auto 0;padding:9px 14px;border:1px solid rgba(50,255,126,.35);border-radius:10px;background:rgba(50,255,126,.1);color:#32ff7e;font-size:10px;font-weight:750;cursor:pointer}
+    #adLoading{position:absolute;inset:0;display:grid;place-content:center;gap:5px;padding:12px;text-align:center;border:1px solid rgba(50,255,126,.13);background:radial-gradient(circle at 50% 10%,rgba(50,255,126,.08),transparent 55%);pointer-events:none}
+    #adLoading strong{font-size:10px}
+    #adLoading small{color:#8f9a92;font-size:8px}
+    body.ad-creative-ready #adLoading{display:none}
+    body>iframe,body>a,body>img{position:relative;z-index:2;max-width:100%;max-height:100%}
   </style>
 </head>
 <body>
-  <main>
-    <span>PUBLICIDADE</span>
-    <strong>Conteúdo patrocinado</strong>
-    <small>O anúncio é exibido somente dentro deste espaço.</small>
-    <button type="button">Ver conteúdo patrocinado</button>
-  </main>
+  <div id="adLoading"><strong>Carregando anúncio</strong><small>Conteúdo patrocinado</small></div>
   <script>(function(s){s.dataset.zone='11495936',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   <script>(function(s){s.dataset.zone='11495938',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   <script src="https://quge5.com/88/tag.min.js" data-zone="266610" async data-cfasync="false"></script>
+  <script>
+    const adObserver=new MutationObserver(()=>{if(document.body.querySelector('iframe,a[href],img'))document.body.classList.add('ad-creative-ready')});
+    adObserver.observe(document.body,{childList:true,subtree:true});
+  </script>
 </body>
 </html>
