@@ -618,8 +618,10 @@ input[type="date"]{color-scheme:dark;accent-color:var(--theme-accent)}
 input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;filter:invert(78%) sepia(88%) saturate(630%) hue-rotate(82deg) brightness(105%);opacity:.9}
 body.light input[type="date"]{color-scheme:light}
 body.light input[type="date"]::-webkit-calendar-picker-indicator{filter:none}
-.holiday-toggle{align-self:center;height:36px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.025);color:var(--muted);font-size:9px;font-weight:700}
+.holiday-toggle,.special-dates-toggle{align-self:center;height:36px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.025);color:var(--muted);font-size:9px;font-weight:700;white-space:nowrap;cursor:pointer}
 .holiday-toggle.active{border-color:rgba(255,197,92,.35);background:rgba(255,197,92,.09);color:#ffc55c}
+.special-dates-toggle.active{border-color:rgba(100,181,255,.35);background:rgba(100,181,255,.09);color:#8dcbff}
+.special-dates-toggle:hover{border-color:rgba(100,181,255,.42);color:#8dcbff}
 .agenda-day.holiday{border-color:rgba(255,197,92,.32);background:rgba(255,197,92,.045)}
 .agenda-day .holiday-label{background:rgba(255,197,92,.12);color:#ffd178}
 .year-days>button.holiday{position:relative;background:rgba(255,197,92,.16);color:#ffd178;font-weight:800;box-shadow:inset 0 0 0 1px rgba(255,197,92,.22)}
@@ -639,7 +641,7 @@ body.light input[type="date"]::-webkit-calendar-picker-indicator{filter:none}
 .special-event>i{width:24px;height:24px;margin:0;background:rgba(100,181,255,.1);color:#8dcbff;box-shadow:none;font-style:normal}
 body.focus-running main>header{z-index:45;border-bottom-color:rgba(var(--theme-accent-rgb),.22);box-shadow:0 8px 30px rgba(0,0,0,.22)}
 body.focus-running #themeBtn{position:relative;z-index:46;border-color:rgba(var(--theme-accent-rgb),.32);box-shadow:0 0 18px rgba(var(--theme-accent-rgb),.12)}
-@media(max-width:780px){.holiday-toggle{height:32px;padding:0 8px;font-size:8px}.agenda-year-card>.panel-head{gap:10px}}
+@media(max-width:780px){.holiday-toggle,.special-dates-toggle{height:32px;padding:0 8px;font-size:8px}.agenda-year-card>.panel-head{gap:10px}}
 
 /* Créditos e outros projetos */
 .creator-card,.projects-card{grid-column:span 1}
@@ -1336,7 +1338,8 @@ body.printing-report #reports [data-report-chart]{display:block!important}
 
 /* Navegação do calendário anual, incluindo anos futuros. */
 .agenda-year-card .panel-head{gap:14px;flex-wrap:wrap}.agenda-year-nav{display:flex;align-items:center;gap:6px;margin-left:auto}.agenda-year-nav button{min-width:34px;height:34px;padding:0 10px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.025);color:var(--text);font-size:9px;font-weight:750;cursor:pointer}.agenda-year-nav button:hover{border-color:var(--theme-accent);color:var(--theme-accent)}
-@media(max-width:700px){.finance-plan-preview .budget-percent-chart.budget-orbit-chart{grid-template-columns:1fr}.finance-plan-preview .budget-percent-chart.budget-orbit-chart>.budget-orbit-visual{grid-column:1;grid-row:auto;width:min(260px,86vw)}.budget-orbit-legend{width:100%}.agenda-year-nav{order:3;margin-left:0}.agenda-year-card .holiday-toggle{margin-left:auto}}
+.agenda-year-nav [data-year-current]{min-width:92px}.agenda-year-nav [data-year-period="current"]{border-color:rgba(var(--theme-accent-rgb),.28);color:var(--theme-accent)}.agenda-year-nav [data-year-period="future"]{border-color:rgba(100,181,255,.3);color:#8dcbff}.agenda-year-nav [data-year-period="past"]{border-color:rgba(255,197,92,.3);color:#ffc55c}
+@media(max-width:700px){.finance-plan-preview .budget-percent-chart.budget-orbit-chart{grid-template-columns:1fr}.finance-plan-preview .budget-percent-chart.budget-orbit-chart>.budget-orbit-visual{grid-column:1;grid-row:auto;width:min(260px,86vw)}.budget-orbit-legend{width:100%}.agenda-year-nav{order:3;margin-left:0}.agenda-year-card .holiday-toggle{margin-left:auto}.agenda-year-card .special-dates-toggle{order:2}.agenda-year-nav [data-year-current]{min-width:86px}}
 
 /* O orçamento ocupa uma linha inteira para o gráfico não ser recortado. */
 #dashboard .finance-plan-preview{grid-column:1/-1;grid-row:2;display:grid!important;grid-template-columns:minmax(250px,.8fr) minmax(480px,1.2fr);grid-template-rows:auto auto 1fr;column-gap:34px;align-items:start;height:auto;min-height:520px;padding:26px;overflow:hidden}
