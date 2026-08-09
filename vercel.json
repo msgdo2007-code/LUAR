@@ -2,13 +2,54 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
+      "source": "/contato.html",
+      "destination": "https://luarhub.site/contato",
+      "permanent": true
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "www.luarhub.site" }],
+      "destination": "https://luarhub.site/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "luarhub.com" }],
+      "destination": "https://luarhub.site/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.luarhub.com" }],
       "destination": "https://luarhub.site/$1",
       "permanent": true
     }
   ],
   "rewrites": [
+    {
+      "source": "/manifest.json",
+      "destination": "/manifest.webmanifest"
+    },
+    {
+      "source": "/campanhas/:slug(habitos|produtividade|financas|estudantes|metas|foco|vitalicio)",
+      "destination": "/api/seo-page?mode=campaign&slug=:slug"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/seo-page?mode=sitemap"
+    },
+    {
+      "source": "/blog",
+      "destination": "/api/blog"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/api/blog?slug=:slug"
+    },
+    {
+      "source": "/:slug(organizacao-pessoal|organizador-de-rotina|aplicativo-de-habitos|aplicativo-de-metas|lista-de-tarefas|gerenciador-de-tarefas|controle-financeiro-pessoal|agenda-pessoal|modo-foco|pomodoro-online|aplicativo-de-notas|diario-de-humor|controle-de-investimentos|backup-e-sincronizacao|estatisticas-de-produtividade|produtividade-com-gamificacao|alternativa-ao-habitica|alternativa-ao-notion|recursos|precos|sobre|contato|ajuda|faq|instalar|divulgar|novidades)",
+      "destination": "/api/seo-page?slug=:slug"
+    },
     {
       "source": "/pesquisa",
       "destination": "/pesquisa/index.html"
@@ -29,7 +70,14 @@
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+        { "key": "Cache-Control", "value": "no-store, max-age=0" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/monetag-slot.html",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
       ]
     },
     {

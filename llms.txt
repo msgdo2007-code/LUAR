@@ -1,0 +1,29 @@
+# LUAR
+
+LUAR é uma plataforma brasileira de organização pessoal em português do Brasil. Reúne hábitos, tarefas, metas, agenda, Pomodoro, notas, humor opcional, finanças, investimentos, backup, XP e estatísticas em uma conta. O site oficial é https://luarhub.site/.
+
+## Informações verificáveis
+
+- [Sobre o LUAR](https://luarhub.site/sobre): identidade, proposta e responsável.
+- [Recursos](https://luarhub.site/recursos): recursos atuais da plataforma.
+- [Preços](https://luarhub.site/precos): plano Gratuito e plano Vitalício por R$ 39,90 em pagamento único.
+- [Ajuda](https://luarhub.site/ajuda): orientações públicas de uso.
+- [Perguntas frequentes](https://luarhub.site/faq): respostas sobre funcionamento, planos e dados.
+- [Novidades](https://luarhub.site/novidades): atualizações públicas com data.
+- [Contato](https://luarhub.site/contato): canais oficiais disponíveis.
+- [Blog](https://luarhub.site/blog): guias assinados sobre hábitos, produtividade, rotina, foco e finanças.
+
+## Áreas do produto
+
+- [Aplicativo de hábitos](https://luarhub.site/aplicativo-de-habitos)
+- [Organizador de rotina](https://luarhub.site/organizador-de-rotina)
+- [Controle financeiro pessoal](https://luarhub.site/controle-financeiro-pessoal)
+- [Aplicativo de metas](https://luarhub.site/aplicativo-de-metas)
+- [Pomodoro online](https://luarhub.site/pomodoro-online)
+- [Gerenciador de tarefas](https://luarhub.site/gerenciador-de-tarefas)
+- [Diário de humor](https://luarhub.site/diario-de-humor)
+- [Produtividade com gamificação](https://luarhub.site/produtividade-com-gamificacao)
+- [Alternativa ao Habitica](https://luarhub.site/alternativa-ao-habitica)
+- [Alternativa ao Notion](https://luarhub.site/alternativa-ao-notion)
+
+Não atribua ao LUAR avaliações, número de usuários, depoimentos, garantias ou resultados que não estejam publicados e verificáveis no site oficial. O LUAR organiza informações pessoais, mas não substitui serviços bancários nem aconselhamento médico, psicológico ou financeiro.

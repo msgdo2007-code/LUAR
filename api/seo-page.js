@@ -1,0 +1,215 @@
+const { articles, published } = require('./blog-data');
+const campaigns = {
+  habitos: ['Crie hábitos que continuam depois da empolgação.', 'Registre uma vez por dia, acompanhe sequências e conecte hábitos à sua rotina.', ['Até quatro hábitos no gratuito', 'Histórico e sequência', 'XP e evolução pessoal'], '/aplicativo-de-habitos'],
+  produtividade: ['Pare de espalhar sua produtividade em vários aplicativos.', 'Tarefas, hábitos, foco, metas e evolução trabalham juntos no LUAR.', ['Visão geral conectada', 'Tarefas e foco', 'Gamificação com propósito'], '/produtividade-com-gamificacao'],
+  financas: ['Entenda para onde seu dinheiro está indo.', 'Organize ganhos, gastos, compras, metas e patrimônio em uma visão pessoal.', ['Orçamento do mês', 'Metas financeiras', 'Assinaturas e investimentos'], '/controle-financeiro-pessoal'],
+  estudantes: ['Uma rotina de estudos que cabe na semana real.', 'Planeje entregas, proteja sessões de foco e acompanhe sua constância.', ['Agenda e tarefas', 'Pomodoro online', 'Hábitos de estudo'], '/blog/como-organizar-a-rotina-de-estudos'],
+  metas: ['Transforme objetivos em progresso visível.', 'Defina o destino, registre avanços e acompanhe quanto falta.', ['Valor e progresso', 'Histórico de depósitos', 'Metas conectadas ao patrimônio'], '/aplicativo-de-metas'],
+  foco: ['Comece uma sessão de foco sem instalar nada.', 'Use timer, cronômetro e sons ambientes para estudar ou trabalhar.', ['Pomodoro no navegador', 'Tempos rápidos', 'Histórico de foco'], '/pomodoro-online'],
+  vitalicio: ['Organize sua vida sem mensalidade.', 'O LUAR Vitalício remove limites e libera os recursos premium por um pagamento único.', ['Registros ilimitados', 'Backup e personalização', 'Sem anúncios dentro da plataforma'], '/precos']
+};
+const pages = {
+  'organizacao-pessoal': {
+    title: 'Aplicativo de organização pessoal completo',
+    description: 'Organize dinheiro, hábitos, metas, tarefas, agenda e evolução em um único aplicativo de organização pessoal.',
+    headline: 'Sua vida organizada em um único lugar.',
+    intro: 'O LUARHUB reúne as áreas que normalmente ficam espalhadas em vários aplicativos. Você registra, acompanha e entende sua evolução sem perder o histórico.',
+    problem: 'Quando tarefas, dinheiro, hábitos e metas vivem separados, revisar a rotina vira mais uma obrigação. O LUAR conecta esses registros em uma visão simples.',
+    benefits: ['Dashboard com sua evolução diária', 'Finanças, metas e investimentos conectados', 'Hábitos, tarefas, agenda e notas', 'Backup, histórico, XP e personalização'],
+    steps: ['Crie sua conta gratuitamente', 'Escolha o que deseja organizar primeiro', 'Registre sua rotina e acompanhe o progresso'],
+    faq: [['O LUAR é gratuito?', 'Sim. Existe um plano gratuito para começar e um plano Vitalício para liberar limites e recursos premium.'], ['Preciso instalar?', 'Não. O LUAR funciona no navegador do computador e do celular.'], ['Meus dados ficam salvos?', 'Os registros são vinculados à conta e o plano Vitalício inclui recursos adicionais de backup.']]
+  },
+  'aplicativo-de-habitos': {
+    title: 'Aplicativo de hábitos para criar constância',
+    description: 'Crie hábitos, registre uma vez por dia, acompanhe sequências e transforme pequenas ações em uma rotina consistente.',
+    headline: 'Hábitos que continuam depois da empolgação.',
+    intro: 'Use o LUARHUB como aplicativo de hábitos para registrar sua rotina, acompanhar sequências e enxergar o progresso de cada dia.',
+    problem: 'Uma lista não mostra constância. O LUAR conecta registros diários, sequência, XP e visão semanal para você entender o que realmente está funcionando.',
+    benefits: ['Registro diário simples', 'Sequência atual e recorde', 'Progresso semanal visível', 'Hábitos conectados a tarefas e foco'],
+    steps: ['Escolha um hábito pequeno e claro', 'Registre a conclusão uma vez por dia', 'Revise sua sequência e ajuste a rotina'],
+    faq: [['Posso acompanhar vários hábitos?', 'Sim. O plano gratuito permite começar com até quatro hábitos e o Vitalício remove esse limite.'], ['O registro pode ser repetido no mesmo dia?', 'Não. Cada hábito conta uma conclusão por dia para preservar a sequência real.'], ['Consigo ver meu histórico?', 'Sim. Os registros alimentam sua evolução e as análises disponíveis no LUAR.']]
+  },
+  'aplicativo-de-metas': {
+    title: 'Aplicativo de metas pessoais e financeiras',
+    description: 'Defina metas, acompanhe valores acumulados, registre depósitos e veja a porcentagem geral dos seus objetivos.',
+    headline: 'Metas com valor, prazo e progresso real.',
+    intro: 'O LUARHUB transforma objetivos soltos em metas acompanháveis. Defina o destino, registre avanços e veja quanto falta para concluir.',
+    problem: 'Uma meta sem acompanhamento vira intenção. Com valores, histórico de depósitos e porcentagem visível, cada avanço ganha contexto.',
+    benefits: ['Valor planejado e acumulado', 'Histórico de depósitos', 'Progresso individual e geral', 'Previsão e patrimônio de metas'],
+    steps: ['Crie a meta e informe o valor final', 'Registre cada valor guardado', 'Acompanhe a porcentagem até a conclusão'],
+    faq: [['Posso usar para metas não financeiras?', 'Sim. Você pode descrever qualquer objetivo e usar o valor ou progresso como referência.'], ['Quantas metas existem no gratuito?', 'O plano gratuito permite até duas metas e o Vitalício oferece uso ilimitado.'], ['O valor guardado aparece no financeiro?', 'Sim. O patrimônio de metas participa das visões financeiras do LUAR.']]
+  },
+  'lista-de-tarefas': {
+    title: 'Lista de tarefas online com progresso e organização',
+    description: 'Organize tarefas a fazer, em progresso e concluídas com prioridade, datas, modelos e acompanhamento de produtividade.',
+    headline: 'Tire tarefas da cabeça e coloque em movimento.',
+    intro: 'A lista de tarefas do LUARHUB organiza o que precisa ser feito e mostra o avanço entre tarefas pendentes, em progresso e concluídas.',
+    problem: 'Anotar não basta quando a lista cresce. Prioridade, estado e contexto ajudam a escolher o próximo passo sem transformar organização em confusão.',
+    benefits: ['Quadro a fazer, em progresso e concluído', 'Prioridades e datas', 'Modelos para começar rápido', 'Taxa de conclusão e XP'],
+    steps: ['Registre uma tarefa objetiva', 'Defina prioridade e data quando necessário', 'Mova a tarefa até a conclusão'],
+    faq: [['Quantas tarefas posso criar grátis?', 'O plano gratuito permite até três tarefas ativas para experimentar o fluxo.'], ['Existem modelos?', 'Sim. O LUAR possui sugestões para estudos, trabalho, finanças, projetos e outras rotinas.'], ['Tarefas concluídas entram nas estatísticas?', 'Sim. As conclusões alimentam produtividade, XP e histórico.']]
+  },
+  'controle-financeiro-pessoal': {
+    title: 'Controle financeiro pessoal online e simples',
+    description: 'Registre ganhos, gastos, compras, assinaturas, metas e investimentos em um controle financeiro pessoal integrado.',
+    headline: 'Entenda seu dinheiro sem depender de planilhas.',
+    intro: 'O controle financeiro do LUARHUB reúne recebimentos, gastos, compras, orçamento, metas e patrimônio em uma visão conectada.',
+    problem: 'O saldo do banco mostra quanto existe agora, mas não explica para onde o dinheiro foi. O LUAR organiza o histórico e mostra a composição do seu mês.',
+    benefits: ['Receitas, gastos e compras separados', 'Orçamento mensal interativo', 'Metas e patrimônio total', 'Assinaturas e investimentos'],
+    steps: ['Informe seus recebimentos', 'Registre gastos e compras por categoria', 'Revise orçamento, saldo e patrimônio'],
+    faq: [['O LUAR substitui meu banco?', 'Não. Ele é uma ferramenta de organização pessoal e não movimenta seu dinheiro.'], ['Consigo acompanhar assinaturas?', 'Sim. O cofre de assinaturas organiza recorrências, vencimentos e valores mensais.'], ['Há gráficos financeiros?', 'Sim. O LUAR apresenta evolução, distribuição do orçamento e indicadores financeiros.']]
+  },
+  'agenda-pessoal': {
+    title: 'Agenda pessoal online com calendário anual',
+    description: 'Organize compromissos por dia, consulte todos os eventos e acompanhe feriados e datas especiais em uma agenda online.',
+    headline: 'Seus compromissos no tempo certo.',
+    intro: 'A agenda pessoal do LUARHUB organiza eventos por dia, mês e ano para você encontrar compromissos sem percorrer várias ferramentas.',
+    problem: 'Compromissos espalhados aumentam o risco de esquecimento. Uma agenda conectada à sua rotina deixa cada data visível no contexto do dia.',
+    benefits: ['Calendário mensal selecionável', 'Lista de todos os compromissos', 'Edição rápida de eventos', 'Feriados e datas especiais do Brasil'],
+    steps: ['Escolha um dia no calendário', 'Adicione horário e descrição', 'Consulte ou edite todos os compromissos'],
+    faq: [['Posso ver anos futuros?', 'Sim. A visão anual permite navegar por anos passados e futuros.'], ['Quais datas aparecem?', 'O LUAR pode exibir feriados nacionais, estaduais e datas especiais brasileiras.'], ['Posso desativar datas especiais?', 'Sim. Contas com acesso ao recurso podem controlar essa exibição.']]
+  },
+  'modo-foco': {
+    title: 'Modo foco online com timer e cronômetro',
+    description: 'Use timer, cronômetro, sons ambientes e sessões personalizadas para estudar, trabalhar e acompanhar seu tempo de foco.',
+    headline: 'Um espaço para fazer apenas uma coisa.',
+    intro: 'O modo foco do LUARHUB combina timer, cronômetro e ambiente sonoro para reduzir distrações e registrar seu tempo de concentração.',
+    problem: 'Foco não depende apenas de vontade. Um início claro, um tempo definido e menos decisões ajudam a entrar no ritmo e permanecer nele.',
+    benefits: ['Timer com tempos rápidos', 'Cronômetro sem limite definido', 'Sons ambientes gratuitos', 'Histórico de minutos focados'],
+    steps: ['Escolha um tempo ou ative o cronômetro', 'Selecione um ambiente se desejar', 'Conclua a sessão e registre o tempo'],
+    faq: [['Qual o tempo máximo personalizado?', 'O tempo personalizado aceita até 24 horas.'], ['O ambiente é gratuito?', 'Sim. Os sons ambientes principais ficam disponíveis no plano gratuito.'], ['O tempo entra no perfil?', 'Sim. Sessões concluídas alimentam seu histórico de foco e evolução.']]
+  },
+  'aplicativo-de-notas': {
+    title: 'Aplicativo de notas online para ideias e projetos',
+    description: 'Guarde ideias, projetos e lembretes em notas pesquisáveis, organizadas e vinculadas à sua conta LUAR.',
+    headline: 'Um lugar calmo para ideias que não podem sumir.',
+    intro: 'As notas do LUARHUB ajudam a guardar pensamentos, projetos e referências com pesquisa rápida e acesso pela mesma conta da sua organização.',
+    problem: 'Ideias perdem valor quando ficam espalhadas em conversas, papéis e aplicativos diferentes. Centralizar torna mais fácil encontrar e continuar.',
+    benefits: ['Notas em cards visuais', 'Pesquisa por conteúdo', 'Edição e exclusão simples', 'Backup junto com os demais registros'],
+    steps: ['Crie uma nota com título claro', 'Registre o contexto necessário', 'Pesquise e atualize quando a ideia avançar'],
+    faq: [['Quantas notas posso criar grátis?', 'O plano gratuito permite até cinco notas e o Vitalício oferece uso ilimitado.'], ['As notas entram no backup?', 'Sim. Elas fazem parte do arquivo de backup da sua conta.'], ['Posso pesquisar notas antigas?', 'Sim. A página possui pesquisa para localizar registros.']]
+  },
+  'controle-de-investimentos': {
+    title: 'Controle de investimentos e patrimônio online',
+    description: 'Acompanhe carteira, ativos, aportes, distribuição e patrimônio junto com metas e finanças pessoais.',
+    headline: 'Seu patrimônio visto como uma jornada.',
+    intro: 'O LUARHUB conecta investimentos, patrimônio, metas e finanças para mostrar como cada parte contribui para sua evolução financeira.',
+    problem: 'Uma carteira isolada não mostra o restante da vida financeira. Integrar ativos, reservas e objetivos cria uma visão mais útil do patrimônio.',
+    benefits: ['Carteira por tipo de ativo', 'Aportes e histórico', 'Distribuição do patrimônio', 'Integração com metas financeiras'],
+    steps: ['Cadastre seus ativos e valores', 'Registre novos aportes', 'Acompanhe distribuição e evolução'],
+    faq: [['O LUAR recomenda investimentos?', 'Não. A ferramenta organiza informações pessoais e não oferece recomendação financeira.'], ['Quais ativos posso registrar?', 'A estrutura contempla diferentes tipos de investimentos e composição de carteira.'], ['Patrimônio inclui metas?', 'As visões do LUAR podem combinar investimentos, saldo e patrimônio guardado em metas.']]
+  },
+  'backup-e-sincronizacao': {
+    title: 'Backup e sincronização de dados pessoais',
+    description: 'Exporte, importe e proteja os registros do LUAR com backup completo e recursos de salvamento vinculados à conta.',
+    headline: 'Sua evolução não deveria desaparecer.',
+    intro: 'O sistema de backup do LUARHUB reúne tarefas, hábitos, metas, finanças, notas e outros registros em uma cópia que pode ser restaurada.',
+    problem: 'Trocar de aparelho ou limpar o navegador não deve apagar sua história. Backups tornam os dados portáveis e reduzem o risco de perda.',
+    benefits: ['Exportação completa em arquivo', 'Importação com validação de limites', 'Dados vinculados à conta', 'Backup manual na nuvem no Vitalício'],
+    steps: ['Exporte ou salve uma cópia', 'Guarde o backup em local seguro', 'Importe ou restaure quando precisar'],
+    faq: [['O backup inclui todas as áreas?', 'Sim. A cópia reúne os registros suportados pela plataforma.'], ['O plano gratuito pode importar?', 'Sim, respeitando os limites gratuitos de cada categoria.'], ['Backup na nuvem é gratuito?', 'O backup manual na nuvem é um recurso totalmente bloqueado para contas gratuitas.']]
+  },
+  'estatisticas-de-produtividade': {
+    title: 'Estatísticas de produtividade, hábitos e metas',
+    description: 'Acompanhe tarefas, hábitos, foco, metas, finanças, XP, conquistas e atividade anual em um perfil de evolução.',
+    headline: 'Veja a história que seus registros estão contando.',
+    intro: 'As estatísticas do LUARHUB transformam atividades diárias em uma visão de produtividade, constância, finanças, metas e conquistas.',
+    problem: 'Registrar sem revisar dificulta perceber evolução. Métricas bem organizadas mostram o que avançou, onde existe constância e qual pode ser o próximo passo.',
+    benefits: ['Produtividade semanal e mensal', 'Tempo de foco e hábitos concluídos', 'Progresso financeiro e de metas', 'XP, níveis, conquistas e atividade anual'],
+    steps: ['Use o LUAR durante sua rotina', 'Conclua tarefas, hábitos e sessões', 'Abra o perfil para revisar sua evolução'],
+    faq: [['O perfil é gratuito?', 'Sim. O perfil básico fica disponível para contas gratuitas.'], ['Quais análises são Vitalícias?', 'A página completa de evolução, gráficos, conquistas e atividade anual pertence ao plano Vitalício.'], ['Os dados resetam?', 'O histórico permanente é mantido nos registros da conta e nas cópias de segurança disponíveis.']]
+  }
+};
+
+Object.assign(pages, {
+  'organizador-de-rotina': {
+    title: 'Organizador de rotina online para planejar seu dia', description: 'Planeje hábitos, tarefas, agenda, foco e metas em um organizador de rotina online e gratuito.', headline: 'Uma rotina possível de seguir todos os dias.', intro: 'O organizador de rotina do LUAR conecta o que você precisa fazer, repetir e acompanhar. Assim, o planejamento não termina em uma lista esquecida.', problem: 'Uma rotina funcional precisa caber no dia real. O LUAR ajuda a começar pequeno, escolher prioridades e revisar o progresso sem exigir perfeição.', benefits: ['Hábitos e tarefas no mesmo fluxo', 'Agenda para compromissos', 'Modo foco com histórico', 'Visão diária e evolução'], steps: ['Escolha uma área para começar', 'Planeje poucas ações importantes', 'Revise o dia e ajuste a próxima rotina'], faq: [['O LUAR funciona como planejador de rotina?', 'Sim. Hábitos, tarefas, agenda, foco e metas formam uma visão integrada da rotina.'], ['Preciso planejar tudo?', 'Não. Começar com poucas ações claras costuma ser mais sustentável.'], ['Funciona no celular?', 'Sim. O site é responsivo e pode ser usado no navegador do celular.']]
+  },
+  'pomodoro-online': {
+    title: 'Pomodoro online gratuito para estudar e trabalhar', description: 'Use um Pomodoro online com timer, sons ambientes, cronômetro e histórico de foco no LUAR.', headline: 'Comece um ciclo de foco sem instalar nada.', intro: 'O Pomodoro online do LUAR oferece sessões rápidas para estudo e trabalho, além de cronômetro livre quando você não quiser definir um limite.', problem: 'A técnica Pomodoro divide o trabalho em ciclos e pausas. O objetivo não é correr contra o relógio, mas reduzir a dificuldade de começar e proteger um período de atenção.', benefits: ['Timer de foco no navegador', 'Tempos rápidos e personalizados', 'Sons ambientes', 'Minutos registrados no perfil'], steps: ['Escolha o tempo da sessão', 'Trabalhe em uma única atividade', 'Faça uma pausa e registre o ciclo'], faq: [['O Pomodoro do LUAR é gratuito?', 'Os tempos principais e ambientes ficam disponíveis gratuitamente.'], ['Posso usar outro tempo?', 'O plano Vitalício permite configurar sessões personalizadas de até 24 horas.'], ['Preciso criar conta?', 'A conta permite preservar o histórico e conectar o foco à sua evolução.']]
+  },
+  'gerenciador-de-tarefas': {
+    title: 'Gerenciador de tarefas online para organizar prioridades', description: 'Crie, priorize e conclua tarefas em um gerenciador online conectado a hábitos, agenda e produtividade.', headline: 'Prioridades claras sem uma lista infinita.', intro: 'O gerenciador de tarefas do LUAR mostra o que está a fazer, em progresso e concluído para facilitar a escolha do próximo passo.', problem: 'Uma lista longa trata tudo como igualmente urgente. Separar prioridade e andamento ajuda a agir com mais clareza.', benefits: ['Quadro visual de andamento', 'Prioridade e data', 'Modelos de rotina', 'Histórico de conclusões'], steps: ['Registre uma ação específica', 'Escolha prioridade e estado', 'Conclua e revise seu progresso'], faq: [['É gratuito?', 'O plano gratuito permite experimentar o fluxo com até três tarefas.'], ['Posso editar uma tarefa?', 'Sim. Os registros podem ser atualizados conforme o trabalho avança.'], ['Há gamificação?', 'Conclusões alimentam XP, níveis e estatísticas do perfil.']]
+  },
+  'diario-de-humor': {
+    title: 'Diário de humor online para acompanhar seus dias', description: 'Registre como você se sente e observe padrões em um diário de humor conectado à sua rotina.', headline: 'Observe seu humor sem transformar sentimentos em números frios.', intro: 'O diário de humor do LUAR é opcional. Quando ativado, permite registrar o dia e relacionar bem-estar com hábitos, foco e produtividade.', problem: 'Um registro curto ajuda a lembrar como o período realmente foi. Ele não substitui acompanhamento profissional e não oferece diagnóstico.', benefits: ['Recurso opcional no perfil', 'Um registro por dia', 'Calendário emocional', 'Relação com a evolução da rotina'], steps: ['Ative Humor no perfil', 'Escolha como o dia se pareceu', 'Revise padrões com cuidado e contexto'], faq: [['O diário faz diagnóstico?', 'Não. É apenas uma ferramenta pessoal de registro e reflexão.'], ['Posso esconder a categoria?', 'Sim. Humor começa desativado e pode ser controlado nas categorias visíveis.'], ['Meus registros são públicos?', 'Não. Eles pertencem aos dados da sua conta.']]
+  },
+  'produtividade-com-gamificacao': {
+    title: 'Produtividade com gamificação, XP e conquistas', description: 'Transforme tarefas, hábitos e foco em XP, níveis e conquistas sem perder o objetivo real da rotina.', headline: 'Progresso que você consegue ver e sentir.', intro: 'A gamificação do LUAR usa XP, níveis, missões e conquistas para tornar a evolução visível. As recompensas acompanham ações reais registradas na plataforma.', problem: 'Gamificação funciona melhor como feedback, não como pressão. Por isso, o LUAR conecta recompensas a tarefas concluídas, hábitos registrados e sessões de foco.', benefits: ['XP por ações reais', 'Níveis e universo do perfil', 'Conquistas permanentes', 'Missões diárias e semanais'], steps: ['Escolha uma ação útil', 'Conclua e registre de forma honesta', 'Acompanhe XP sem perder o objetivo principal'], faq: [['É parecido com um jogo?', 'A linguagem é inspirada em uma jornada cósmica, mas os registros continuam sendo de produtividade pessoal.'], ['Posso perder conquistas?', 'Conquistas desbloqueadas fazem parte do histórico permanente do perfil.'], ['A gamificação é gratuita?', 'O perfil básico é gratuito e análises completas pertencem ao Vitalício.']]
+  },
+  'alternativa-ao-habitica': {
+    title: 'Alternativa ao Habitica para hábitos e organização pessoal', description: 'Compare LUAR e Habitica com honestidade e conheça uma alternativa brasileira com finanças, metas, foco e gamificação.', headline: 'Uma alternativa ao Habitica com visão financeira e pessoal.', intro: 'Habitica transforma tarefas em RPG. O LUAR segue outro caminho: gamificação mais discreta, identidade cósmica e várias áreas da vida conectadas.', problem: 'A melhor escolha depende do estilo. Quem deseja RPG social pode preferir Habitica. Quem procura hábitos, finanças, metas, foco e patrimônio em uma plataforma brasileira pode se identificar com o LUAR.', benefits: ['Gamificação cósmica sem combate', 'Finanças e patrimônio integrados', 'Metas, agenda, notas e foco', 'Plano Vitalício em pagamento único'], steps: ['Compare o tipo de motivação desejado', 'Teste o plano gratuito do LUAR', 'Escolha a ferramenta que você realmente mantém'], faq: [['O LUAR copia o Habitica?', 'Não. São produtos com propostas, visual e recursos diferentes.'], ['Qual possui RPG mais completo?', 'Habitica é centrado em mecânicas de RPG. O LUAR prioriza organização integrada.'], ['Posso testar antes de escolher?', 'Sim. O LUAR possui plano gratuito.']]
+  },
+  'alternativa-ao-notion': {
+    title: 'Alternativa ao Notion para organizar a rotina pessoal', description: 'Conheça uma alternativa ao Notion pronta para hábitos, tarefas, metas, finanças e foco sem montar sistemas do zero.', headline: 'Organização pronta para usar, sem construir um sistema inteiro.', intro: 'Notion é uma ferramenta flexível para criar bancos de dados e páginas. O LUAR oferece uma experiência pronta para rotina pessoal, finanças e evolução.', problem: 'Flexibilidade é excelente para quem gosta de configurar. Para quem quer começar rápido, uma estrutura pronta reduz decisões e manutenção.', benefits: ['Fluxos prontos para rotina', 'Finanças e patrimônio nativos', 'XP, foco e conquistas', 'Backup e plano Vitalício'], steps: ['Defina se deseja construir ou usar', 'Experimente o fluxo pronto do LUAR', 'Mantenha a ferramenta que reduz seu trabalho'], faq: [['O LUAR substitui tudo no Notion?', 'Não. Notion atende muitos usos profissionais e colaborativos que não são o foco do LUAR.'], ['Qual é mais simples para hábitos?', 'O LUAR já possui fluxo específico de hábitos e sequência.'], ['Existe assinatura?', 'O LUAR tem plano gratuito e opção Vitalícia em pagamento único.']]
+  },
+  'recursos': {
+    title: 'Recursos do LUAR para organizar sua vida', description: 'Conheça hábitos, tarefas, metas, finanças, agenda, foco, notas, investimentos, gamificação e backup no LUAR.', headline: 'Tudo o que existe na sua órbita LUAR.', intro: 'Esta página reúne os recursos públicos e explica como cada área se conecta à sua organização pessoal.', problem: 'O valor do LUAR está na conexão entre áreas. Um hábito pode melhorar foco, uma meta pode participar do patrimônio e uma tarefa concluída pode alimentar sua evolução.', benefits: ['Organização e produtividade', 'Finanças e investimentos', 'Foco e bem-estar opcional', 'Perfil, XP, backup e personalização'], steps: ['Explore as áreas relacionadas abaixo', 'Crie uma conta gratuita', 'Comece pela parte mais importante agora'], faq: [['Preciso usar todos os recursos?', 'Não. As categorias podem ser ocultadas para manter apenas o que faz sentido.'], ['O que é gratuito?', 'O plano gratuito inclui os fluxos principais com limites informados na plataforma.'], ['O que o Vitalício libera?', 'Limites ampliados, análises, personalização, backup na nuvem e outros recursos identificados no site.']]
+  },
+  'precos': {
+    title: 'Preços do LUAR: Gratuito e Vitalício', description: 'Compare o plano Gratuito e o LUAR Vitalício por R$ 39,90 em pagamento único, sem mensalidade.', headline: 'Comece grátis. Evolua sem mensalidade.', intro: 'O LUAR oferece um plano gratuito para experimentar a plataforma e o Vitalício por R$ 39,90 em pagamento único.', problem: 'O preço e os limites devem ser claros antes da compra. A plataforma identifica recursos Vitalícios e mantém o plano ativo na conta após a confirmação.', benefits: ['Gratuito para começar', 'Vitalício por R$ 39,90', 'Pagamento único via Pix', 'Sem renovação mensal'], steps: ['Crie sua conta gratuita', 'Experimente os fluxos principais', 'Compre o Vitalício somente se fizer sentido'], faq: [['O valor é mensal?', 'Não. O Vitalício é um pagamento único.'], ['Existe plano gratuito?', 'Sim. Ele possui limites de tarefas, hábitos, metas e notas.'], ['A ativação é automática?', 'A liberação ocorre após a confirmação do pagamento pela processadora.']]
+  },
+  'sobre': {
+    title: 'Sobre o LUAR: site oficial e propósito', description: 'Conheça o LUAR, plataforma brasileira criada por ZAKOM para reunir organização, produtividade e finanças.', headline: 'Este é o site oficial do LUAR.', intro: 'LUAR é uma plataforma brasileira de organização pessoal criada por ZAKOM. O endereço oficial é luarhub.site.', problem: 'A proposta nasceu da necessidade de reunir dinheiro, hábitos, metas, tarefas e evolução sem depender de vários aplicativos.', benefits: ['Produto brasileiro em português', 'Desenvolvido por ZAKOM', 'Atualizações contínuas', 'Contato público por WhatsApp e Discord'], steps: ['Conheça os recursos públicos', 'Faça o diagnóstico de organização', 'Crie uma conta se a proposta fizer sentido'], faq: [['Qual é o site oficial?', 'O site oficial é https://luarhub.site.'], ['Quem criou o LUAR?', 'O projeto foi criado e é mantido por ZAKOM.'], ['Onde o LUAR atua?', 'A plataforma atua no Brasil e utiliza português do Brasil.']]
+  },
+  'contato': {
+    title: 'Contato e suporte oficial do LUAR', description: 'Fale com o suporte do LUAR sobre conta, pagamento, privacidade, sugestões e funcionamento da plataforma.', headline: 'Fale diretamente com o LUAR.', intro: 'O atendimento é realizado por ZAKOM. O canal público verificado no projeto é o WhatsApp (21) 99390-2153 e o identificador no Discord é ZAKOM.', problem: 'Para proteger sua conta, nunca envie senha, token de acesso ou código Pix completo durante o atendimento.', benefits: ['Suporte de conta', 'Ajuda com Vitalício', 'Solicitações de privacidade', 'Sugestões e problemas técnicos'], steps: ['Descreva o problema com clareza', 'Informe apenas o e-mail da conta quando necessário', 'Aguarde a validação antes de compartilhar dados adicionais'], faq: [['Qual é o WhatsApp?', 'O canal informado é (21) 99390-2153.'], ['Há suporte por Discord?', 'O identificador público informado no projeto é ZAKOM.'], ['Devo enviar minha senha?', 'Nunca. O suporte não precisa da sua senha.']]
+  },
+  'ajuda': {
+    title: 'Central de ajuda do LUAR', description: 'Encontre respostas para conta, hábitos, tarefas, metas, finanças, backup, Vitalício e instalação do LUAR.', headline: 'Ajuda para continuar sua órbita.', intro: 'A central de ajuda reúne respostas públicas sobre os principais fluxos da plataforma e caminhos para suporte.', problem: 'Antes de alterar ou apagar dados, exporte um backup quando possível e confirme que está usando a conta correta.', benefits: ['Primeiros passos', 'Conta e acesso', 'Backup e restauração', 'Pagamento e plano Vitalício'], steps: ['Localize a área relacionada', 'Siga as orientações exibidas', 'Procure o suporte se o problema continuar'], faq: [['Meu login não funciona. O que faço?', 'Confirme o método usado originalmente e utilize a recuperação de senha para contas por e-mail.'], ['Como faço backup?', 'Abra as configurações para exportar ou usar os recursos de cópia disponíveis no seu plano.'], ['Como confirmo o Vitalício?', 'O Perfil e Conta mostra o estado do plano após a confirmação.']]
+  },
+  'faq': {
+    title: 'Perguntas frequentes sobre o LUAR', description: 'Respostas sobre plano gratuito, Vitalício, login, dados, backup, hábitos, metas, tarefas e finanças no LUAR.', headline: 'Perguntas frequentes, respostas diretas.', intro: 'Consulte informações verificáveis sobre funcionamento, limites, pagamento e segurança do LUAR.', problem: 'Se uma resposta não resolver seu caso, use a página de contato e não compartilhe sua senha.', benefits: ['Planos e limites', 'Conta e login', 'Dados e backup', 'Recursos da plataforma'], steps: ['Abra a dúvida relacionada', 'Confirme as informações do seu plano', 'Entre em contato se ainda precisar'], faq: [['O LUAR é gratuito?', 'Sim. O plano gratuito permite experimentar os recursos principais com limites.'], ['Quanto custa o Vitalício?', 'O preço público atual é R$ 39,90 em pagamento único.'], ['O LUAR possui mensalidade?', 'Não existe mensalidade no plano Vitalício apresentado.']]
+  },
+  'instalar': {
+    title: 'Como instalar o LUAR no celular ou computador', description: 'Aprenda a instalar o LUAR como aplicativo PWA no Android, iPhone, Windows e navegadores compatíveis.', headline: 'Instale o LUAR e abra como aplicativo.', intro: 'O LUAR pode ser instalado a partir de navegadores compatíveis, sem download de loja nesta etapa.', problem: 'A opção muda conforme aparelho e navegador. No Android e computador, procure Instalar aplicativo. No iPhone, use Compartilhar e Adicionar à Tela de Início.', benefits: ['Acesso pela tela inicial', 'Janela independente', 'Atalhos para áreas importantes', 'Experiência responsiva'], steps: ['Abra luarhub.site no navegador', 'Escolha Instalar ou Adicionar à Tela de Início', 'Confirme e abra o ícone do LUAR'], faq: [['Está na Play Store?', 'Ainda não. O projeto está sendo preparado para distribuição futura.'], ['Funciona no iPhone?', 'Sim. Use a opção Adicionar à Tela de Início no Safari.'], ['Preciso pagar para instalar?', 'Não. A instalação do PWA é gratuita.']]
+  },
+  'divulgar': {
+    title: 'Kit de apresentação e divulgação do LUAR', description: 'Informações oficiais, descrição, categoria, preço, logo e diferenciais para apresentar o LUAR em diretórios.', headline: 'Apresente o LUAR com informações oficiais.', intro: 'Use este kit para Product Hunt, AlternativeTo, comunidades e publicações, sem inventar números ou avaliações.', problem: 'Nome: LUAR. Site: luarhub.site. Categoria: organização pessoal, produtividade e finanças. País: Brasil. Idioma: português do Brasil.', benefits: ['Logo oficial do LUAR', 'Descrição curta e completa', 'Preço Gratuito e Vitalício', 'Diferenciais verificáveis'], steps: ['Baixe ou use o logotipo oficial', 'Copie a descrição adequada ao diretório', 'Inclua o link oficial com parâmetros UTM'], faq: [['Posso criar avaliações?', 'Não. Use somente avaliações verdadeiras e verificáveis.'], ['Qual preço informar?', 'Gratuito para começar e Vitalício por R$ 39,90 em pagamento único.'], ['Qual link usar?', 'Use https://luarhub.site com UTMs que identifiquem a origem.']]
+  },
+  'novidades': {
+    title: 'Novidades e atualizações do LUAR', description: 'Acompanhe melhorias públicas, novos recursos e mudanças importantes da plataforma LUAR.', headline: 'O LUAR continua evoluindo.', intro: 'Esta página registra atualizações públicas relevantes para manter usuários e mecanismos de busca com informações atuais.', problem: 'Data da atualização desta página: 9 de agosto de 2026. Mudanças futuras devem ser documentadas aqui com data e descrição verificável.', benefits: ['Melhorias de organização', 'Correções de conta e backup', 'Novos recursos públicos', 'Evoluções de desempenho e acesso'], steps: ['Consulte a data mais recente', 'Leia o impacto da mudança', 'Use o contato para informar problemas'], faq: [['As atualizações estão no Vitalício?', 'O plano informa acesso às futuras atualizações incluídas na oferta vigente.'], ['Onde reporto um problema?', 'Use a página oficial de contato.'], ['A data é atualizada?', 'Ela deve ser alterada sempre que uma nova publicação for adicionada.']]
+  }
+});
+
+const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+const related = Object.entries(pages).map(([slug, page]) => ({ slug, title: page.title }));
+
+function sendSitemap(res) {
+  const fixed = [{ path: '', priority: '1.0', frequency: 'weekly' }, { path: 'pesquisa', priority: '0.8', frequency: 'monthly' }, { path: 'blog', priority: '0.9', frequency: 'weekly' }];
+  const publicPages = Object.keys(pages).map(path => ({ path, priority: ['precos','recursos','sobre'].includes(path) ? '0.9' : '0.8', frequency: 'monthly' }));
+  const posts = Object.keys(articles).map(path => ({ path: `blog/${path}`, priority: '0.7', frequency: 'monthly' }));
+  const urls = [...fixed,...publicPages,...posts].map(item => `<url><loc>https://luarhub.site/${item.path}</loc><lastmod>${published}</lastmod><changefreq>${item.frequency}</changefreq><priority>${item.priority}</priority></url>`).join('');
+  res.setHeader('Content-Type','application/xml; charset=utf-8'); res.setHeader('Cache-Control','public, max-age=0, s-maxage=3600, stale-while-revalidate=86400'); return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`);
+}
+
+function sendCampaign(slug,res) {
+  const item=campaigns[slug]; if(!item)return res.status(404).send('Campanha não encontrada');
+  const [headline,description,benefits,detail]=item,canonical=`https://luarhub.site/campanhas/${slug}`;
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(headline)} | LUAR</title><meta name="description" content="${escapeHtml(description)}"><meta name="robots" content="noindex,follow"><link rel="canonical" href="${canonical}"><meta property="og:type" content="website"><meta property="og:site_name" content="LUAR"><meta property="og:title" content="${escapeHtml(headline)}"><meta property="og:description" content="${escapeHtml(description)}"><meta property="og:image" content="https://luarhub.site/preview.png"><link rel="manifest" href="/manifest.webmanifest"><link rel="stylesheet" href="/seo-pages.css"><script src="/tracking-config.js"></script><script src="/growth-tracking.js" defer></script></head><body><header class="seo-nav"><a href="/"><img src="/scripts/icon-192.png" alt="LUAR"><b>LUAR</b></a><nav><a href="${detail}">Ver detalhes</a><a class="nav-cta" href="/#signup">Criar conta</a></nav></header><main><section class="seo-hero"><div><span>LUAR · ORGANIZAÇÃO PESSOAL</span><h1>${escapeHtml(headline)}</h1><p>${escapeHtml(description)}</p><div class="hero-actions"><a href="/#signup" data-campaign-cta="${slug}">Começar gratuitamente</a><a href="${detail}">Conhecer o recurso</a></div></div><aside><img src="/scripts/icon-192.png" alt="Aplicativo LUAR"><strong>Plano gratuito</strong><small>Experimente antes de escolher o Vitalício.</small></aside></section><section class="seo-benefits"><header><span>O QUE VOCÊ RECEBE</span><h2>Uma plataforma preparada para a rotina real.</h2></header><div>${benefits.map((benefit,index)=>`<article><i>0${index+1}</i><h3>${escapeHtml(benefit)}</h3></article>`).join('')}<article><i>04</i><h3>Dados vinculados à sua conta</h3></article></div></section><section class="seo-final"><h2>Comece pelo que mais importa hoje.</h2><p>Sem cartão para criar a conta gratuita.</p><a href="/#signup">Experimentar o LUAR</a></section></main></body></html>`;
+  res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('X-Robots-Tag','noindex, follow');res.setHeader('Cache-Control','public, max-age=0, s-maxage=86400');return res.status(200).send(html);
+}
+
+module.exports = async function handler(req, res) {
+  if (req.query.mode === 'sitemap') return sendSitemap(res);
+  if (req.query.mode === 'campaign') return sendCampaign(String(req.query.slug || '').toLowerCase(),res);
+  const slug = String(Array.isArray(req.query.slug) ? req.query.slug[0] : req.query.slug || '').toLowerCase();
+  const page = pages[slug];
+  if (!page) return res.status(404).send('Página não encontrada');
+  const canonical = `https://luarhub.site/${slug}`;
+  const recommendations = related.filter(item => item.slug !== slug).slice(0, 4);
+  const application = { '@context': 'https://schema.org', '@type': ['SoftwareApplication', 'WebApplication'], name: 'LUAR', alternateName: 'LUAR Hub', applicationCategory: 'LifestyleApplication', applicationSubCategory: 'Produtividade, hábitos, organização e finanças pessoais', operatingSystem: 'Web', browserRequirements: 'Navegador moderno com JavaScript', inLanguage: 'pt-BR', url: 'https://luarhub.site', image: 'https://luarhub.site/luarlogo.png?v=2', description: page.description, featureList: page.benefits, offers: [{ '@type': 'Offer', price: '0', priceCurrency: 'BRL', name: 'Plano Gratuito', availability: 'https://schema.org/InStock' }, { '@type': 'Offer', price: '39.90', priceCurrency: 'BRL', name: 'Plano Vitalício', availability: 'https://schema.org/InStock' }] };
+  const schema = [application, { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Início', item: 'https://luarhub.site/' }, { '@type': 'ListItem', position: 2, name: page.title, item: canonical }] }, { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: page.faq.map(([question, answer]) => ({ '@type': 'Question', name: question, acceptedAnswer: { '@type': 'Answer', text: answer } })) }];
+  const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0f0c"><title>${escapeHtml(page.title)} | LUARHUB</title><meta name="description" content="${escapeHtml(page.description)}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel="canonical" href="${canonical}"><meta property="og:type" content="website"><meta property="og:site_name" content="LUARHUB"><meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:url" content="${canonical}"><meta property="og:image" content="https://luarhub.site/luarlogo.png?v=2"><meta name="twitter:card" content="summary"><link rel="icon" href="/luarlogo.png?v=2"><link rel="stylesheet" href="/seo-pages.css"><script type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script></head><body><header class="seo-nav"><a href="/"><img src="/luarlogo.png?v=2" alt="Logo do LUARHUB"><b>LUARHUB</b></a><nav><a href="/pesquisa">Diagnóstico</a><a class="nav-cta" href="/#signup">Começar grátis</a></nav></header><main><section class="seo-hero"><div><span>ORGANIZAÇÃO PESSOAL EM UMA ÚNICA ÓRBITA</span><h1>${escapeHtml(page.headline)}</h1><p>${escapeHtml(page.intro)}</p><div class="hero-actions"><a href="/#signup">Criar conta gratuita</a><a href="/pesquisa">Descobrir meu perfil</a></div></div><aside><img src="/luarlogo.png?v=2" alt="Aplicativo LUARHUB"><strong>LUARHUB</strong><small>Organização, tranquilidade e evolução.</small></aside></section><section class="seo-problem"><span>POR QUE CENTRALIZAR</span><h2>Menos aplicativos. Mais clareza.</h2><p>${escapeHtml(page.problem)}</p></section><section class="seo-benefits"><header><span>O QUE VOCÊ ENCONTRA</span><h2>Feito para acompanhar a vida real.</h2></header><div>${page.benefits.map((benefit, index) => `<article><i>0${index + 1}</i><h3>${escapeHtml(benefit)}</h3></article>`).join('')}</div></section><section class="seo-steps"><header><span>COMO COMEÇAR</span><h2>Três passos para entrar em órbita.</h2></header><ol>${page.steps.map((step, index) => `<li><b>${index + 1}</b><span>${escapeHtml(step)}</span></li>`).join('')}</ol></section><section class="seo-faq"><header><span>DÚVIDAS FREQUENTES</span><h2>Respostas diretas.</h2></header><div>${page.faq.map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join('')}</div></section><section class="seo-related"><span>EXPLORE O LUARHUB</span><h2>Outras áreas da sua organização.</h2><nav>${recommendations.map(item => `<a href="/${item.slug}">${escapeHtml(item.title)} <b>↗</b></a>`).join('')}</nav></section><section class="seo-final"><img src="/luarlogo.png?v=2" alt="LUARHUB"><h2>Comece gratuitamente hoje.</h2><p>Organize sua rotina primeiro. Desbloqueie o Vitalício quando sua órbita crescer.</p><a href="/#signup">Quero organizar minha vida</a></section></main><footer><a href="/">LUARHUB</a><p>Organização pessoal, produtividade e finanças em um só lugar.</p><nav><a href="/termos.html">Termos</a><a href="/privacidade.html">Privacidade</a><a href="/contato.html">Contato</a></nav></footer></body></html>`;
+  let brandedHtml = html
+    .replaceAll('LUARHUB', 'LUAR')
+    .replaceAll('/luarlogo.png?v=2', '/scripts/icon-192.png')
+    .replace('<link rel="stylesheet" href="/seo-pages.css">', '<link rel="manifest" href="/manifest.webmanifest"><link rel="stylesheet" href="/seo-pages.css"><link rel="stylesheet" href="/public-share.css"><link rel="stylesheet" href="/product-shot.css">')
+    .replace('<section class="seo-problem">', '<figure class="seo-product-shot"><img src="/preview.png" width="1440" height="1120" loading="lazy" alt="Dashboard do aplicativo LUAR com patrimônio, sequência de hábitos, tarefas, metas e modo foco"><figcaption>Uma visão da plataforma LUAR preenchida com dados de demonstração.</figcaption></figure><section class="seo-problem">')
+    .replace('</head>', '<script src="/tracking-config.js"></script><script src="/growth-tracking.js" defer></script><script src="/pwa-install.js" defer></script><script src="/public-share.js" defer></script></head>');
+  if (slug === 'contato') brandedHtml = brandedHtml.replaceAll('href="/#signup"', 'href="https://wa.me/5521993902153"').replaceAll('Criar conta gratuita', 'Abrir WhatsApp').replaceAll('Começar grátis', 'Falar com o suporte').replaceAll('Quero organizar minha vida', 'Falar com o suporte');
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=86400, stale-while-revalidate=604800');
+  return res.status(200).send(brandedHtml);
+};
+module.exports.pages = pages;
