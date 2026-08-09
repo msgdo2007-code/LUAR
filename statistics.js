@@ -875,9 +875,10 @@
     append(body, identity, progress);
     append(card, cover, body);
 
-    const inventory = create('div', 'ls-inventory');
+    const inventory = create('div', `ls-inventory${context?.lifetimeActive ? ' lifetime-active' : ''}`);
     const inventoryHead = create('header');
     append(inventoryHead, create('span', '', 'INVENTÁRIO'), create('h3', '', 'Personalize sua evolução'));
+    if (context?.lifetimeActive) inventoryHead.appendChild(create('strong', 'ls-inventory-plan', '✦ VITALÍCIO ATIVO'));
     inventory.appendChild(inventoryHead);
 
     const mediaGroup = create('section', 'ls-cosmetic-group ls-media-editor');

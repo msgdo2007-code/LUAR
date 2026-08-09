@@ -467,13 +467,11 @@
         <div class="onboarding-choices"><button data-onboarding-goal="routine">✓ <b>Minha rotina</b><small>Hábitos e tarefas</small></button><button data-onboarding-goal="money">⌁ <b>Meu dinheiro</b><small>Finanças e metas</small></button><button data-onboarding-goal="goals">◎ <b>Minhas metas</b><small>Objetivos claros</small></button><button data-onboarding-goal="all">✦ <b>Tudo junto</b><small>Minha vida completa</small></button></div>
       </div>
       <div class="onboarding-step" data-onboarding-step="2">
-        <span>SEU PRIMEIRO PASSO</span><h2>Qual hábito você<br>deseja começar?</h2><p>Escolha algo simples que você queira cumprir todos os dias.</p>
-        <label class="onboarding-habit"><span>✦</span><input id="onboardingHabit" maxlength="80" placeholder="Ex.: Beber água, estudar ou caminhar"></label>
-        <div class="onboarding-suggestions"><button>Beber água</button><button>Ler 10 minutos</button><button>Organizar meu dia</button></div>
-        <button class="onboarding-next" id="onboardingCreate">Criar meu primeiro hábito ↗</button>
+        <button class="onboarding-back" id="onboardingBack" type="button" aria-label="Voltar para as opções">← <span>Voltar</span></button>
+        <div id="onboardingSetup"></div>
       </div>
       <div class="onboarding-step onboarding-success" data-onboarding-step="3">
-        <div class="onboarding-eclipse"><i></i><b></b></div><span>PRIMEIRO RESULTADO</span><h2>Sua primeira atividade<br>já está em órbita. ✦</h2><p>Você já pode acompanhar seu progresso, concluir o hábito e construir sua sequência.</p>
+        <div class="onboarding-eclipse"><i></i><b></b></div><span>PRIMEIRO RESULTADO</span><h2 id="onboardingSuccessTitle">Sua primeira atividade<br>já está em órbita. ✦</h2><p id="onboardingSuccessCopy">Você já pode acompanhar seu progresso na visão geral.</p>
         <button class="onboarding-next" id="onboardingFinish">Ir para minha visão geral ↗</button>
       </div>
     </section>
