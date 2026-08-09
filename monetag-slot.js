@@ -4,9 +4,9 @@ const adLoading=document.getElementById('adLoading');
 const adTimeout=setTimeout(()=>{
   if(document.body.classList.contains('ad-creative-ready'))return;
   document.body.classList.add('ad-unavailable');
-  adLoading.innerHTML='<strong>Publicidade indisponível no momento</strong><small>O espaço tentará carregar novamente ao trocar de página.</small>';
+  adLoading.innerHTML='<strong>Nenhuma campanha disponível agora</strong><small>A Monetag não entregou um anúncio para este acesso.</small>';
   notifyAdStatus('unavailable');
-},7000);
+},5000);
 const adObserver=new MutationObserver(()=>{
   if(!document.body.querySelector('iframe,a[href],img'))return;
   clearTimeout(adTimeout);

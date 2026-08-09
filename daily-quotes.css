@@ -1,0 +1,119 @@
+.daily-quote-layer {
+  padding: 18px;
+  background: rgba(3, 7, 5, 0.64);
+  backdrop-filter: blur(9px);
+}
+
+.daily-quote-card {
+  width: min(624px, 100%);
+  padding: 50px 54px 36px;
+  border-radius: 30px;
+  box-shadow: 0 30px 82px rgba(0, 0, 0, 0.48);
+}
+
+.daily-quote-orbit {
+  margin-bottom: 18px;
+}
+
+.daily-quote-card > span {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 10px;
+  letter-spacing: 0.17em;
+}
+
+.daily-quote-card h2 {
+  max-width: 510px;
+  margin: 0 auto;
+  color: #f5faf6;
+  font-size: clamp(31px, 4.4vw, 45px);
+  line-height: 1.12;
+}
+
+.daily-quote-card .daily-quote-explanation {
+  max-width: 490px;
+  margin: 22px auto 0;
+  color: #b4beb7;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.daily-quote-confirm {
+  min-width: 240px;
+  margin-top: 31px;
+  padding: 16px 24px;
+  color: var(--accent-ink);
+  font-size: 10px;
+}
+
+.daily-quote-card > #dailyQuoteDate {
+  display: block;
+  margin-top: 15px;
+  color: #8e9a92;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+}
+
+.daily-quote-close {
+  top: 17px;
+  right: 17px;
+  width: 40px;
+  height: 40px;
+  border-color: rgba(255, 255, 255, 0.17);
+  background: rgba(255, 255, 255, 0.09);
+  color: #f0f6f2;
+  font-size: 23px;
+  font-weight: 500;
+}
+
+.daily-quote-close:hover {
+  border-color: rgba(var(--theme-accent-rgb), 0.4);
+  background: rgba(var(--theme-accent-rgb), 0.12);
+  color: var(--theme-accent);
+}
+
+body.light .daily-quote-explanation {
+  color: #58675e;
+}
+
+body.light .daily-quote-card > #dailyQuoteDate {
+  color: #68766d;
+}
+
+body.light .daily-quote-close {
+  border-color: rgba(20, 40, 26, 0.16);
+  background: rgba(20, 40, 26, 0.07);
+  color: #26372c;
+}
+
+@media (max-width: 560px) {
+  .daily-quote-layer {
+    padding: 0;
+  }
+
+  .daily-quote-card {
+    width: 90vw;
+    padding: 45px 24px 30px;
+    border-radius: 24px;
+  }
+
+  .daily-quote-card h2 {
+    font-size: 31px;
+  }
+
+  .daily-quote-card .daily-quote-explanation {
+    font-size: 11px;
+    line-height: 1.65;
+  }
+
+  .daily-quote-confirm {
+    width: 100%;
+    margin-top: 27px;
+  }
+
+  .daily-quote-close {
+    top: 13px;
+    right: 13px;
+  }
+}

@@ -143,7 +143,7 @@
     layer.id = 'dailyQuoteLayer';
     layer.className = 'daily-quote-layer';
     layer.setAttribute('aria-hidden', 'true');
-    layer.innerHTML = '<section class="daily-quote-card" role="dialog" aria-modal="true" aria-labelledby="dailyQuoteTitle"><button class="daily-quote-close" type="button" aria-label="Fechar frase do dia">×</button><div class="daily-quote-orbit" aria-hidden="true"><i></i><b>☾</b></div><span>FRASE DO DIA</span><h2 id="dailyQuoteTitle"></h2><p id="dailyQuoteDate"></p><button class="daily-quote-confirm" type="button">Levar comigo hoje</button></section>';
+    layer.innerHTML = '<section class="daily-quote-card" role="dialog" aria-modal="true" aria-labelledby="dailyQuoteTitle"><button class="daily-quote-close" type="button" aria-label="Fechar frase do dia">×</button><div class="daily-quote-orbit" aria-hidden="true"><i></i><b>☾</b></div><span>FRASE DO DIA</span><h2 id="dailyQuoteTitle"></h2><p class="daily-quote-explanation">Respire, confie no seu processo e transforme esta mensagem em um pequeno passo hoje.</p><button class="daily-quote-confirm" type="button">Começar meu dia</button><small id="dailyQuoteDate">Nova frase amanhã</small></section>';
     document.body.appendChild(layer);
     layer.querySelector('.daily-quote-close').addEventListener('click', () => close(true));
     layer.querySelector('.daily-quote-confirm').addEventListener('click', () => close(true));
@@ -160,8 +160,7 @@
     if (localStorage.getItem(storageKey()) === dateKey) return;
     const layer = ensureLayer();
     const quote = quoteForDate();
-    layer.querySelector('#dailyQuoteTitle').textContent = quote.text;
-    layer.querySelector('#dailyQuoteDate').textContent = `Mensagem ${quote.number} de ${quotes.length} · renova à meia-noite de Brasília`;
+    layer.querySelector('#dailyQuoteTitle').textContent = `“${quote.text}”`;
     layer.classList.add('open');
     layer.setAttribute('aria-hidden', 'false');
     requestAnimationFrame(() => layer.querySelector('.daily-quote-confirm')?.focus());
