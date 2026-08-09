@@ -1,3 +1,4 @@
+(function(s){s.dataset.zone='11539704',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
 const notifyAdStatus=status=>parent.postMessage({type:'luar-ad-status',status},location.origin);
 const adLoading=document.getElementById('adLoading');
 const adTimeout=setTimeout(()=>{
