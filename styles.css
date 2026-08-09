@@ -1055,6 +1055,21 @@ body.light .payment-card .secondary{border-color:var(--border);background:#fff;c
 .ad-card-frame{position:relative;overflow:hidden}
 .ad-pending{position:absolute;z-index:1;inset:0;display:grid;place-content:center;padding:12px;text-align:center}
 .ad-pending b{color:var(--text);font-size:10px;letter-spacing:.1em}.ad-pending p{margin:6px 0 0;color:var(--muted);font-size:9px}
+.section-ad-layout{display:grid;grid-template-columns:minmax(0,1fr) 200px;align-items:start;gap:20px}
+.section-ad-content{min-width:0}
+.section-ad-rail{position:sticky;top:86px;width:200px;min-width:200px}
+.section-vertical-ad{box-sizing:border-box;width:200px;height:800px;margin:0;padding:12px;display:flex;flex-direction:column}
+.section-vertical-ad>header{flex:0 0 auto;gap:6px;align-items:flex-start}
+.section-vertical-ad>header small{text-align:right;line-height:1.35}
+.section-vertical-ad .ad-card-frame{flex:1 1 auto;min-height:0;margin:11px 0;padding:0}
+.section-vertical-ad .ad-card-frame.ad-provider-frame{min-height:0}
+.section-vertical-ad .ad-card-frame [data-monetag-placement],.section-vertical-ad .ad-card-frame [data-monetag-frame]{width:100%;height:100%;min-height:0}
+.section-vertical-ad>footer{flex:0 0 auto;line-height:1.45}
+@media(max-width:980px){
+  .section-ad-layout{grid-template-columns:minmax(0,1fr)}
+  .section-ad-rail{position:static;width:100%;min-width:0}
+  .section-vertical-ad{width:100%;height:260px}
+}
 .focus-ad-layout{
   display:grid;
   grid-template-columns:minmax(145px,1fr) minmax(460px,680px) minmax(145px,1fr);

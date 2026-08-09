@@ -802,6 +802,7 @@
     const selectedBadgeId = String(profile.cosmetics.badge || '');
     const selectedBadge = unlockedAchievements.find(item => item.id === selectedBadgeId);
 
+    const settingsHub = host.querySelector(':scope > .profile-settings-hub');
     host.replaceChildren();
     host.dataset.profileCursor = cursorId;
     const card = create('article', `ls-profile-card frame-${frameId} effect-${effectId} animation-${animationId} theme-${themeId}`);
@@ -969,7 +970,9 @@
     chooser('Temas cósmicos', 'theme', COSMETICS.themes, themeId);
     if (unlockedAchievements.length) chooser('Badge em destaque', 'badge', unlockedAchievements.map(item => ({ id: item.id, name: item.title, icon: item.badge || '★', level: 1 })), selectedBadge?.id || unlockedAchievements[0].id);
 
-    append(host, card, inventory);
+    host.appendChild(card);
+    if (settingsHub) host.appendChild(settingsHub);
+    host.appendChild(inventory);
     return host;
   }
 

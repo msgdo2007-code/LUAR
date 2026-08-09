@@ -1,0 +1,62 @@
+/* Painel editorial para blocos premium; botões continuam com cadeado compacto. */
+.premium-lock:not(button) {
+  isolation: isolate;
+  min-height: 250px !important;
+}
+
+.premium-lock:not(button)::before {
+  content: "✦";
+  position: absolute;
+  z-index: 31;
+  left: 50%;
+  top: calc(50% - 70px);
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(var(--theme-accent-rgb), 0.32);
+  border-radius: 50%;
+  background: rgba(var(--theme-accent-rgb), 0.08);
+  color: var(--theme-accent);
+  font: 800 27px var(--display);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 36px rgba(var(--theme-accent-rgb), 0.08);
+}
+
+.premium-lock:not(button)::after {
+  content: "EXCLUSIVO LUAR VITALÍCIO\A\A Desbloqueie sua evolução completa\A Acesse este conteúdo e todos os recursos premium para sempre.";
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 112px 26px 28px;
+  border-radius: inherit;
+  background: rgba(8, 13, 10, 0.96);
+  color: var(--text);
+  font: 800 22px/1.45 var(--display);
+  letter-spacing: -0.02em;
+  text-align: center;
+  white-space: pre-line;
+  text-shadow: none;
+  cursor: pointer;
+}
+
+body.light .premium-lock:not(button)::after {
+  background: rgba(246, 250, 247, 0.97);
+}
+
+body.light .premium-lock:not(button)::before {
+  background: rgba(var(--theme-accent-rgb), 0.11);
+}
+
+@media (max-width: 620px) {
+  .premium-lock:not(button)::after {
+    padding: 106px 18px 24px;
+    font-size: 18px;
+  }
+
+  .premium-lock:not(button)::before {
+    top: calc(50% - 64px);
+    width: 62px;
+    height: 62px;
+  }
+}
