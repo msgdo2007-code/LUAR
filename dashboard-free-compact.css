@@ -1,0 +1,165 @@
+/* Ajustes de densidade exclusivos do dashboard gratuito. */
+body.app-mode:not(.lifetime-user) #dashboard #dashboardActivities > .empty {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 92px;
+  margin: 0;
+  padding: 15px 12px;
+  place-self: stretch;
+  place-content: center;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard #dashboardActivities > .empty > span {
+  margin: 0 auto 3px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard #dashboardActivities > .empty > b,
+body.app-mode:not(.lifetime-user) #dashboard #dashboardActivities > .empty > small {
+  width: 100%;
+  text-align: center;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .side-stack .streak {
+  min-height: 0;
+  height: auto;
+  gap: 0;
+  padding: 19px 21px 17px;
+  justify-content: flex-start;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak > div:first-child {
+  min-height: 29px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak > section {
+  margin: 12px 0 16px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak > section > small {
+  margin: 0 0 4px;
+  font-size: 10px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak > section h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 0;
+  font-size: 24px;
+  line-height: 1;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak > section h2 b {
+  font-size: 34px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak > section p {
+  max-width: 330px;
+  margin: 8px 0 0;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak .calendar-title {
+  margin: 0 0 8px;
+  padding-top: 13px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak .calendar-title h3 {
+  margin-top: 3px;
+  font-size: 16px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak .calendar-title button {
+  align-self: center;
+  font-size: 9px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak .month-calendar {
+  gap: 3px;
+  padding: 8px 7px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak .month-calendar > b {
+  font-size: 8px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak .month-calendar > span {
+  width: 24px;
+  height: 24px;
+  font-size: 8px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .streak > footer {
+  margin-top: 12px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview {
+  padding: 20px 22px 18px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview > .portfolio-hero-value {
+  margin: 12px 0 0;
+  padding: 12px 0 14px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview > .portfolio-hero-value h2 {
+  margin: 2px 0 0;
+  font-size: 25px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview > .budget-percent-chart.budget-orbit-chart {
+  grid-template-columns: 190px minmax(330px, 1fr);
+  width: min(100%, 780px);
+  gap: 30px;
+  padding: 18px 0 0;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview .budget-percent-chart.budget-orbit-chart > .budget-orbit-visual {
+  width: 190px;
+}
+
+body.app-mode:not(.lifetime-user) #dashboard .budget-orbit-legend > button {
+  grid-template-columns: 9px minmax(105px, 1fr) 52px minmax(100px, 1fr);
+  min-height: 45px;
+  padding-block: 6px;
+}
+
+@media (max-width: 900px) {
+  body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview > .budget-percent-chart.budget-orbit-chart {
+    grid-template-columns: 180px minmax(280px, 1fr);
+    width: 100%;
+    gap: 24px;
+  }
+
+  body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview .budget-percent-chart.budget-orbit-chart > .budget-orbit-visual {
+    width: 180px;
+  }
+}
+
+@media (max-width: 700px) {
+  body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview {
+    padding: 17px;
+  }
+
+  body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview > .budget-percent-chart.budget-orbit-chart {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding-top: 16px;
+  }
+
+  body.app-mode:not(.lifetime-user) #dashboard .finance-plan-preview .budget-percent-chart.budget-orbit-chart > .budget-orbit-visual {
+    width: min(180px, 58vw);
+  }
+
+  body.app-mode:not(.lifetime-user) #dashboard .budget-orbit-legend > button {
+    grid-template-columns: 9px minmax(0, 1fr) 50px;
+  }
+
+  body.app-mode:not(.lifetime-user) #dashboard .budget-orbit-legend > button > u {
+    grid-column: 2 / 4;
+  }
+}
