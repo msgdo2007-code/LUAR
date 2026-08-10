@@ -48,14 +48,18 @@
     <nav class="landing-nav">
       <a class="landing-brand" href="#inicio"><img src="luarlogo.png?v=2" alt="LUAR"><strong>LUAR</strong></a>
       <div><a href="#experiencia">Experiência</a><a href="#como-funciona">Sem × Com</a><a href="#recursos">Recursos</a><a href="#tudo-incluso">Tudo incluso</a><a href="#vitalicio">Vitalício</a></div>
-      <label class="landing-language-select" data-no-translate title="Mudar idioma">
-        <span class="language-orbit" aria-hidden="true">◎</span>
-        <span class="language-flag" data-language-flag aria-hidden="true">🇧🇷</span>
-        <span class="language-copy"><small data-language-kicker>IDIOMA</small><b data-language-name>Português</b></span>
-        <span class="language-code" data-language-code>PT</span>
-        <span class="language-chevron" aria-hidden="true">⌄</span>
-        <select data-language-select aria-label="Idioma do site"><option value="pt">🇧🇷 Português</option><option value="en">🇺🇸 English</option><option value="ru">🇷🇺 Русский</option></select>
-      </label>
+      <details class="landing-language-select" data-no-translate>
+        <summary aria-label="Mudar idioma">
+          <span class="language-flag" data-language-flag aria-hidden="true">🇧🇷</span>
+          <span class="language-current"><b data-language-name>Português</b><small data-language-code>PT-BR</small></span>
+          <span class="language-chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="landing-language-popover" role="menu" aria-label="Escolher idioma">
+          <button type="button" data-language="pt" role="menuitem"><i class="language-option-flag">🇧🇷</i><span><b>Português</b><small>Brasil</small></span><em>✓</em></button>
+          <button type="button" data-language="en" role="menuitem"><i class="language-option-flag">🇺🇸</i><span><b>English</b><small>United States</small></span><em></em></button>
+          <button type="button" data-language="ru" role="menuitem"><i class="language-option-flag">🇷🇺</i><span><b>Русский</b><small>Россия</small></span><em></em></button>
+        </div>
+      </details>
       <div class="landing-nav-actions" id="landingGuestActions"><button class="landing-login" data-auth-open="login">Entrar</button><button class="landing-cta small" data-auth-open="signup">Criar conta grátis</button></div>
       <button class="landing-profile" id="landingProfile" type="button" hidden><span>LU</span><b>Meu perfil<small>Abrir visão geral</small></b></button>
     </nav>
