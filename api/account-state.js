@@ -16,16 +16,17 @@ const cleanBackups = (value) => {
   if (!Array.isArray(value)) return [];
   const kept = [];
   let totalBytes = 0;
-  for (const candidate of value.slice(0, 8)) {
+  for (const candidate of value.slice(0, 10)) {
     if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) continue;
     const backup = { savedAt: candidate.savedAt || null, state: snapshotState(candidate.state), manual: candidate.manual === true };
     const bytes = Buffer.byteLength(JSON.stringify(backup));
-    if (bytes > 2_000_000 || totalBytes + bytes > 2_000_000) break;
+    if (bytes > 1_600_000 || totalBytes + bytes > 16_000_000) break;
     kept.push(backup);
     totalBytes += bytes;
   }
   return kept;
 };
+const backupSummaries = (value) => cleanBackups(value).filter((backup) => backup.manual).map((backup) => ({ savedAt: backup.savedAt, manual: true, size: Buffer.byteLength(JSON.stringify(backup.state)) }));
 
 const ensureAccount = async (user) => {
   const email = canonicalEmail(user);
@@ -74,7 +75,7 @@ module.exports = async (req, res) => {
     }
 
     const lifetime = account?.plan === "lifetime";
-    return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, backups: lifetime ? cleanBackups(account.backups).filter((backup) => backup.manual) : [] });
+    return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, backups: lifetime ? backupSummaries(account.backups) : [] });
   } catch (error) {
     if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
     if (error.message === "RATE_LIMITED") return json(res, 429, { error: "Muitas solicitações. Aguarde alguns minutos." });

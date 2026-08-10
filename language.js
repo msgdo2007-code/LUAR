@@ -107,7 +107,18 @@
     ['Registre cada desafio uma vez por dia e avance com constância.','Log each challenge once a day and progress consistently.','Отмечайте каждое испытание один раз в день и двигайтесь вперёд регулярно.'],
     ['Registre os compromissos importantes da semana.','Record the week’s important appointments.','Запишите важные события недели.'],
     ['Transforme uma pendência em conquista.','Turn something pending into an achievement.','Превратите незавершённое дело в достижение.'],
-    ['Usar a agenda por uma semana','Use the calendar for one week','Использовать календарь одну неделю']
+    ['Usar a agenda por uma semana','Use the calendar for one week','Использовать календарь одну неделю'],
+    ['Preferências, segurança e informações do LUAR separadas por assunto.','Preferences, security and LUAR information organized by topic.','Настройки, безопасность и информация о LUAR, организованные по темам.'],
+    ['INTERFACE','INTERFACE','ИНТЕРФЕЙС'],['Idioma do LUAR','LUAR language','Язык LUAR'],
+    ['Backup, armazenamento e navegação','Backup, storage and navigation','Резервные копии, хранилище и навигация'],
+    ['ARQUIVO LOCAL','LOCAL FILE','ЛОКАЛЬНЫЙ ФАЙЛ'],['Exportar ou importar seus dados','Export or import your data','Экспорт или импорт данных'],
+    ['Leve tarefas, hábitos, finanças, assinaturas, metas, notas, humor, agenda, foco e progresso em um único arquivo JSON.','Keep tasks, habits, finances, subscriptions, goals, notes, mood, calendar, focus and progress in a single JSON file.','Сохраните задачи, привычки, финансы, подписки, цели, заметки, настроение, календарь, фокус и прогресс в одном файле JSON.'],
+    ['RESUMO DOS DADOS','DATA SUMMARY','СВОДКА ДАННЫХ'],['Conteúdo nesta instalação','Content in this installation','Данные в этой установке'],['Essas quantidades também são incluídas no arquivo exportado.','These totals are also included in the exported file.','Эти данные также включаются в экспортируемый файл.'],
+    ['HISTÓRICO NA NUVEM','CLOUD HISTORY','ИСТОРИЯ В ОБЛАКЕ'],['Até 10 versões para restaurar','Up to 10 versions to restore','До 10 версий для восстановления'],
+    ['Crie uma versão manual completa sem substituir as anteriores. Ao chegar a 10, a cópia mais antiga sai do histórico.','Create a complete manual version without replacing earlier ones. Once there are 10, the oldest copy leaves the history.','Создавайте полные ручные версии без замены предыдущих. После десяти самая старая копия удаляется из истории.'],
+    ['de 10 versões','of 10 versions','из 10 версий'],['Criar nova versão','Create new version','Создать новую версию'],['↶ Ver e restaurar','↶ View and restore','↶ Просмотр и восстановление'],
+    ['Mais recente','Most recent','Самая новая'],['Versão anterior','Earlier version','Предыдущая версия'],['Nenhuma versão criada','No versions created','Версии ещё не созданы'],['Use o botão abaixo para guardar a primeira.','Use the button below to save the first one.','Используйте кнопку ниже, чтобы сохранить первую версию.'],
+    ['Projeto, suporte e indicações','Project, support and referrals','Проект, поддержка и приглашения'],['Restaurar uma versão','Restore a version','Восстановить версию']
   ];
   ENTRIES.push(...EXTRA_ENTRIES);
   const dictionaries = { en: new Map(), ru: new Map() };
@@ -154,6 +165,8 @@
     if ((match = value.match(/^Nível (\d+) · ([\d.]+ XP) · sequência de (\d+) dias$/))) return code === 'en' ? `Level ${match[1]} · ${match[2]} · ${match[3]}-day streak` : `Уровень ${match[1]} · ${match[2]} · серия ${match[3]} дней`;
     if ((match = value.match(/^sequência de (\d+) dias$/))) return code === 'en' ? `${match[1]}-day streak` : `серия ${match[1]} дней`;
     if ((match = value.match(/^(.+) no período anterior$/))) return code === 'en' ? `${match[1]} in the previous period` : `${match[1]} за предыдущий период`;
+    if ((match = value.match(/^(\d+) de 10 versões guardadas · a mais antiga será removida ao ultrapassar o limite\.$/))) return code === 'en' ? `${match[1]} of 10 versions saved · the oldest will be removed when the limit is exceeded.` : `Сохранено ${match[1]} из 10 версий · при превышении лимита самая старая будет удалена.`;
+    if ((match = value.match(/^Versão (\d+) de (\d+)$/))) return code === 'en' ? `Version ${match[1]} of ${match[2]}` : `Версия ${match[1]} из ${match[2]}`;
     return '';
   }
   function ignored(node) { const element = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement; return !element || !!element.closest('script,style,code,pre,[data-no-translate]'); }
