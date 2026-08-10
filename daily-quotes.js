@@ -101,6 +101,10 @@
     'Eu sei que você consegue.',
     'Continue, ainda há muito esperando por você.'
   ];
+  const localizedQuotes = {
+    en: ['I believe in you.','You can go much further.','Do not give up now.','You are capable of overcoming this.','Keep going; your effort will pay off.','Your future can still be incredible.','Start small, but start.','You are not behind.','Go at your own pace, but keep going.','Rest and come back stronger.','Every day is a new chance.','Trust your process.'],
+    ru: ['Я верю в вас.','Вы можете достичь гораздо большего.','Не сдавайтесь сейчас.','Вы способны это преодолеть.','Продолжайте: ваши усилия принесут результат.','Ваше будущее всё ещё может быть прекрасным.','Начните с малого, но начните.','Вы не опоздали.','Двигайтесь в своём темпе, но не останавливайтесь.','Отдохните и вернитесь сильнее.','Каждый день — новый шанс.','Доверьтесь своему пути.']
+  };
 
   let userId = '';
   let timer = null;
@@ -122,8 +126,10 @@
 
   function quoteForDate(date = new Date()) {
     const { year, month, day } = brasiliaDateParts(date);
-    const index = Math.floor(Date.UTC(year, month - 1, day) / 86400000) % quotes.length;
-    return { number: index + 1, text: quotes[index] };
+    const language = window.LuarLanguage?.current?.() || 'pt';
+    const activeQuotes = localizedQuotes[language] || quotes;
+    const index = Math.floor(Date.UTC(year, month - 1, day) / 86400000) % activeQuotes.length;
+    return { number: index + 1, text: activeQuotes[index] };
   }
 
   const storageKey = () => `luar-daily-quote:${userId}`;
