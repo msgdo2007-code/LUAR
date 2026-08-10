@@ -14,6 +14,8 @@ create table if not exists public.luar_accounts (
   state jsonb not null default '{}'::jsonb,
   state_updated_at timestamptz,
   backups jsonb not null default '[]'::jsonb check (jsonb_typeof(backups) = 'array'),
+  login_count integer not null default 0 check (login_count >= 0),
+  last_login_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -23,6 +25,56 @@ alter table public.luar_accounts add column if not exists lifetime_provider text
 alter table public.luar_accounts add column if not exists lifetime_granted_by uuid;
 alter table public.luar_accounts add column if not exists lifetime_granted_at timestamptz;
 alter table public.luar_accounts add column if not exists lifetime_revoked_at timestamptz;
+
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'luar_accounts' and column_name = 'login_count'
+  ) then
+    alter table public.luar_accounts add column login_count integer not null default 0 check (login_count >= 0);
+    alter table public.luar_accounts add column last_login_at timestamptz;
+    update public.luar_accounts set login_count = 1 where login_count = 0;
+  elsif not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'luar_accounts' and column_name = 'last_login_at'
+  ) then
+    alter table public.luar_accounts add column last_login_at timestamptz;
+  end if;
+end $$;
+
+create or replace function public.record_luar_login(p_email text, p_user_id uuid)
+returns table(login_count integer, first_login boolean)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_email text := lower(btrim(coalesce(p_email, '')));
+  v_count integer;
+begin
+  if v_email = '' or p_user_id is null then
+    raise exception 'INVALID_LOGIN_EVENT';
+  end if;
+
+  insert into public.luar_accounts (email, user_ids, login_count, last_login_at)
+  values (v_email, array[p_user_id], 1, now())
+  on conflict (email) do update set
+    user_ids = (
+      select array_agg(distinct linked_id)
+      from unnest(public.luar_accounts.user_ids || excluded.user_ids) linked_id
+    ),
+    login_count = public.luar_accounts.login_count + 1,
+    last_login_at = now(),
+    updated_at = now()
+  returning public.luar_accounts.login_count into v_count;
+
+  return query select v_count, v_count = 1;
+end;
+$$;
+
+revoke all on function public.record_luar_login(text, uuid) from public, anon, authenticated;
+grant execute on function public.record_luar_login(text, uuid) to service_role;
 
 do $$
 begin

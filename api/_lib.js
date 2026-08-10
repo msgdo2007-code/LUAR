@@ -101,18 +101,25 @@ const getAuthUserById = async (userId) => {
   return response.json().catch(() => null);
 };
 
-const sendDiscordEvent = async ({ type, user, email, transactionId = "", amountCents = 0, provider = "" }) => {
+const sendDiscordEvent = async ({ type, user, email, transactionId = "", amountCents = 0, provider = "", firstLogin = false, loginCount = 0 }) => {
   try {
-    const configured = String(process.env.DISCORD_ACTIVITY_WEBHOOK_URL || "").trim();
+    const configured = String(
+      type === "login"
+        ? process.env.DISCORD_LOGIN_WEBHOOK_URL || process.env.DISCORD_ACTIVITY_WEBHOOK_URL || ""
+        : process.env.DISCORD_PAYMENT_WEBHOOK_URL || process.env.DISCORD_ACTIVITY_WEBHOOK_URL || ""
+    ).trim();
     if (!configured) return false;
     const webhook = new URL(configured);
     if (webhook.protocol !== "https:" || !["discord.com", "discordapp.com"].includes(webhook.hostname) || !/^\/api\/webhooks\/\d+\/[A-Za-z0-9._-]+$/.test(webhook.pathname)) return false;
     const safeEmail = String(email || user?.email || "").trim().toLowerCase().slice(0, 254);
-    const labels = { login: { title: "Login realizado no LUAR", color: 0x32ff7e }, payment_created: { title: "Página de pagamento criada", color: 0xf4c95d }, payment_paid: { title: "Pagamento confirmado", color: 0x57a9ff } };
+    const labels = { login: { title: firstLogin ? "Primeiro login no LUAR" : "Login realizado novamente", color: firstLogin ? 0xff4d5e : 0x32ff7e }, payment_created: { title: "Página de pagamento criada", color: 0xf4c95d }, payment_paid: { title: "Pagamento confirmado", color: 0x57a9ff } };
     const event = labels[type];
     if (!event || !safeEmail) return false;
     const fields = [{ name: "Usuário", value: displayName(user, safeEmail), inline: true }, { name: "E-mail", value: safeEmail, inline: true }];
-    if (type === "login") fields.push({ name: "Plataforma", value: provider || authProvider(user), inline: true });
+    if (type === "login") {
+      fields.push({ name: "Plataforma", value: provider || authProvider(user), inline: true });
+      fields.push({ name: "Acessos registrados", value: String(Math.max(1, Number(loginCount) || 1)), inline: true });
+    }
     if (type.startsWith("payment_")) {
       fields.push({ name: "Valor", value: `R$ ${(Number(amountCents || 0) / 100).toFixed(2).replace(".", ",")}`, inline: true });
       if (transactionId) fields.push({ name: "Transação", value: String(transactionId).slice(0, 128), inline: false });

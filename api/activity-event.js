@@ -1,4 +1,4 @@
-const { json, readBody, requireUser, requireSameOrigin, rateLimit, canonicalEmail, authProvider, sendDiscordEvent } = require("./_lib");
+const { json, readBody, requireUser, requireSameOrigin, rateLimit, canonicalEmail, authProvider, sendDiscordEvent, adminRequest } = require("./_lib");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return json(res, 405, { error: "Método não permitido." });
@@ -8,8 +8,12 @@ module.exports = async (req, res) => {
     const [user, body] = await Promise.all([requireUser(req), readBody(req, 2_048)]);
     if (body.event !== "login") return json(res, 400, { error: "Evento inválido." });
     const email = canonicalEmail(user);
-    await sendDiscordEvent({ type: "login", user, email, provider: authProvider(user) });
-    return json(res, 200, { notified: true });
+    const recorded = await adminRequest("rpc/record_luar_login", { method: "POST", body: JSON.stringify({ p_email: email, p_user_id: user.id }) });
+    const login = Array.isArray(recorded) ? recorded[0] : recorded;
+    const loginCount = Math.max(1, Number(login?.login_count) || 1);
+    const firstLogin = login?.first_login === true;
+    await sendDiscordEvent({ type: "login", user, email, provider: authProvider(user), firstLogin, loginCount });
+    return json(res, 200, { notified: true, firstLogin, loginCount });
   } catch (error) {
     if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
     if (error.message === "RATE_LIMITED") return json(res, 429, { error: "Muitas notificações." });
