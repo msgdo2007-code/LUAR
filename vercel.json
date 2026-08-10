@@ -82,7 +82,7 @@
       ]
     },
     {
-      "source": "/(app.js|styles.css|statistics.js|statistics.css|daily-quotes.js|daily-quotes.css|dashboard-free-compact.css|premium-locks.css|landing-seo.css|growth.css|admin-growth.css|heading-fix.css|cookie-consent.js|cookie-consent.css|monetag-slot.js)",
+      "source": "/(app.js|styles.css|statistics.js|statistics.css|daily-quotes.js|daily-quotes.css|dashboard-free-compact.css|premium-locks.css|landing-seo.css|growth.css|admin-growth.css|heading-fix.css|cookie-consent.js|cookie-consent.css|monetag-slot.js|language.js)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=300, s-maxage=86400, stale-while-revalidate=604800" }
       ]
