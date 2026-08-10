@@ -23,6 +23,10 @@
     #adTrigger small{position:relative;z-index:1;max-width:230px;color:#95a198;font-size:9px;line-height:1.5}
     #adTrigger b{position:relative;z-index:1;padding:9px 13px;border-radius:9px;background:#32ff7e;color:#071009;font-size:8px;letter-spacing:.04em}
     #adTrigger:hover{border-color:rgba(50,255,126,.42);filter:brightness(1.06)}
+    body.ad-network-unavailable #adTrigger{border-color:rgba(255,255,255,.09);background:linear-gradient(160deg,#161a17,#0d100e);cursor:pointer}
+    body.ad-network-unavailable #adTrigger i{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#9ca69f;box-shadow:none}
+    body.ad-network-unavailable #adTrigger span{color:#9ca69f}
+    body.ad-network-unavailable #adTrigger b{background:rgba(255,255,255,.08);color:#d9e0db}
     body.ad-network-delayed #adTrigger small:after{content:" A rede será acionada ao abrir a oferta."}
     body>iframe,body>a,body>img{position:relative;z-index:2;max-width:100%;max-height:100%}
     @media(max-height:180px){body{padding:5px}#adTrigger{grid-template-columns:auto minmax(0,1fr) auto;place-content:center;justify-items:start;gap:10px;padding:10px 12px;text-align:left}#adTrigger i{width:38px;height:38px;font-size:18px;grid-row:1/4}#adTrigger span,#adTrigger strong,#adTrigger small{grid-column:2}#adTrigger strong{font-size:12px}#adTrigger b{grid-column:3;grid-row:1/4}#adTrigger:before,#adTrigger:after{display:none}}
@@ -37,6 +41,6 @@
     <small>O anúncio abre somente quando você clicar neste espaço.</small>
     <b>ABRIR ANÚNCIO</b>
   </button>
-  <script src="/monetag-slot.js?v=6"></script>
+  <script src="/monetag-slot.js?v=7"></script>
 </body>
 </html>
