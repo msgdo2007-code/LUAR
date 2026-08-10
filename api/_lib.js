@@ -83,7 +83,11 @@ const displayName = (user, fallbackEmail = "") => {
 
 const authProvider = (user) => {
   const identities = Array.isArray(user?.identities) ? user.identities : [];
-  const provider = identities.find((identity) => identity?.provider)?.provider || user?.app_metadata?.provider || "email";
+  const latestIdentity = identities
+    .filter((identity) => identity?.provider)
+    .map((identity) => ({ provider: identity.provider, timestamp: Date.parse(identity.last_sign_in_at || identity.updated_at || identity.created_at || "") || 0 }))
+    .sort((left, right) => right.timestamp - left.timestamp)[0];
+  const provider = latestIdentity?.provider || user?.app_metadata?.provider || "email";
   const normalized = String(provider).trim().toLowerCase();
   return normalized === "google" ? "Google" : normalized === "discord" ? "Discord" : "E-mail e senha";
 };
