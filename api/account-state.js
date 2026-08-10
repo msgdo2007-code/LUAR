@@ -64,9 +64,27 @@ module.exports = async (req, res) => {
       if (body.action !== "restoreBackup") return json(res, 400, { error: "Ação inválida." });
       if (account?.plan !== "lifetime" || !account.user_ids?.includes(user.id)) return json(res, 403, { error: "Backup disponível somente no LUAR Vitalício." });
       const savedAt = String(body.savedAt || "");
-      const backup = cleanBackups(account.backups).find((item) => item.manual && item.savedAt === savedAt);
+      const existingBackups = cleanBackups(account.backups);
+      const backup = existingBackups.find((item) => item.manual && item.savedAt === savedAt);
       if (!backup) return json(res, 404, { error: "Esta versão não foi encontrada." });
-      return json(res, 200, { savedAt: backup.savedAt, state: backup.state });
+      const updatedAt = new Date().toISOString();
+      const rollback = { savedAt: updatedAt, state: snapshotState(account.state), manual: true };
+      const backups = cleanBackups([rollback, ...existingBackups]);
+      account = await upsertLuarAccount({
+        email: canonicalEmail(user),
+        user_ids: [...new Set([...(account.user_ids || []), user.id])],
+        plan: "lifetime",
+        state: snapshotState(backup.state),
+        state_updated_at: updatedAt,
+        backups,
+        updated_at: updatedAt,
+      });
+      return json(res, 200, {
+        savedAt: backup.savedAt,
+        state: cleanState(account.state),
+        updatedAt: account.state_updated_at || updatedAt,
+        backups: backupSummaries(account.backups),
+      });
     }
 
     if (req.method === "PUT") {
