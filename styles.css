@@ -1619,3 +1619,9 @@ details.landing-language-select:hover,details.landing-language-select[open]{tran
 .landing-language-popover button[data-language="en"] .language-option-flag:before{content:"";position:absolute;left:0;top:0;width:48%;height:54%;background:#3c3b6e}
 .landing-language-popover button[data-language="ru"] .language-option-flag{background:linear-gradient(to bottom,#fff 0 33.33%,#1c57a7 33.33% 66.66%,#d52b1e 66.66%)}
 @media(max-width:760px){details.landing-language-select{min-width:56px;width:56px;height:42px}.landing-language-select summary{grid-template-columns:24px 10px;gap:7px;padding:0 8px}.landing-language-select .language-current{display:none}.landing-language-select .language-chevron{display:block}.landing-language-popover{position:fixed;top:70px;right:14px;width:min(244px,calc(100vw - 28px))}}
+
+/* Na navegação, o idioma atual é representado somente pela bandeira. */
+details.landing-language-select{min-width:48px;width:48px}
+.landing-language-select summary{display:grid;grid-template-columns:24px;place-content:center;padding:0}
+.landing-language-select .language-current,.landing-language-select .language-chevron{display:none!important}
+@media(max-width:760px){details.landing-language-select{min-width:48px;width:48px}.landing-language-select summary{grid-template-columns:24px;padding:0}}
