@@ -1632,6 +1632,7 @@ details.landing-language-select{min-width:48px;width:48px}
 .landing-nav>div:first-of-type{grid-column:2;justify-self:center;gap:clamp(18px,2.25vw,34px)}
 .landing-nav>details.landing-language-select{grid-column:3;justify-self:center;align-self:center;min-width:36px;width:36px;height:36px;border:0;background:transparent;box-shadow:none}
 .landing-nav>details.landing-language-select:hover,.landing-nav>details.landing-language-select[open]{border:0;background:transparent;box-shadow:none}
+.landing-nav>details.landing-language-select[open]{z-index:75}
 .landing-nav>.landing-nav-actions,.landing-nav>.landing-profile{grid-column:4;justify-self:end;align-self:center}
 .landing-nav .landing-language-select summary{grid-template-columns:26px;width:36px;height:36px;padding:0;place-content:center}
 .landing-nav .landing-language-select .language-flag{width:26px;height:19px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 3px 10px rgba(0,0,0,.2);transition:transform .18s ease,filter .18s ease}
@@ -1644,5 +1645,7 @@ html[data-language="en"] .landing-nav .landing-language-select .language-flag:af
 html[data-language="ru"] .landing-nav .landing-language-select .language-flag{background:linear-gradient(to bottom,#fff 0 33.33%,#1c57a7 33.33% 66.66%,#d52b1e 66.66%)}
 html[data-language="ru"] .landing-nav .landing-language-select .language-flag:before,html[data-language="ru"] .landing-nav .landing-language-select .language-flag:after{content:none}
 .landing-nav .landing-language-select summary:hover .language-flag{transform:translateY(-1px);filter:brightness(1.08)}
+.landing-language-select[open] .landing-language-popover{animation:languageMenuIn .16s ease-out both}
+@keyframes languageMenuIn{from{opacity:0;transform:translateY(-5px) scale(.985)}to{opacity:1;transform:none}}
 @media(max-width:900px){.landing-nav{grid-template-columns:auto minmax(0,1fr) auto auto;column-gap:12px}.landing-nav>details.landing-language-select{grid-column:3}.landing-nav>.landing-nav-actions,.landing-nav>.landing-profile{grid-column:4}}
 @media(max-width:620px){.landing-nav{grid-template-columns:auto minmax(0,1fr) auto auto;column-gap:9px}.landing-nav>details.landing-language-select{grid-column:3}.landing-nav>.landing-profile{grid-column:4}}

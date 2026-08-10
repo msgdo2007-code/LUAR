@@ -198,7 +198,7 @@
     while ((node = walker.nextNode())) node.nodeType === Node.TEXT_NODE ? applyTextNode(node) : applyAttributes(node);
   }
   function controlMarkup(kind) {
-    if (kind === 'landing') return `<details class="landing-language-select" data-no-translate><summary aria-label="Mudar idioma"><span class="language-flag" data-language-flag aria-hidden="true">${languageInfo().flag}</span></summary><div class="landing-language-popover" role="menu" aria-label="Escolher idioma">${Object.entries(LANGUAGES).map(([code,item])=>`<button type="button" data-language="${code}" role="menuitem" aria-pressed="${currentLanguage===code}"><i class="language-option-flag">${item.flag}</i><span><b>${item.nativeName}</b><small>${item.country}</small></span><em>${currentLanguage===code?'✓':''}</em></button>`).join('')}</div></details>`;
+    if (kind === 'landing') return `<details class="landing-language-select" data-no-translate><summary aria-label="Mudar idioma" aria-expanded="false"><span class="language-flag" data-language-flag aria-hidden="true">${languageInfo().flag}</span></summary><div class="landing-language-popover" role="menu" aria-label="Escolher idioma">${Object.entries(LANGUAGES).map(([code,item])=>`<button type="button" data-language="${code}" role="menuitem" aria-pressed="${currentLanguage===code}"><i class="language-option-flag">${item.flag}</i><span><b>${item.nativeName}</b><small>${item.country}</small></span><em>${currentLanguage===code?'✓':''}</em></button>`).join('')}</div></details>`;
     const copy=currentLanguage==='en'?{eyebrow:'INTERFACE LANGUAGE',title:'Choose your language',description:'Use the same language on the landing page and inside your LUAR account.',current:'CURRENT LANGUAGE'}:currentLanguage==='ru'?{eyebrow:'ЯЗЫК ИНТЕРФЕЙСА',title:'Выберите язык',description:'Используйте один язык на лендинге и внутри аккаунта LUAR.',current:'ТЕКУЩИЙ ЯЗЫК'}:{eyebrow:'IDIOMA DA INTERFACE',title:'Escolha seu idioma',description:'Use o mesmo idioma na landing page e dentro da sua conta LUAR.',current:'IDIOMA ATUAL'};
     return `<article class="card settings-card language-settings-card" data-language-rendered="${currentLanguage}" data-no-translate><header class="language-settings-heading"><i aria-hidden="true">◎</i><div><span>${copy.eyebrow}</span><h3>${copy.title}</h3><p>${copy.description}</p></div><em><small>${copy.current}</small><b>${languageInfo().flag} ${languageInfo().nativeName}</b></em></header><div class="settings-language-options">${Object.entries(LANGUAGES).map(([code,item])=>`<button type="button" data-language="${code}" aria-pressed="${currentLanguage===code}"><i>${item.flag}</i><b>${item.nativeName}<small>${item.country}</small></b><em>${currentLanguage===code?'✓':''}</em></button>`).join('')}</div></article>`;
   }
@@ -252,8 +252,15 @@
     requestAnimationFrame(()=>{scheduled=false;translateTree(document.body);ensureControls();syncAccountPreference()});
   }
 
-  document.addEventListener('click',event=>{const button=event.target.closest('[data-language]');if(button)setLanguage(button.dataset.language);document.querySelectorAll('details.landing-language-select[open]').forEach(detail=>{if(button||!detail.contains(event.target))detail.removeAttribute('open')})});
-  document.addEventListener('keydown',event=>{if(event.key==='Escape')document.querySelectorAll('details.landing-language-select[open]').forEach(detail=>detail.removeAttribute('open'))});
+  function closeLanguageMenus(except=null){document.querySelectorAll('details.landing-language-select[open]').forEach(detail=>{if(detail===except)return;detail.open=false;detail.querySelector('summary')?.setAttribute('aria-expanded','false')})}
+  document.addEventListener('click',event=>{
+    const summary=event.target.closest('details.landing-language-select > summary');
+    if(summary){event.preventDefault();const detail=summary.parentElement,willOpen=!detail.open;closeLanguageMenus(detail);detail.open=willOpen;summary.setAttribute('aria-expanded',String(willOpen));return}
+    const button=event.target.closest('[data-language]');
+    if(button){setLanguage(button.dataset.language);closeLanguageMenus();return}
+    if(!event.target.closest('details.landing-language-select'))closeLanguageMenus();
+  });
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeLanguageMenus()});
   const observer = new MutationObserver(records => {
     records.forEach(record => {
       if (record.type === 'characterData') applyTextNode(record.target,true);
