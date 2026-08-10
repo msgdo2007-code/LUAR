@@ -1529,3 +1529,6 @@ body.light .budget-orbit-tooltip>small{color:#7a877d}
 .payment-extra-benefits{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:12px}
 .payment-extra-benefits>span{padding:7px 10px;border:1px solid rgba(var(--theme-accent-rgb),.13);border-radius:9px;background:rgba(var(--theme-accent-rgb),.035);color:var(--muted);font-size:9px;font-weight:700}
 @media(max-width:620px){.lifetime-core-features{gap:7px}.lifetime-core-features>span{flex-basis:92px;max-width:none;min-height:72px}.payment-core-features>span{flex-basis:100%;max-width:none}}
+
+/* A landing preserva o HTML inicial e adia o desenho das seções fora da tela. */
+.landing-main>section:not(.landing-hero){content-visibility:auto;contain-intrinsic-size:auto 760px}

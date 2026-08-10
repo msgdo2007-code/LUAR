@@ -193,7 +193,7 @@
     uiReady = true;
     document.body.insertAdjacentHTML('beforeend', `
       <div class="cookie-consent" id="luarCookieBanner" role="dialog" aria-modal="false" aria-labelledby="luarCookieTitle" ${current ? 'hidden' : ''}>
-        <div class="cookie-consent__copy"><img src="/scripts/icon-192.png" width="42" height="42" alt=""><div><strong id="luarCookieTitle">Sua privacidade, sua escolha</strong><p>Usamos armazenamento necessário para o LUAR funcionar. Analytics, publicidade e personalização só são ativados com sua autorização.</p><a href="/cookies.html">Ver Política de Cookies</a></div></div>
+        <div class="cookie-consent__copy"><img src="/scripts/icon-192.png" width="42" height="42" alt=""><div><strong id="luarCookieTitle">Sua privacidade, sua escolha</strong><p>Usamos armazenamento necessário para o LUAR funcionar. Analytics, pixels de campanha e personalização só são ativados com sua autorização.</p><a href="/cookies.html">Ver Política de Cookies</a></div></div>
         <div class="cookie-consent__actions"><button type="button" data-consent="accept">Aceitar todos</button><button type="button" data-consent="reject">Rejeitar não essenciais</button><button type="button" data-consent="manage">Gerenciar preferências</button></div>
       </div>
       <div class="cookie-preferences" id="luarCookiePreferences" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="luarPreferencesTitle" hidden>
