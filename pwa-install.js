@@ -4,10 +4,7 @@
     const actions = document.querySelector('.hero-actions');
     if (actions && !actions.querySelector('[data-install-luar]')) actions.insertAdjacentHTML('afterbegin', '<button class="nav-cta" type="button" data-install-luar hidden>Instalar o LUAR agora</button>');
   }
-  const emit = (event, details = {}) => {
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event, ...details });
-  };
+  const emit = (event, details = {}) => window.LuarConsent?.track(event, details) || false;
   window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
     installPrompt = event;

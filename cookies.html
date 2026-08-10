@@ -1,15 +1,6 @@
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XJ09WSQNMQ"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-XJ09WSQNMQ');
-  </script>
     <meta name="monetag" content="7c3487b78ee4ec5a677a6ec8a362ba22" />
     <meta charset="utf-8" />
     <meta name="description" content="Política de Cookies do LUAR e explicação sobre tecnologias necessárias, métricas e publicidade." />
@@ -17,7 +8,7 @@
     <link rel="canonical" href="https://luarhub.site/cookies.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="description" content="Política de Cookies do LUAR." />
-    <title>Política de Cookies — LUAR</title>
+    <title>Política de Cookies | LUAR</title>
     <link rel="icon" href="/luarlogo.png?v=2" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,6 +17,10 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/legal.css" />
+    <link rel="stylesheet" href="/cookie-consent.css" />
+    <script src="/tracking-config.js"></script>
+    <script src="/cookie-consent.js" defer></script>
+    <script src="/growth-tracking.js" defer></script>
   </head>
   <body>
     <header class="legal-nav">
@@ -50,7 +45,7 @@
           métricas.
         </p>
         <small class="legal-date"
-          >Última atualização: 31 de julho de 2026</small
+          >Última atualização: 9 de agosto de 2026</small
         >
       </header>
       <article class="legal-content">
@@ -77,22 +72,23 @@
         <section>
           <h2>3. Medição e desempenho</h2>
           <p>
-            Se o Google Analytics ou ferramenta equivalente for configurado,
-            cookies opcionais poderão medir páginas acessadas, dispositivo,
-            duração e eventos de navegação. Esses dados ajudam a encontrar erros
-            e melhorar a experiência. Eles só serão carregados conforme a
-            escolha de consentimento e a legislação aplicável.
+            O Google Analytics pode medir páginas acessadas, dispositivo,
+            duração e eventos de navegação para ajudar a encontrar erros e
+            melhorar a experiência. A tag não é carregada antes da autorização
+            para Analytics. O sinal <code>analytics_storage</code> permanece
+            negado por padrão.
           </p>
         </section>
         <section>
           <h2>4. Publicidade e fornecedores parceiros</h2>
           <p>
-            Fornecedores de publicidade poderão usar cookies e identificadores
-            para entregar anúncios, medir resultados, limitar repetições e
-            combater fraude. Dependendo de sua escolha e região, os anúncios
-            poderão ser personalizados ou contextuais. O LUAR não carrega
-            publicidade opcional antes da aceitação registrada no aviso de
-            cookies.
+            A Monetag e os pixels do Google Ads, Meta, TikTok e Microsoft
+            Advertising podem exibir publicidade ou medir campanhas e
+            conversões somente quando houver configuração e autorização para
+            Publicidade e marketing. Até essa escolha, as tags permanecem
+            ausentes da página. Os sinais
+            <code>ad_storage</code>, <code>ad_user_data</code> e
+            <code>ad_personalization</code> começam negados.
           </p>
         </section>
         <section>
@@ -106,23 +102,29 @@
         <section>
           <h2>6. Suas escolhas</h2>
           <p>
-            No primeiro acesso, você pode aceitar recursos opcionais ou
-            continuar apenas com tecnologias essenciais. Sua decisão fica
-            registrada neste navegador. Você também pode apagar os dados do site
-            nas configurações do navegador para refazer a escolha.
+            No primeiro acesso, você pode aceitar todos, rejeitar os não
+            essenciais ou escolher categoria por categoria. A decisão fica
+            registrada localmente por até 180 dias. Use o botão
+            <button class="legal-inline-button" type="button" data-consent="manage">Configurar cookies</button>
+            no rodapé para alterar ou retirar a autorização a qualquer momento.
           </p>
         </section>
         <section>
-          <h2>7. Prazos</h2>
-          <p>
-            Cookies de sessão normalmente expiram ao encerrar a navegação.
-            Preferências locais podem permanecer até serem removidas por você.
-            Fornecedores terceiros definem seus próprios prazos, informados nas
-            respectivas políticas.
-          </p>
+          <h2>7. Finalidades e prazos</h2>
+          <div class="legal-cookie-list">
+            <p><strong>Necessários:</strong> autenticação, segurança, sincronização e preferências solicitadas. Duração de sessão ou enquanto a conta e os dados locais forem mantidos.</p>
+            <p><strong>Analytics:</strong> medição agregada com Google Analytics. Cookies do fornecedor podem durar de uma sessão a até 24 meses.</p>
+            <p><strong>Publicidade e marketing:</strong> medição de campanhas. Meta pode usar identificadores por até 90 dias; TikTok e Microsoft podem mantê-los por até 13 meses. Google Ads segue os prazos informados pelo próprio fornecedor.</p>
+            <p><strong>Personalização:</strong> adaptação de conteúdo e publicidade quando autorizada. A preferência do LUAR dura no máximo 180 dias antes de ser solicitada novamente.</p>
+          </div>
+          <p>Os prazos dos fornecedores podem mudar. Consulte também as políticas oficiais vinculadas na seção seguinte.</p>
         </section>
         <section>
-          <h2>8. Contato</h2>
+          <h2>8. Fornecedores opcionais</h2>
+          <p><a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener noreferrer">Google</a>, <a href="https://www.facebook.com/privacy/policies/cookies/" target="_blank" rel="noopener noreferrer">Meta</a>, <a href="https://www.tiktok.com/legal/page/global/cookie-policy/pt-BR" target="_blank" rel="noopener noreferrer">TikTok</a> e <a href="https://privacy.microsoft.com/pt-br/privacystatement" target="_blank" rel="noopener noreferrer">Microsoft</a> publicam detalhes próprios sobre cookies e retenção.</p>
+        </section>
+        <section>
+          <h2>9. Contato</h2>
           <p>
             Para dúvidas ou solicitações sobre cookies e privacidade, acesse a
             <a href="/contato.html">página de contato</a>.
