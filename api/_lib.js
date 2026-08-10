@@ -75,6 +75,53 @@ const canonicalEmail = (user) => {
   return email;
 };
 
+const displayName = (user, fallbackEmail = "") => {
+  const metadata = user?.user_metadata || {};
+  const raw = metadata.name || metadata.full_name || metadata.user_name || metadata.preferred_username || String(fallbackEmail || user?.email || "").split("@")[0] || "Usuário LUAR";
+  return String(raw).trim().replace(/[\u0000-\u001f\u007f]/g, "").slice(0, 80) || "Usuário LUAR";
+};
+
+const authProvider = (user) => {
+  const identities = Array.isArray(user?.identities) ? user.identities : [];
+  const provider = identities.find((identity) => identity?.provider)?.provider || user?.app_metadata?.provider || "email";
+  const normalized = String(provider).trim().toLowerCase();
+  return normalized === "google" ? "Google" : normalized === "discord" ? "Discord" : "E-mail e senha";
+};
+
+const getAuthUserById = async (userId) => {
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey || !/^[0-9a-f-]{20,64}$/i.test(String(userId || ""))) return null;
+  const response = await fetch(`${url}/auth/v1/admin/users/${encodeURIComponent(userId)}`, { headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}` } });
+  if (!response.ok) return null;
+  return response.json().catch(() => null);
+};
+
+const sendDiscordEvent = async ({ type, user, email, transactionId = "", amountCents = 0, provider = "" }) => {
+  try {
+    const configured = String(process.env.DISCORD_ACTIVITY_WEBHOOK_URL || "").trim();
+    if (!configured) return false;
+    const webhook = new URL(configured);
+    if (webhook.protocol !== "https:" || !["discord.com", "discordapp.com"].includes(webhook.hostname) || !/^\/api\/webhooks\/\d+\/[A-Za-z0-9._-]+$/.test(webhook.pathname)) return false;
+    const safeEmail = String(email || user?.email || "").trim().toLowerCase().slice(0, 254);
+    const labels = { login: { title: "Login realizado no LUAR", color: 0x32ff7e }, payment_created: { title: "Página de pagamento criada", color: 0xf4c95d }, payment_paid: { title: "Pagamento confirmado", color: 0x57a9ff } };
+    const event = labels[type];
+    if (!event || !safeEmail) return false;
+    const fields = [{ name: "Usuário", value: displayName(user, safeEmail), inline: true }, { name: "E-mail", value: safeEmail, inline: true }];
+    if (type === "login") fields.push({ name: "Plataforma", value: provider || authProvider(user), inline: true });
+    if (type.startsWith("payment_")) {
+      fields.push({ name: "Valor", value: `R$ ${(Number(amountCents || 0) / 100).toFixed(2).replace(".", ",")}`, inline: true });
+      if (transactionId) fields.push({ name: "Transação", value: String(transactionId).slice(0, 128), inline: false });
+    }
+    const response = await fetch(webhook.href, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "LUAR", allowed_mentions: { parse: [] }, embeds: [{ title: event.title, color: event.color, fields, timestamp: new Date().toISOString(), footer: { text: "luarhub.site" } }] }) });
+    if (!response.ok) console.error("Discord activity notification failed", response.status);
+    return response.ok;
+  } catch (error) {
+    console.error("Discord activity notification failed", error?.message || "unknown");
+    return false;
+  }
+};
+
 const adminRequest = async (path, options = {}) => {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -176,4 +223,4 @@ const verifyPayload = (token) => {
   }
 };
 
-module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat };
+module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, displayName, authProvider, getAuthUserById, sendDiscordEvent, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat };

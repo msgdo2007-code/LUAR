@@ -1,4 +1,4 @@
-const { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, adminRequest, getLuarAccount, upsertLuarAccountCompat } = require("./_lib");
+const { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat } = require("./_lib");
 
 const amountInCents = (payment) => {
   const raw = payment.value ?? payment.amount ?? payment.amount_cents;
@@ -44,6 +44,7 @@ module.exports = async (req, res) => {
       { email, user_ids: [...new Set([...(account?.user_ids || []), user.id])], plan: "lifetime", lifetime_paid_at: account?.lifetime_paid_at || paidAt, lifetime_transaction_id: account?.lifetime_transaction_id || transactionId, updated_at: paidAt },
       { lifetime_source: "purchase" },
     );
+    if (!storedPayment.paid_at) await sendDiscordEvent({ type: "payment_paid", user, email, transactionId, amountCents: 3990 });
     const license = signPayload({
       type: "lifetime",
       uid: user.id,

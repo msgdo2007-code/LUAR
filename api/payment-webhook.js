@@ -1,4 +1,4 @@
-const { json, readBody, rateLimit, adminRequest, getLuarAccount, upsertLuarAccountCompat } = require("./_lib");
+const { json, readBody, rateLimit, getAuthUserById, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat } = require("./_lib");
 
 const amountInCents = (payment) => {
   const raw = payment.value ?? payment.amount ?? payment.amount_cents;
@@ -32,6 +32,10 @@ module.exports = async (req, res) => {
         { email: stored.account_email, user_ids: [...new Set([...(account?.user_ids || []), stored.user_id])], plan: "lifetime", lifetime_paid_at: account?.lifetime_paid_at || stored.paid_at || now, lifetime_transaction_id: account?.lifetime_transaction_id || transactionId, updated_at: now },
         { lifetime_source: "purchase" },
       );
+      if (!stored.paid_at) {
+        const user = await getAuthUserById(stored.user_id);
+        await sendDiscordEvent({ type: "payment_paid", user, email: stored.account_email, transactionId, amountCents: stored.amount_cents });
+      }
     }
     return json(res, 200, { received: true });
   } catch (error) {

@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { json, requireUser, requireSameOrigin, rateLimit, signPayload, canonicalEmail, adminRequest, getLuarAccount, upsertLuarAccount } = require("./_lib");
+const { json, requireUser, requireSameOrigin, rateLimit, signPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccount } = require("./_lib");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return json(res, 405, { error: "Método não permitido." });
@@ -39,6 +39,7 @@ module.exports = async (req, res) => {
       headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
       body: JSON.stringify({ transaction_id: payment.id, account_email: email, user_id: user.id, amount_cents: 3990, status: String(payment.status || "created").toLowerCase(), updated_at: new Date().toISOString() }),
     });
+    await sendDiscordEvent({ type: "payment_created", user, email, transactionId: payment.id, amountCents: 3990 });
     return json(res, 200, {
       id: payment.id,
       status: payment.status,
