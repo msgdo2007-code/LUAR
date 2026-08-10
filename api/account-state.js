@@ -53,11 +53,21 @@ const ensureAccount = async (user) => {
 
 module.exports = async (req, res) => {
   try {
-    if (!["GET", "PUT"].includes(req.method)) return json(res, 405, { error: "Método não permitido." });
+    if (!["GET", "PUT", "POST"].includes(req.method)) return json(res, 405, { error: "Método não permitido." });
     requireSameOrigin(req);
     rateLimit(req, "account-state", req.method === "GET" ? 90 : 45, 10 * 60 * 1000);
     const user = await requireUser(req);
     let account = await ensureAccount(user);
+
+    if (req.method === "POST") {
+      const body = await readBody(req, 4_096);
+      if (body.action !== "restoreBackup") return json(res, 400, { error: "Ação inválida." });
+      if (account?.plan !== "lifetime" || !account.user_ids?.includes(user.id)) return json(res, 403, { error: "Backup disponível somente no LUAR Vitalício." });
+      const savedAt = String(body.savedAt || "");
+      const backup = cleanBackups(account.backups).find((item) => item.manual && item.savedAt === savedAt);
+      if (!backup) return json(res, 404, { error: "Esta versão não foi encontrada." });
+      return json(res, 200, { savedAt: backup.savedAt, state: backup.state });
+    }
 
     if (req.method === "PUT") {
       const body = await readBody(req, 2_000_000);
@@ -80,6 +90,7 @@ module.exports = async (req, res) => {
     if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
     if (error.message === "RATE_LIMITED") return json(res, 429, { error: "Muitas solicitações. Aguarde alguns minutos." });
     if (error.message === "BODY_TOO_LARGE") return json(res, 413, { error: "Backup muito grande." });
+    if (error.message === "BODY_INVALID") return json(res, 400, { error: "Solicitação inválida." });
     const auth = String(error.message).startsWith("AUTH_") || error.message === "EMAIL_REQUIRED";
     return json(res, auth ? 401 : 500, { error: auth ? "Sessão ou e-mail não confirmado." : "Não foi possível acessar os dados da conta." });
   }
