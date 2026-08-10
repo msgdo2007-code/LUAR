@@ -1210,6 +1210,11 @@ html.animations-disabled{scroll-behavior:auto!important}
 
 /* Contas Vitalícias nunca exibem os espaços reservados para publicidade. */
 body.lifetime-user .free-ad-card{display:none!important}
+body.lifetime-user .section-ad-layout{grid-template-columns:minmax(0,1fr);gap:0}
+body.lifetime-user .section-ad-rail{display:none!important}
+body.lifetime-user .focus-ad-layout{display:block}
+body.lifetime-user .focus-ad-main{width:100%;grid-column:auto}
+body.lifetime-user .focus-ad-rail{display:none!important}
 
 /* Cronômetro livre integrado ao Modo Foco e ao cabeçalho. */
 .focus-stopwatch-card{margin-top:17px;padding:17px;border:1px solid rgba(var(--theme-accent-rgb),.17);border-radius:16px;background:linear-gradient(145deg,rgba(var(--theme-accent-rgb),.055),rgba(255,255,255,.012));text-align:left}
