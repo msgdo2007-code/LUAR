@@ -82,6 +82,9 @@ button,a,input,textarea,[role="button"]{outline-offset:3px}
 @media(max-width:900px){.admin-shell{grid-template-columns:1fr}.admin-sidebar{position:static;width:100%;height:auto;padding:15px}.admin-sidebar-brand,.admin-security-state,.admin-sidebar>form{display:none}.admin-nav{flex-direction:row;overflow-x:auto}.admin-nav-spacer{display:none}.admin-nav-link{flex:0 0 auto}.admin-main{width:100%}.admin-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-ranking-grid,.admin-feedback-list{grid-template-columns:1fr}}
 @media(max-width:620px){.admin-topbar{height:64px;padding:0 16px}.admin-user>div{display:none}.admin-page{padding:24px 15px}.admin-page-head{align-items:flex-start;flex-direction:column}.admin-kpi-grid,.admin-overview-grid{grid-template-columns:1fr}.admin-filter-row{grid-template-columns:1fr}.admin-check-list{grid-template-columns:1fr}.admin-feedback-card{padding:16px}.admin-feedback-head{align-items:flex-start;flex-direction:column}.admin-pagination{justify-content:space-between}.admin-pagination>span{display:none}}
 
+.admin-account-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(360px,1.15fr);gap:14px;align-items:start}.admin-account-email{display:flex;flex-direction:column;gap:5px;padding:13px;border:1px solid var(--border);border-radius:12px;background:oklch(.9 .03 150 / 3%)}.admin-account-email span{color:var(--muted-foreground);font-size:9px}.admin-account-email b{overflow:hidden;font-size:13px;text-overflow:ellipsis}
+@media(max-width:900px){.admin-account-grid{grid-template-columns:1fr}}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

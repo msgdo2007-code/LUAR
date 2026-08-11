@@ -5,7 +5,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/admin-auth";
 
-export type AuthActionState = { error?: string; enrollment?: { factorId: string; qrCode?: string; secret?: string } };
+export type AuthActionState = { error?: string; success?: string; enrollment?: { factorId: string; qrCode?: string; secret?: string } };
 
 const credentialsSchema = z.object({
   email: z.string().trim().email().max(254),
@@ -62,4 +62,19 @@ export async function signOutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/login");
+}
+
+const passwordSchema = z.object({
+  password: z.string().min(10).max(128).regex(/[A-Za-z]/).regex(/[0-9]/),
+  confirmation: z.string().max(128),
+}).refine(value => value.password === value.confirmation, { path: ["confirmation"] });
+
+export async function changePasswordAction(_: AuthActionState, formData: FormData): Promise<AuthActionState> {
+  const parsed = passwordSchema.safeParse({ password: formData.get("password"), confirmation: formData.get("confirmation") });
+  if (!parsed.success) return { error: "Use pelo menos 10 caracteres com letras e números e repita a mesma senha." };
+  const { supabase } = await requireAdmin(true);
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) return { error: "Não foi possível alterar a senha. Entre novamente e tente outra vez." };
+  await supabase.rpc("admin_record_security_event", { p_action: "password_changed" });
+  return { success: "Senha alterada com segurança." };
 }
