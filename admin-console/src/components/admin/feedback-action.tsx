@@ -17,6 +17,6 @@ export function FeedbackAction({ feedback }: { feedback: FeedbackRow }) {
     <form action={action} className="space-y-4"><input type="hidden" name="id" value={feedback.id} /><div className="space-y-2"><Label>Status</Label><Select name="status" defaultValue={feedback.status}><SelectTrigger className="w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="pending">Pendente</SelectItem><SelectItem value="reviewing">Em análise</SelectItem><SelectItem value="approved">Aprovado</SelectItem><SelectItem value="rejected">Recusado</SelectItem><SelectItem value="implemented">Implementado</SelectItem></SelectContent></Select></div>
       <div className="space-y-2"><Label htmlFor={`response-${feedback.id}`}>Resposta</Label><Textarea id={`response-${feedback.id}`} name="response" maxLength={1200} defaultValue={feedback.admin_response || ""} /></div>
       {state.error && <p role="alert" className="text-sm text-destructive">{state.error}</p>}{state.success && <p role="status" className="text-sm text-primary">{state.success}</p>}
-      <Button className="w-full" disabled={pending}>{pending && <SpinnerGap className="animate-spin" />}{pending ? "Salvando…" : "Salvar análise"}</Button></form>
+      <Button type="submit" className="w-full" disabled={pending}>{pending && <SpinnerGap className="animate-spin" />}{pending ? "Salvando…" : "Salvar análise"}</Button></form>
   </DialogContent></Dialog>;
 }

@@ -19,6 +19,6 @@ export function MfaForm() {
     <input type="hidden" name="factorId" value={setup.enrollment.factorId} />
     <div className="space-y-2"><Label htmlFor="code">Código de seis números</Label><Input id="code" name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>
     {state.error && <p role="alert" className="rounded-lg border border-destructive/25 bg-destructive/10 px-3 py-2 text-sm text-destructive">{state.error}</p>}
-    <Button className="h-11 w-full" disabled={pending}>{pending ? <SpinnerGap className="animate-spin" /> : <Key />} {pending ? "Validando…" : "Confirmar código"}</Button>
+    <Button type="submit" className="h-11 w-full" disabled={pending}>{pending ? <SpinnerGap className="animate-spin" /> : <Key />} {pending ? "Validando…" : "Confirmar código"}</Button>
   </form>;
 }
