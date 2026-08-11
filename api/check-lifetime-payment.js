@@ -1,4 +1,4 @@
-const { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat } = require("./_lib");
+const { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible } = require("./_lib");
 
 const amountInCents = (payment) => {
   const raw = payment.value ?? payment.amount ?? payment.amount_cents;
@@ -45,6 +45,12 @@ module.exports = async (req, res) => {
       { lifetime_source: "purchase" },
     );
     if (!storedPayment.paid_at) await sendDiscordEvent({ type: "payment_paid", user, email, transactionId, amountCents: 3990 });
+    try {
+      const referralRows = await adminRequest(`luar_referrals?referred_user_id=eq.${encodeURIComponent(user.id)}&status=eq.verified&select=referrer_user_id&limit=1`);
+      if (referralRows?.[0]?.referrer_user_id) await grantReferralLifetimeIfEligible(referralRows[0].referrer_user_id);
+    } catch (referralError) {
+      console.error("Referral reward check failed", referralError.message);
+    }
     const license = signPayload({
       type: "lifetime",
       uid: user.id,

@@ -207,6 +207,27 @@ const upsertLuarAccountCompat = async (account, provenance = {}) => {
   }
 };
 
+const grantReferralLifetimeIfEligible = async (referrerUserId) => {
+  const referrals = await adminRequest(`luar_referrals?referrer_user_id=eq.${encodeURIComponent(referrerUserId)}&status=eq.verified&select=referred_user_id&limit=100`);
+  const referredIds = [...new Set((referrals || []).map(item => item.referred_user_id).filter(Boolean))];
+  if (!referredIds.length) return { purchased: 0, goal: 2, rewardUnlocked: false };
+  const ids = referredIds.map(value => `"${String(value).replace(/["\\]/g, "")}"`).join(",");
+  const payments = await adminRequest(`luar_payments?user_id=in.(${encodeURIComponent(ids)})&status=eq.paid&select=user_id&limit=100`);
+  const purchased = new Set((payments || []).map(item => item.user_id).filter(Boolean)).size;
+  if (purchased < 2) return { purchased, goal: 2, rewardUnlocked: false };
+  const profiles = await adminRequest(`luar_referral_profiles?user_id=eq.${encodeURIComponent(referrerUserId)}&select=email&limit=1`);
+  const email = String(profiles?.[0]?.email || "").trim().toLowerCase();
+  if (!email) return { purchased, goal: 2, rewardUnlocked: false };
+  const account = await getLuarAccount(email);
+  if (account?.plan === "lifetime") return { purchased, goal: 2, rewardUnlocked: true };
+  const grantedAt = account?.lifetime_granted_at || new Date().toISOString();
+  await upsertLuarAccountCompat(
+    { email, user_ids: [...new Set([...(account?.user_ids || []), referrerUserId])], plan: "lifetime", updated_at: grantedAt },
+    { lifetime_source: "referral", lifetime_granted_at: grantedAt },
+  );
+  return { purchased, goal: 2, rewardUnlocked: true };
+};
+
 const encode = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
 const signingSecret = () => {
   const secret = process.env.LIFETIME_SIGNING_SECRET || "";
@@ -234,4 +255,4 @@ const verifyPayload = (token) => {
   }
 };
 
-module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, displayName, authProvider, getAuthUserById, sendDiscordEvent, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat };
+module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, displayName, authProvider, getAuthUserById, sendDiscordEvent, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible };

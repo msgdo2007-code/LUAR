@@ -85,7 +85,7 @@ begin
   ) then
     alter table public.luar_accounts
       add constraint luar_accounts_lifetime_source_check
-      check (lifetime_source in ('none', 'purchase', 'legacy', 'bootstrap', 'admin'));
+      check (lifetime_source in ('none', 'purchase', 'legacy', 'bootstrap', 'admin', 'referral'));
   end if;
   if not exists (
     select 1 from pg_constraint

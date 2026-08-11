@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { json, readBody, requireUser, requireSameOrigin, rateLimit, canonicalEmail, adminRequest } = require('./_lib');
+const { json, readBody, requireUser, requireSameOrigin, rateLimit, canonicalEmail, adminRequest, grantReferralLifetimeIfEligible } = require('./_lib');
 
 const referralCode = userId => crypto.createHash('sha256').update(`luar-referral:${userId}`).digest('hex').slice(0, 10).toUpperCase();
 const maskEmail = email => {
@@ -35,9 +35,17 @@ module.exports = async function handler(req, res) {
       res.setHeader('Allow', 'GET, POST');
       return json(res, 405, { error: 'Método não permitido.' });
     }
-    const referrals = await adminRequest(`luar_referrals?referrer_user_id=eq.${encodeURIComponent(user.id)}&status=eq.verified&select=referred_email,source,verified_at&order=verified_at.desc&limit=100`);
+    const referrals = await adminRequest(`luar_referrals?referrer_user_id=eq.${encodeURIComponent(user.id)}&status=eq.verified&select=referred_user_id,referred_email,source,verified_at&order=verified_at.desc&limit=100`);
     const verified = Array.isArray(referrals) ? referrals.length : 0;
-    return json(res, 200, { code: profile.code, inviteUrl: `https://luarhub.site/?ref=${profile.code}&utm_source=referral&utm_medium=invite&utm_campaign=member_get_member`, verified, rewardXp: verified * 25, rewardPerReferral: 25, invitations: (referrals || []).map(item => ({ email: maskEmail(item.referred_email), source: item.source, verifiedAt: item.verified_at })) });
+    const reward = await grantReferralLifetimeIfEligible(user.id);
+    const referredIds = [...new Set((referrals || []).map(item => item.referred_user_id).filter(Boolean))];
+    let paidIds = new Set();
+    if (referredIds.length) {
+      const ids = referredIds.map(value => `"${String(value).replace(/["\\]/g, '')}"`).join(',');
+      const paid = await adminRequest(`luar_payments?user_id=in.(${encodeURIComponent(ids)})&status=eq.paid&select=user_id&limit=100`);
+      paidIds = new Set((paid || []).map(item => item.user_id));
+    }
+    return json(res, 200, { code: profile.code, inviteUrl: `https://luarhub.site/?ref=${profile.code}&utm_source=referral&utm_medium=invite&utm_campaign=member_get_member`, verified, purchased: reward.purchased, goal: reward.goal, rewardUnlocked: reward.rewardUnlocked, rewardXp: verified * 25, rewardPerReferral: 25, invitations: (referrals || []).map(item => ({ email: maskEmail(item.referred_email), source: item.source, verifiedAt: item.verified_at, purchased: paidIds.has(item.referred_user_id) })) });
   } catch (error) {
     if (error.message === 'AUTH_REQUIRED' || error.message === 'AUTH_INVALID') return json(res, 401, { error: 'Entre na conta para acessar indicações.' });
     if (error.message === 'EMAIL_REQUIRED') return json(res, 403, { error: 'Confirme seu e-mail antes de usar indicações.' });

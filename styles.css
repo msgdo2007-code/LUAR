@@ -1363,7 +1363,7 @@ body[data-appearance-template="christmas"] :is(.nav.active,.settings-theme-toggl
 #settings .category-setting-row>span{display:flex;gap:3px}
 #settings .category-setting-row>span button{width:25px;height:25px;border:1px solid var(--settings-line);border-radius:7px;background:rgba(255,255,255,.025);color:var(--muted);cursor:pointer}
 #settings .restore-navigation{margin-top:12px}
-.sidebar nav.custom-nav-order>p{display:none!important}
+.sidebar nav.custom-nav-order>p{display:block}
 #settings .settings-account-identity{display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:12px;margin-top:12px}
 #settings .settings-account-identity>i{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;background:var(--theme-accent-fade) center/cover;color:var(--theme-accent);font-style:normal;font-weight:850}
 #settings .settings-account-identity h3{margin:0 0 3px}
@@ -1821,3 +1821,54 @@ html[data-language="ru"] .landing-nav .landing-language-select .language-flag:be
 #settings #settingsAboutGrid>.creator-accordion{grid-column:1/-1}
 #settings .preference-card h3 + .settings-row{margin-top:7px}
 @media(max-width:900px){#settings #settingsDataGrid,#settings #settingsAboutGrid{grid-template-columns:1fr}#settings #settingsDataGrid>* ,#settings #settingsAboutGrid>*{grid-column:1}}
+
+/* Configurações 1.8.26: leitura, alinhamento e identidade por tema */
+#settings .settings-page-head{align-items:center;gap:24px}
+#settings .settings-page-head h1{font-size:clamp(30px,4vw,46px)}
+#settings .settings-page-head p,#settings .settings-panel>header p{font-size:13px;line-height:1.65}
+#settings .settings-search{margin-left:auto;min-width:min(390px,42vw);height:48px;font-size:17px}
+#settings .settings-search input{font-size:14px}
+#settings .settings-category-nav button{min-height:50px;font-size:13px}
+#settings .settings-panel>header h2{font-size:clamp(24px,3vw,34px)}
+#settings .settings-card>span,#settings .settings-panel>header>span{font-size:10px;letter-spacing:.15em}
+#settings .settings-card h3{font-size:18px;line-height:1.25}
+#settings .settings-card p,#settings .settings-card small{font-size:12px;line-height:1.55}
+#settings .settings-account-identity{gap:14px}
+#settings .settings-account-identity>i{width:48px;height:48px;flex:0 0 48px}
+#settings .settings-appearance-complete{grid-column:1/-1;padding:24px}
+#settings .settings-appearance-complete .template-presets{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#settings .settings-appearance-complete .template-choice{min-height:72px;padding:12px 14px}
+#settings .settings-appearance-complete .template-choice b{font-size:13px}
+#settings .settings-appearance-complete .template-choice small{font-size:9px}
+#settings .cloud-backup-card{border-color:rgba(var(--theme-accent-rgb),.22);background:linear-gradient(145deg,rgba(var(--theme-accent-rgb),.06),var(--card))}
+#settings .cloud-backup-overview{border-color:rgba(var(--theme-accent-rgb),.2);background:rgba(var(--theme-accent-rgb),.045)}
+#settings .cloud-backup-overview strong,#settings .cloud-backup-overview li>i{color:var(--theme-accent)}
+#settings .cloud-backup-overview li>i{background:rgba(var(--theme-accent-rgb),.1)}
+#settings .cloud-backup-overview>i>u{background:var(--theme-accent);box-shadow:0 0 12px rgba(var(--theme-accent-rgb),.4)}
+#settings .danger-settings-panel .settings-panel-grid{gap:16px}
+#settings .danger-action-card{position:relative;overflow:hidden;padding:24px;border-color:rgba(255,82,82,.2);background:linear-gradient(135deg,rgba(255,62,62,.065),rgba(255,62,62,.018))}
+#settings .danger-action-card:before{content:'!';display:grid;place-items:center;width:38px;height:38px;margin-bottom:18px;border-radius:12px;background:rgba(255,72,72,.12);color:#ff6b6b;font-weight:900}
+#settings .danger-action-card h3{font-size:20px}
+.finance-history-layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(330px,.92fr);gap:16px;align-items:start}
+.finance-history-layout>.card{min-width:0;height:100%}
+.finance-history-layout .panel-head p{margin:4px 0 0;color:var(--muted);font-size:11px}
+.finance-history-more{display:block;width:100%;margin-top:14px}
+.finance-category-chart{display:grid;gap:11px;margin-top:18px}
+.finance-category-bar{position:relative;display:grid;grid-template-columns:minmax(90px,.7fr) minmax(100px,1fr) auto;align-items:center;gap:12px;width:100%;padding:9px 0;border:0;background:none;color:var(--text);text-align:left;cursor:default}
+.finance-category-bar>span{display:flex;min-width:0;flex-direction:column}.finance-category-bar>span b{overflow:hidden;font-size:12px;text-overflow:ellipsis;white-space:nowrap}.finance-category-bar>span small{margin-top:3px;color:var(--muted);font-size:8px}
+.finance-category-bar>i{height:9px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.06)}.finance-category-bar>i>u{display:block;width:var(--bar);height:100%;border-radius:inherit;background:var(--theme-accent)}
+.finance-category-bar.expense>i>u{background:#ff6b72}.finance-category-bar.purchase>i>u{background:#b68cff}.finance-category-bar>em{font-size:11px;font-style:normal;font-weight:800}
+.finance-category-tooltip{position:absolute;z-index:5;right:0;bottom:calc(100% + 5px);display:none;min-width:190px;padding:11px;border:1px solid rgba(var(--theme-accent-rgb),.22);border-radius:10px;background:var(--card);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.finance-category-bar:hover .finance-category-tooltip,.finance-category-bar:focus .finance-category-tooltip{display:grid;gap:4px}.finance-category-tooltip span{color:var(--theme-accent);font-weight:800}.finance-category-tooltip small{color:var(--muted)}
+@media(max-width:900px){#settings .settings-page-head{align-items:stretch;flex-direction:column}#settings .settings-search{width:100%;min-width:0;margin:0}.finance-history-layout{grid-template-columns:1fr}}
+@media(max-width:620px){#settings .settings-appearance-complete .template-presets{grid-template-columns:1fr}.finance-category-bar{grid-template-columns:minmax(80px,.7fr) 1fr}.finance-category-bar>em{grid-column:2;text-align:right}}
+.referral-reward-card{grid-column:1/-1;overflow:hidden;padding:0!important}
+.referral-hero{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:28px;background:linear-gradient(135deg,rgba(var(--theme-accent-rgb),.12),transparent 70%)}
+.referral-hero>div{max-width:680px}.referral-hero span{color:var(--theme-accent);font-size:10px;font-weight:800;letter-spacing:.16em}.referral-hero h3{margin:8px 0;font-size:clamp(24px,3.5vw,38px)!important}.referral-hero p{margin:0!important}
+.referral-hero>strong{display:grid;place-items:center;width:112px;height:112px;flex:0 0 112px;border:1px solid rgba(var(--theme-accent-rgb),.32);border-radius:50%;background:rgba(var(--theme-accent-rgb),.08);color:var(--theme-accent);font:800 32px/1 var(--display)}.referral-hero>strong small{margin-top:-28px;font:700 8px/1 var(--font);letter-spacing:.12em;text-transform:uppercase}
+.referral-purchase-progress{padding:20px 28px;border-block:1px solid var(--line)}.referral-purchase-progress>i{display:block;height:8px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.06)}.referral-purchase-progress>i>u{display:block;height:100%;border-radius:inherit;background:var(--theme-accent);box-shadow:0 0 18px rgba(var(--theme-accent-rgb),.35)}
+.referral-purchase-progress ol{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0 0;padding:0;list-style:none}.referral-purchase-progress li{display:flex;align-items:center;gap:10px;color:var(--muted)}.referral-purchase-progress li>b{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line);border-radius:50%}.referral-purchase-progress li>span{display:flex;flex-direction:column;font-size:11px;font-weight:800}.referral-purchase-progress li small{font-size:8px;font-weight:500}.referral-purchase-progress li.done,.referral-purchase-progress li.done>b{color:var(--theme-accent);border-color:rgba(var(--theme-accent-rgb),.35)}
+.referral-reward-card>.referral-metrics,.referral-reward-card>.referral-identity,.referral-reward-card>.referral-share,.referral-reward-card>.referral-list,.referral-reward-card>footer{margin-inline:28px}.referral-reward-card>.referral-metrics{margin-top:22px}.referral-reward-card>.referral-identity{margin-top:20px}.referral-reward-card>.referral-share{margin-block:14px}.referral-reward-card>.referral-list{margin-bottom:20px}.referral-reward-card>.referral-list h4{margin:0 0 10px}.referral-reward-card>.referral-list small.purchased{border-color:rgba(var(--theme-accent-rgb),.3);color:var(--theme-accent)}.referral-reward-card>footer{padding:16px 0 24px;border-top:1px solid var(--line);color:var(--muted);font-size:10px}
+.support-actions-card button{display:flex;width:100%;align-items:center;border:0;background:none;color:inherit;text-align:left;cursor:pointer}.support-actions-card button:hover{background:rgba(var(--theme-accent-rgb),.05)}
+.real-feedback-card form{display:grid;gap:14px;margin-top:18px}.real-feedback-card label{display:grid;gap:7px;font-size:11px;font-weight:800}.real-feedback-card textarea{min-height:140px;resize:vertical}.real-feedback-card form>div{display:flex;gap:9px}.feedback-authorization{display:flex!important;grid-template-columns:auto 1fr!important;align-items:center}.feedback-authorization[hidden],.feedback-rating[hidden],.real-feedback-card[hidden]{display:none!important}
+@media(max-width:620px){.referral-hero{align-items:flex-start;flex-direction:column;padding:22px}.referral-hero>strong{width:88px;height:88px;flex-basis:88px;font-size:27px}.referral-purchase-progress{padding:18px 22px}.referral-reward-card>.referral-metrics,.referral-reward-card>.referral-identity,.referral-reward-card>.referral-share,.referral-reward-card>.referral-list,.referral-reward-card>footer{margin-inline:22px}.referral-purchase-progress ol{grid-template-columns:1fr}}
