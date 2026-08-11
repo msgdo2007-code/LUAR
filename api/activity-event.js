@@ -5,7 +5,7 @@ module.exports = async (req, res) => {
   try {
     requireSameOrigin(req);
     rateLimit(req, "activity-event", 20, 60 * 60 * 1000);
-    const [user, body] = await Promise.all([requireUser(req), readBody(req, 2_048)]);
+    const [user, body] = await Promise.all([requireUser(req), readBody(req, 4_096)]);
     if (!["login", "feedback"].includes(body.event)) return json(res, 400, { error: "Evento inválido." });
     const email = canonicalEmail(user);
     if (body.event === "feedback") {
@@ -13,12 +13,17 @@ module.exports = async (req, res) => {
       const message = String(body.message || "").trim();
       const rating = Math.max(0, Math.min(5, Number(body.rating) || 0));
       if (!["suggestion", "problem", "review"].includes(kind) || message.length < 10 || message.length > 1800) return json(res, 400, { error: "Preencha a mensagem com 10 a 1.800 caracteres." });
+      await adminRequest("admin_feedback", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ user_id: user.id, user_email: email, kind, message, rating: kind === "review" && rating ? rating : null, publish_authorized: kind === "review" && body.publishAuthorized === true }) });
       const webhook = String(process.env.DISCORD_FEEDBACK_WEBHOOK_URL || "");
-      if (!/^https:\/\/discord\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]+$/.test(webhook)) throw new Error("SERVER_CONFIG");
-      const labels = { suggestion: "Sugestão", problem: "Problema", review: "Avaliação" };
-      const response = await fetch(webhook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [{ title: `${labels[kind]} enviada pelo LUAR`, color: kind === "problem" ? 15158332 : 3342206, fields: [{ name: "Usuário", value: String(user.user_metadata?.name || user.email?.split("@")[0] || "Usuário").slice(0, 200), inline: true }, { name: "E-mail", value: email.slice(0, 200), inline: true }, ...(kind === "review" ? [{ name: "Nota", value: rating ? `${rating}/5` : "Não informada", inline: true }, { name: "Autorizou publicação", value: body.publishAuthorized === true ? "Sim" : "Não", inline: true }] : []), { name: "Mensagem", value: message.slice(0, 1024) }], timestamp: new Date().toISOString() }] }) });
-      if (!response.ok) throw new Error("WEBHOOK_FAILED");
-      return json(res, 200, { sent: true });
+      let notified = false;
+      if (/^https:\/\/discord\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]+$/.test(webhook)) {
+        const labels = { suggestion: "Sugestão", problem: "Problema", review: "Avaliação" };
+        try {
+          const response = await fetch(webhook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [{ title: `${labels[kind]} enviada pelo LUAR`, color: kind === "problem" ? 15158332 : 3342206, fields: [{ name: "Usuário", value: String(user.user_metadata?.name || user.email?.split("@")[0] || "Usuário").slice(0, 200), inline: true }, { name: "E-mail", value: email.slice(0, 200), inline: true }, ...(kind === "review" ? [{ name: "Nota", value: rating ? `${rating}/5` : "Não informada", inline: true }, { name: "Autorizou publicação", value: body.publishAuthorized === true ? "Sim" : "Não", inline: true }] : []), { name: "Mensagem", value: message.slice(0, 1024) }], timestamp: new Date().toISOString() }] }) });
+          notified = response.ok;
+        } catch (webhookError) { console.error("Discord feedback notification failed", webhookError.message); }
+      }
+      return json(res, 200, { sent: true, notified });
     }
     const recorded = await adminRequest("rpc/record_luar_login", { method: "POST", body: JSON.stringify({ p_email: email, p_user_id: user.id }) });
     const login = Array.isArray(recorded) ? recorded[0] : recorded;
