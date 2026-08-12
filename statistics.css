@@ -1154,8 +1154,53 @@ body.app-mode:not([data-appearance-template="luar"]) .ls-profile-card.effect-uni
 @media (min-width: 1121px) {
   .ls-profile-host { grid-template-columns: minmax(0, .96fr) minmax(0, 1.04fr); }
   .ls-profile-host > .ls-profile-card { grid-column: 1 / -1; }
-  .ls-profile-host > .profile-settings-hub { grid-column: 1; min-width: 0; }
+.ls-profile-host > .profile-settings-hub { grid-column: 1; min-width: 0; }
   .ls-profile-host > .ls-inventory { grid-column: 2; min-width: 0; }
+}
+
+/* Perfil cósmico compacto: banner preservado, identidade legível e sem altura vazia. */
+.ls-profile-card {
+  min-height: 0;
+}
+.ls-profile-cover {
+  min-height: clamp(132px, 15vw, 178px);
+  padding: 14px;
+}
+.ls-profile-cover::before { height: 116px; left: -34px; top: -62px; width: 116px; }
+.ls-profile-cover::after { height: 52px; left: 22px; top: 20px; width: 52px; }
+.ls-cover-edit { left: 13px; top: 13px; padding: 7px 9px; }
+.ls-profile-universe { padding: 7px 10px; font-size: 8px; }
+.ls-profile-body {
+  padding: 0 clamp(18px, 3vw, 28px) 20px;
+}
+.ls-profile-identity {
+  align-items: center;
+  gap: 13px;
+  margin-top: -31px;
+}
+.ls-profile-avatar {
+  border-width: 3px;
+  font-size: 17px;
+  height: clamp(68px, 7vw, 80px);
+  width: clamp(68px, 7vw, 80px);
+}
+button.ls-profile-avatar::after { bottom: 0; right: 0; width: 19px; height: 19px; font-size: 8px; }
+.ls-profile-identity > div { min-width: 0; padding-top: 27px; }
+.ls-profile-identity > div > span:first-child { font-size: 7px; letter-spacing: .13em; }
+.ls-profile-identity h2 { margin: 3px 0 2px; font-size: clamp(18px, 2.5vw, 25px); line-height: 1.08; }
+.ls-profile-identity p { margin: 0; overflow: hidden; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.ls-profile-badges { gap: 5px; margin-top: 8px; }
+.ls-profile-badges > span { min-height: 24px; padding: 5px 8px; font-size: 8px; }
+.ls-xp-progress { margin-top: 15px; }
+.ls-xp-progress > div { margin-bottom: 7px; }
+@media (max-width: 620px) {
+  .ls-profile-cover { min-height: 120px; }
+  .ls-profile-body { padding-inline: 15px; }
+  .ls-profile-identity { gap: 10px; margin-top: -27px; }
+  .ls-profile-avatar { height: 62px; width: 62px; }
+  .ls-profile-identity > div { padding-top: 25px; }
+  .ls-profile-identity h2 { font-size: 18px; }
+  .ls-profile-badges > span { min-height: 22px; padding: 4px 7px; }
 }
 .ls-inventory{align-content:start;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;padding:22px;max-height:720px;overflow:auto;scrollbar-width:thin;scrollbar-color:rgba(var(--ls-accent-rgb),.3) transparent}
 .ls-inventory>header{grid-column:1/-1;position:relative;padding:0 0 12px}.ls-inventory>header>span{margin-bottom:7px}.ls-inventory>header h3{font-size:22px}.ls-inventory-plan{position:absolute;right:0;top:0;padding:6px 8px;border:1px solid rgba(var(--ls-accent-rgb),.24);border-radius:8px;background:rgba(var(--ls-accent-rgb),.075);color:var(--ls-accent);font-size:7px;letter-spacing:.1em}
@@ -1207,4 +1252,30 @@ body.app-mode:not([data-appearance-template="luar"]) .ls-profile-card.effect-uni
     scroll-behavior: auto !important;
     transition: none !important;
   }
+}
+
+/* Mantém o resumo compacto depois das regras responsivas legadas. */
+.ls-hero { min-height: 154px; padding: clamp(24px, 3vw, 34px); }
+.ls-hero h1 { font-size: clamp(28px, 3.4vw, 40px); }
+.ls-hero p { margin-top: 11px; font-size: 12px; line-height: 1.55; }
+.ls-kicker { margin-bottom: 9px; font-size: 8px; }
+.ls-stage-pill { min-width: 140px; padding: 13px 15px; border-radius: 15px; }
+.ls-stage-pill i { font-size: 23px; }
+.ls-stage-pill span { font-size: 12px; }
+.ls-stage-pill b { font-size: 8px; }
+.ls-profile-cover { min-height: clamp(116px, 11vw, 132px); }
+@media (max-width: 760px) {
+  .ls-hero { gap: 18px; padding: 21px 18px; }
+  .ls-hero h1 { font-size: 27px; }
+  .ls-profile-cover { min-height: 112px; }
+  .ls-profile-body { padding: 0 15px 18px; }
+  .ls-profile-identity { align-items: center; gap: 10px; margin-top: -27px; }
+  .ls-profile-identity > div:last-child { min-width: 0; padding-top: 25px; }
+  .ls-profile-avatar { height: 62px; width: 62px; }
+  .ls-profile-identity h2 { font-size: 18px; }
+}
+@media (max-width: 430px) {
+  .ls-profile-identity { display: flex; margin-top: -27px; }
+  .ls-profile-identity > div:last-child { padding-top: 25px; }
+  .ls-profile-identity h2 { font-size: 17px; }
 }
