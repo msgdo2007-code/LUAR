@@ -2141,6 +2141,9 @@ body.light .finance-pie-visual>div{background:rgba(255,255,255,.94)}
 #settings [data-settings-panel="appearance"] .settings-language-options b{font-size:8px}.settings-language-options small{font-size:6px}
 #settings [data-settings-panel="appearance"] .settings-select-row{min-height:43px;padding:7px 0}
 #settings [data-settings-panel="appearance"] .settings-select-row select{max-width:145px;height:31px;padding-inline:7px;font-size:8px}
+#settings [data-settings-panel="appearance"] .appearance-profile-context{margin-top:7px;padding-top:7px;border-top:1px solid var(--settings-line)}
+#settings [data-settings-panel="appearance"] .appearance-profile-context input{width:145px;height:31px;padding:0 7px;border:1px solid var(--settings-line);border-radius:8px;background:var(--settings-soft);color:var(--text);font:700 8px var(--font);color-scheme:dark}
+body.light #settings [data-settings-panel="appearance"] .appearance-profile-context input{color-scheme:light}
 #settings [data-settings-panel="appearance"] .settings-premium-banner{padding:12px 15px}
 
 #settings #settingsDataGrid{grid-template-columns:repeat(12,minmax(0,1fr));gap:9px}
