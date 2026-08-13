@@ -96,9 +96,23 @@ module.exports = async (req, res) => {
       const updatedAt = new Date().toISOString();
       const previous = cleanState(account.state);
       if (stateHasContent(previous) && !stateHasContent(incoming) && body.allowEmpty !== true) return json(res, 409, { error: "O salvamento vazio foi bloqueado para proteger seus dados." });
+      const currentRevision = account.state_updated_at || null;
+      const requestedRevision = body.baseUpdatedAt || null;
+      if (stateHasContent(previous) && currentRevision && requestedRevision !== currentRevision) {
+        return json(res, 409, {
+          error: "Existe uma versão mais recente desta conta.",
+          conflict: true,
+          state: previous,
+          updatedAt: currentRevision,
+          backups: account?.plan === "lifetime" ? backupSummaries(account.backups) : [],
+        });
+      }
       const lifetime = account?.plan === "lifetime";
       const existingBackups = cleanBackups(account.backups);
-      const backups = lifetime ? cleanBackups(body.createBackup === true ? [{ savedAt: updatedAt, state: incoming, manual: true }, ...existingBackups] : existingBackups) : [];
+      const changed = JSON.stringify(previous) !== serialized;
+      const automaticRollback = changed && stateHasContent(previous) ? [{ savedAt: updatedAt, state: snapshotState(previous), manual: false }] : [];
+      const manualSnapshot = body.createBackup === true ? [{ savedAt: updatedAt, state: snapshotState(incoming), manual: true }] : [];
+      const backups = cleanBackups([...manualSnapshot, ...automaticRollback, ...existingBackups]);
       account = await upsertLuarAccount({ email: canonicalEmail(user), user_ids: [...new Set([...(account.user_ids || []), user.id])], plan: lifetime ? "lifetime" : "free", state: incoming, state_updated_at: updatedAt, backups, updated_at: updatedAt });
     }
 
