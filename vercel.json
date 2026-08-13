@@ -95,14 +95,7 @@
       ]
     },
     {
-      "source": "/monetag-slot.html",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
-        { "key": "Cache-Control", "value": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400" }
-      ]
-    },
-    {
-      "source": "/(app.js|styles.css|statistics.js|statistics.css|daily-quotes.js|daily-quotes.css|dashboard-free-compact.css|premium-locks.css|landing-seo.css|growth.css|admin-growth.css|heading-fix.css|cookie-consent.js|cookie-consent.css|monetag-slot.js|language.js)",
+      "source": "/(app.js|styles.css|statistics.js|statistics.css|daily-quotes.js|daily-quotes.css|dashboard-free-compact.css|premium-locks.css|landing-seo.css|growth.css|admin-growth.css|heading-fix.css|cookie-consent.js|cookie-consent.css|language.js)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=0, must-revalidate" }
       ]
