@@ -13,7 +13,7 @@
     #adLoading small{color:#8f9a92;font-size:8px}
     [hidden]{display:none!important}
     body.ad-network-ready #adLoading,body.ad-network-unavailable #adLoading{display:none}
-    #adTrigger{position:relative;width:100%;height:100%;min-height:96px;display:grid;place-content:center;justify-items:center;gap:12px;overflow:hidden;padding:22px 14px;border:1px solid rgba(50,255,126,.2);border-radius:14px;background:radial-gradient(circle at 50% 24%,rgba(50,255,126,.16),transparent 30%),linear-gradient(160deg,#152119,#0b0f0c 68%);color:#eef8f1;text-align:center;cursor:pointer}
+    #adTrigger{position:relative;width:100%;height:100%;min-height:96px;display:grid;place-content:center;justify-items:center;gap:12px;overflow:hidden;padding:22px 14px;border:1px solid rgba(50,255,126,.2);border-radius:14px;background:radial-gradient(circle at 50% 24%,rgba(50,255,126,.16),transparent 30%),linear-gradient(160deg,#152119,#0b0f0c 68%);color:#eef8f1;text-align:center}
     #adTrigger:before,#adTrigger:after{content:"";position:absolute;border:1px solid rgba(50,255,126,.12);border-radius:50%}
     #adTrigger:before{width:190px;height:190px;left:50%;top:22%;transform:translate(-50%,-50%)}
     #adTrigger:after{width:116px;height:116px;left:50%;top:22%;transform:translate(-50%,-50%)}
@@ -22,25 +22,23 @@
     #adTrigger strong{position:relative;z-index:1;max-width:210px;font-size:16px;line-height:1.2}
     #adTrigger small{position:relative;z-index:1;max-width:230px;color:#95a198;font-size:9px;line-height:1.5}
     #adTrigger b{position:relative;z-index:1;padding:9px 13px;border-radius:9px;background:#32ff7e;color:#071009;font-size:8px;letter-spacing:.04em}
-    #adTrigger:hover{border-color:rgba(50,255,126,.42);filter:brightness(1.06)}
-    body.ad-network-unavailable #adTrigger{border-color:rgba(255,255,255,.09);background:linear-gradient(160deg,#161a17,#0d100e);cursor:pointer}
+    body.ad-network-unavailable #adTrigger{border-color:rgba(255,255,255,.09);background:linear-gradient(160deg,#161a17,#0d100e)}
     body.ad-network-unavailable #adTrigger i{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#9ca69f;box-shadow:none}
     body.ad-network-unavailable #adTrigger span{color:#9ca69f}
     body.ad-network-unavailable #adTrigger b{background:rgba(255,255,255,.08);color:#d9e0db}
-    body.ad-network-delayed #adTrigger small:after{content:" A rede será acionada ao abrir a oferta."}
     body>iframe,body>a,body>img{position:relative;z-index:2;max-width:100%;max-height:100%}
     @media(max-height:180px){body{padding:5px}#adTrigger{grid-template-columns:auto minmax(0,1fr) auto;place-content:center;justify-items:start;gap:10px;padding:10px 12px;text-align:left}#adTrigger i{width:38px;height:38px;font-size:18px;grid-row:1/4}#adTrigger span,#adTrigger strong,#adTrigger small{grid-column:2}#adTrigger strong{font-size:12px}#adTrigger b{grid-column:3;grid-row:1/4}#adTrigger:before,#adTrigger:after{display:none}}
   </style>
 </head>
 <body>
   <div id="adLoading"><strong>Preparando publicidade</strong><small>Conteúdo patrocinado</small></div>
-  <button id="adTrigger" type="button" hidden aria-label="Abrir conteúdo patrocinado">
+  <div id="adTrigger" hidden role="status">
     <i aria-hidden="true">◇</i>
     <span>CONTEÚDO PATROCINADO</span>
-    <strong>Veja a oferta disponível</strong>
-    <small>O anúncio abre somente quando você clicar neste espaço.</small>
-    <b>ABRIR ANÚNCIO</b>
-  </button>
-  <script src="/monetag-slot.js?v=8"></script>
+    <strong>Conteúdo patrocinado</strong>
+    <small>A campanha será exibida automaticamente quando estiver disponível para esta visita.</small>
+    <b>MONETAG</b>
+  </div>
+  <script src="/monetag-slot.js?v=9"></script>
 </body>
 </html>

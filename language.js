@@ -63,6 +63,8 @@
   );
 
   const EXTRA_ENTRIES = [
+    ['Estamos aprimorando o LUAR','We are improving LUAR','Мы улучшаем LUAR'],
+    ['Algumas funções podem oscilar por alguns instantes. Seus dados continuam protegidos.','Some features may fluctuate briefly. Your data remains protected.','Некоторые функции могут временно работать нестабильно. Ваши данные остаются защищёнными.'],
     ['Desbloqueie o LUAR completo por R$ 39,90 durante o lançamento. O preço planejado para depois é R$ 79,90.','Unlock the complete LUAR for R$ 39.90 during launch. The planned price afterward is R$ 79.90.','Откройте полный LUAR за R$ 39,90 во время запуска. Плановая цена после запуска — R$ 79,90.'],
     ['Escolha o que deseja organizar e veja como o LUAR conecta o próximo passo. Sem promessa exagerada e sem cobrança escondida.','Choose what you want to organize and see how LUAR connects your next step. No exaggerated promises or hidden charges.','Выберите, что хотите организовать, и посмотрите, как LUAR связывает ваш следующий шаг. Без громких обещаний и скрытых платежей.'],
     ['Evolução diária, gastos por categoria, distribuição do foco e variação do humor em uma visão tranquila.','Daily progress, expenses by category, focus distribution and mood changes in one calm view.','Ежедневный прогресс, расходы по категориям, распределение фокуса и изменения настроения в одном спокойном обзоре.'],
