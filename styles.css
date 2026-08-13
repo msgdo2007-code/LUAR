@@ -2051,3 +2051,70 @@ body.light .finance-pie-visual>div{background:rgba(255,255,255,.94)}
 
 @media(max-width:900px){#settings .settings-appearance-complete .template-presets{grid-template-columns:repeat(2,minmax(0,1fr))}.finance-category-pie{grid-template-columns:1fr}.finance-history-layout>.card{height:auto}}
 @media(max-width:620px){#settings .referral-reward-card>.referral-metrics{grid-template-columns:1fr}#settings .referral-share{grid-template-columns:repeat(2,minmax(0,1fr))}#settings .feedback-stars label{min-height:42px}#settings .feedback-actions{display:grid!important;grid-template-columns:1fr!important}#settings .feedback-actions button{min-width:0}.reset-confirm-preserved,.reset-confirm-actions{grid-template-columns:1fr!important}}
+
+/* Configurações compactas: mais informação visível, sem perder controles. */
+#settings [data-settings-panel="appearance"]>.settings-panel-grid{grid-template-columns:repeat(12,minmax(0,1fr));gap:9px}
+#settings [data-settings-panel="appearance"] .settings-appearance-complete{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:center;gap:6px 9px;padding:12px}
+#settings .settings-appearance-complete>span,#settings .settings-appearance-complete>h3,#settings .settings-appearance-complete>p{grid-column:1/-1}
+#settings .settings-appearance-complete>h3{margin:2px 0;font-size:13px}
+#settings .settings-appearance-complete>p{margin:0 0 2px;font-size:8px}
+#settings .settings-appearance-complete .settings-theme-toggle{grid-column:1/4;height:48px;margin:0;padding:7px 9px}
+#settings .settings-appearance-complete .settings-theme-toggle>i{width:28px;height:28px;font-size:16px}
+#settings .settings-appearance-complete .settings-theme-toggle>b{font-size:9px}
+#settings .settings-appearance-complete .settings-theme-toggle small{font-size:6px}
+#settings .settings-appearance-complete .template-presets{grid-column:4/-1;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:0}
+#settings .settings-appearance-complete .template-choice{min-height:48px;display:flex!important;align-items:center;gap:5px;padding:6px!important}
+#settings .settings-appearance-complete .template-choice>i{width:21px;height:28px;flex:0 0 21px;gap:2px;padding:3px}
+#settings .settings-appearance-complete .template-choice>i u{width:4px}
+#settings .settings-appearance-complete .template-choice>i u:nth-child(1){height:9px}#settings .settings-appearance-complete .template-choice>i u:nth-child(2){height:17px}#settings .settings-appearance-complete .template-choice>i u:nth-child(3){height:13px}
+#settings .settings-appearance-complete .template-choice>b{min-width:0;font-size:8px;line-height:1.1}
+#settings .settings-appearance-complete .template-choice small{overflow:hidden;font-size:5px;text-overflow:ellipsis;white-space:nowrap}
+#settings .settings-appearance-complete .template-choice>em{margin-left:auto;font-size:7px}
+#settings .settings-appearance-complete .custom-color-row{grid-column:1/6;min-height:44px;margin:0;padding:6px 8px;border:1px solid var(--settings-line);border-radius:10px;background:var(--settings-soft)}
+#settings .settings-appearance-complete .custom-color-row label{display:flex;align-items:center;gap:8px}
+#settings .settings-appearance-complete .custom-color-row label input{width:34px;height:28px}
+#settings .settings-appearance-complete .custom-color-row button{min-height:32px}
+#settings .settings-appearance-complete .motion-preference{grid-column:6/-1;min-height:44px;margin:0;padding:6px 8px;border-radius:10px}
+#settings .settings-appearance-complete .motion-preference>i{width:28px;height:28px}
+#settings .settings-appearance-complete .motion-preference b{font-size:8px}.settings-appearance-complete .motion-preference small{font-size:6px}
+#settings .settings-appearance-complete .motion-preference button{min-height:32px}
+#settings [data-settings-panel="appearance"] .settings-language-host{grid-column:1/9}
+#settings [data-settings-panel="appearance"]>.settings-panel-grid>.preference-card{grid-column:9/-1;height:100%;padding:13px}
+#settings [data-settings-panel="appearance"] .language-settings-card{height:100%;padding:12px!important}
+#settings [data-settings-panel="appearance"] .language-settings-heading{grid-template-columns:32px minmax(0,1fr) auto;gap:8px}
+#settings [data-settings-panel="appearance"] .language-settings-heading>i{width:32px;height:32px}
+#settings [data-settings-panel="appearance"] .language-settings-heading h3{font-size:12px}.language-settings-heading p{font-size:7px}
+#settings [data-settings-panel="appearance"] .settings-language-options{gap:5px;margin-top:8px}
+#settings [data-settings-panel="appearance"] .settings-language-options button{min-height:45px;grid-template-columns:32px minmax(0,1fr) 17px;gap:7px;padding:6px 8px}
+#settings [data-settings-panel="appearance"] .settings-language-options i{width:32px;height:22px}
+#settings [data-settings-panel="appearance"] .settings-language-options b{font-size:8px}.settings-language-options small{font-size:6px}
+#settings [data-settings-panel="appearance"] .settings-select-row{min-height:43px;padding:7px 0}
+#settings [data-settings-panel="appearance"] .settings-select-row select{max-width:145px;height:31px;padding-inline:7px;font-size:8px}
+#settings [data-settings-panel="appearance"] .settings-premium-banner{padding:12px 15px}
+
+#settings #settingsDataGrid{grid-template-columns:repeat(12,minmax(0,1fr));gap:9px}
+#settings #settingsDataGrid>.settings-card{padding:12px}
+#settings #settingsDataGrid>.storage-card{grid-column:1/-1;min-height:0}
+#settings #settingsDataGrid>.backup-card{grid-column:1/5;min-height:0}
+#settings #settingsDataGrid>.cloud-backup-card{grid-column:5/-1;width:100%}
+#settings #settingsDataGrid .storage-stats{grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:8px}
+#settings #settingsDataGrid .storage-stats>span{min-height:45px;padding:7px}
+#settings #settingsDataGrid .storage-stats b{font-size:15px}.settings-data-grid .storage-stats small{font-size:6px}
+#settings #settingsDataGrid .backup-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:11px}
+#settings #settingsDataGrid .backup-actions button{min-height:36px}
+#settings #settingsDataGrid>.cloud-backup-card{display:grid;grid-template-columns:minmax(0,1fr) 210px;grid-template-rows:auto auto auto auto;column-gap:12px;padding:12px}
+#settings .cloud-backup-card>span,#settings .cloud-backup-card>h3,#settings .cloud-backup-card>p,#settings .cloud-backup-card>.cloud-backup-overview,#settings .cloud-backup-card>#cloudBackupStatus{grid-column:1}
+#settings .cloud-backup-card .cloud-backup-overview{grid-row:auto;grid-template-columns:58px 1fr;gap:7px 10px;margin:8px 0 6px;padding:8px}
+#settings .cloud-backup-overview>div{min-height:48px}.cloud-backup-overview strong{font-size:20px}
+#settings .cloud-backup-overview ol{gap:3px}.cloud-backup-overview li{grid-template-columns:17px 1fr auto;gap:5px}.cloud-backup-overview li>i{width:17px;height:17px}
+#settings .cloud-backup-card>#cloudBackupStatus{margin:0;font-size:7px}
+#settings .cloud-backup-card>.cloud-actions{grid-column:2;grid-row:1/6;display:flex;align-items:stretch;justify-content:center;flex-direction:column;gap:6px;min-width:0;margin:0;padding-left:12px;border-left:1px solid var(--settings-line)}
+#settings .cloud-backup-card>.cloud-actions button{min-height:37px}
+
+#settings .referral-reward-card>footer{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#settings .referral-reward-card>footer .text-button{padding:0;border:0;background:transparent;color:var(--theme-accent);font-size:8px;font-weight:800;cursor:pointer}
+#settings .settings-loading-card.referral-card{min-height:92px;padding:16px!important}
+
+@media(max-width:1120px){#settings .settings-appearance-complete .settings-theme-toggle{grid-column:1/-1}#settings .settings-appearance-complete .template-presets{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:900px){#settings [data-settings-panel="appearance"]>.settings-panel-grid{grid-template-columns:1fr}#settings [data-settings-panel="appearance"] .settings-language-host,#settings [data-settings-panel="appearance"]>.settings-panel-grid>.preference-card{grid-column:1}#settings #settingsDataGrid{grid-template-columns:1fr}#settings #settingsDataGrid>*{grid-column:1!important}#settings #settingsDataGrid .storage-stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:620px){#settings .settings-appearance-complete{display:block!important}#settings .settings-appearance-complete>*{margin-top:7px!important}#settings .settings-appearance-complete .template-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#settings .settings-appearance-complete .custom-color-row,#settings .settings-appearance-complete .motion-preference{display:flex}#settings #settingsDataGrid>.cloud-backup-card{display:flex}#settings .cloud-backup-card>.cloud-actions{padding:8px 0 0;border-top:1px solid var(--settings-line);border-left:0}#settings .referral-reward-card>footer{align-items:flex-start;flex-direction:column}}
