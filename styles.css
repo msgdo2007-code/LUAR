@@ -1943,6 +1943,15 @@ body.light .finance-category-grid i{background:rgba(15,25,19,.08)}
 /* Publicidade inline aguardando a zona correta: nunca exibe carregamento infinito */
 .free-ad-card[data-ad-provider="pending-inline"] .ad-card-frame{min-height:116px}.free-ad-card[data-ad-provider="pending-inline"] .ad-card-frame:before{content:'PUBLICIDADE';display:block;margin-bottom:7px;color:var(--theme-accent);font-size:7px;font-weight:900;letter-spacing:.14em}
 
+/* Unidade horizontal do cabeçalho. O slot fica no fluxo e aguarda um código oficial Display/Native. */
+.header-ad{width:min(970px,calc(100% - 76px));margin:22px auto 0;text-align:center;overflow:hidden}
+.header-ad[hidden],body.lifetime-user .header-ad{display:none!important}
+.header-ad>span{display:block;margin:0 auto 7px;color:var(--muted);font-size:7px;font-weight:800;letter-spacing:.16em}
+#header-ad-slot{width:min(728px,100%);min-height:90px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:14px 20px;border:0;border-radius:11px;background:rgba(255,255,255,.018);color:var(--text);box-sizing:border-box}
+#header-ad-slot strong{font-size:11px;font-weight:700;letter-spacing:.02em}
+#header-ad-slot small{color:var(--muted);font-size:9px}
+@media(max-width:700px){.header-ad{width:calc(100% - 28px);margin-top:14px}.header-ad>span{margin-bottom:5px}#header-ad-slot{width:100%;min-height:0;height:auto;aspect-ratio:728/90;padding:9px 12px;border-radius:9px}#header-ad-slot strong{font-size:9px}#header-ad-slot small{font-size:8px}}
+
 @media(max-width:900px){.maintenance-notice{top:68px;margin-inline:-18px;padding-inline:18px}#settings [data-settings-panel="appearance"] .settings-language-host,#settings [data-settings-panel="appearance"]>.settings-panel-grid>.preference-card{grid-column:1/-1}#settings [data-settings-panel="appearance"] .settings-language-host{border-right:0;border-bottom:1px solid var(--settings-line)}}
 @media(max-width:620px){.maintenance-notice{align-items:flex-start;justify-content:flex-start;flex-wrap:wrap}.maintenance-notice span{flex-basis:calc(100% - 15px);margin-left:15px}#settings [data-settings-panel="appearance"] .settings-appearance-complete{padding:16px 14px}#settings [data-settings-panel="appearance"] .settings-language-host,#settings [data-settings-panel="appearance"]>.settings-panel-grid>.preference-card{padding:14px}.reset-confirm-card .reset-confirm-preserved{grid-template-columns:1fr!important}}
 

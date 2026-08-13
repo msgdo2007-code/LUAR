@@ -63,6 +63,7 @@
   );
 
   const EXTRA_ENTRIES = [
+    ['Preparando publicidade','Preparing advertisement','Подготовка рекламы'],
     ['Estamos aprimorando o LUAR','We are improving LUAR','Мы улучшаем LUAR'],
     ['Algumas funções podem oscilar por alguns instantes. Seus dados continuam protegidos.','Some features may fluctuate briefly. Your data remains protected.','Некоторые функции могут временно работать нестабильно. Ваши данные остаются защищёнными.'],
     ['Desbloqueie o LUAR completo por R$ 39,90 durante o lançamento. O preço planejado para depois é R$ 79,90.','Unlock the complete LUAR for R$ 39.90 during launch. The planned price afterward is R$ 79.90.','Откройте полный LUAR за R$ 39,90 во время запуска. Плановая цена после запуска — R$ 79,90.'],
