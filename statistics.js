@@ -1016,6 +1016,35 @@
     host.appendChild(grid);
   }
 
+  function chartTooltip(host) {
+    let tooltip = host.querySelector('.ls-chart-tooltip');
+    if (!tooltip) {
+      tooltip = create('div', 'ls-chart-tooltip');
+      tooltip.setAttribute('role', 'status');
+      host.appendChild(tooltip);
+    }
+    return tooltip;
+  }
+
+  function showChartTooltip(host, tooltip, text, event) {
+    tooltip.textContent = text;
+    tooltip.classList.add('show');
+    if (event?.clientX !== undefined) {
+      const rect = host.getBoundingClientRect();
+      tooltip.style.left = `${Math.max(8, Math.min(rect.width - tooltip.offsetWidth - 8, event.clientX - rect.left + 12))}px`;
+      tooltip.style.top = `${Math.max(8, Math.min(rect.height - tooltip.offsetHeight - 8, event.clientY - rect.top - tooltip.offsetHeight - 10))}px`;
+    }
+  }
+
+  function bindChartTooltip(host, node, text) {
+    const tooltip = chartTooltip(host);
+    const value = () => typeof text === 'function' ? text() : text;
+    node.tabIndex = 0;
+    node.onpointerenter = node.onfocus = event => showChartTooltip(host, tooltip, value(), event);
+    node.onpointermove = event => showChartTooltip(host, tooltip, value(), event);
+    node.onpointerleave = node.onblur = () => tooltip.classList.remove('show');
+  }
+
   function barChart(host, rows, valueKey, formatter, tone) {
     host.replaceChildren();
     const chart = create('div', `ls-bars ${tone || ''}`.trim());
@@ -1028,6 +1057,7 @@
       bar.title = `${row.label}: ${formatter ? formatter(row[valueKey]) : row[valueKey]}`;
       append(column, bar, create('small', '', row.label));
       chart.appendChild(column);
+      bindChartTooltip(host, column, `${row.label}\n${formatter ? formatter(row[valueKey]) : row[valueKey]}`);
     });
     host.appendChild(chart);
   }
@@ -1054,6 +1084,7 @@
       });
       append(column, bars, create('small', '', row.label));
       chart.appendChild(column);
+      bindChartTooltip(host, column, `${row.label}\nTarefas: ${Math.round(row.tasks)}\nHábitos: ${Math.round(row.habits)}\nFoco: ${formatDuration(row.focus)}`);
     });
     append(host, legend, chart);
   }
@@ -1086,6 +1117,11 @@
       path.setAttribute('class', `ls-line ls-line-${key}`);
       svg.appendChild(path);
     });
+    const hoverLine = document.createElementNS(svg.namespaceURI, 'line');
+    hoverLine.setAttribute('class', 'ls-line-hover');
+    hoverLine.setAttribute('y1', padY);
+    hoverLine.setAttribute('y2', height - padY);
+    svg.appendChild(hoverLine);
     const labels = create('div', 'ls-axis-labels');
     rows.forEach((row, index) => {
       if (rows.length > 8 && index % Math.ceil(rows.length / 6) && index !== rows.length - 1) return;
@@ -1097,6 +1133,23 @@
       legend.appendChild(create('span', key, `${key === 'income' ? 'Ganhos' : key === 'expense' ? 'Gastos' : key === 'saved' ? 'Economia' : 'XP'} · ${formatter ? formatter(last) : last}`));
     });
     append(host, legend, svg, labels);
+    const tooltip = chartTooltip(host);
+    const lineLabels = { xp: 'XP', income: 'Ganhos', expense: 'Gastos', saved: 'Economia' };
+    const inspect = event => {
+      const rect = svg.getBoundingClientRect();
+      const ratio = clamp((event.clientX - rect.left) / Math.max(1, rect.width), 0, 1);
+      const index = Math.round(ratio * Math.max(0, rows.length - 1));
+      const row = rows[index] || rows[0];
+      if (!row) return;
+      const x = padX + index / Math.max(1, rows.length - 1) * (width - padX * 2);
+      hoverLine.setAttribute('x1', x);
+      hoverLine.setAttribute('x2', x);
+      hoverLine.classList.add('show');
+      const details = keys.map(key => `${lineLabels[key] || key}: ${formatter ? formatter(row[key]) : row[key]}`).join('\n');
+      showChartTooltip(host, tooltip, `${row.label}\n${details}`, event);
+    };
+    svg.onpointerenter = svg.onpointermove = inspect;
+    svg.onpointerleave = () => { tooltip.classList.remove('show'); hoverLine.classList.remove('show'); };
   }
 
   function renderCharts(root, context, metrics) {
@@ -1139,6 +1192,7 @@
       if (/^#[0-9a-f]{6}$/i.test(String(goal?.color || ''))) fill.style.background = goal.color;
       track.appendChild(fill);
       append(row, top, track);
+      bindChartTooltip(goalCanvas, row, `${goal?.name || 'Meta sem nome'}\n${percent(progress)} concluído\nAcumulado: ${compactMoney(number(goal?.current), context)}\nMeta: ${compactMoney(number(goal?.target), context)}`);
       goalCanvas.appendChild(row);
     });
   }

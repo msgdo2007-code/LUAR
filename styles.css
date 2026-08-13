@@ -2175,3 +2175,70 @@ body.light #settings [data-settings-panel="appearance"] .appearance-profile-cont
 @media(max-width:1120px){#settings .settings-appearance-complete .settings-theme-toggle{grid-column:1/-1}#settings .settings-appearance-complete .template-presets{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:900px){#settings [data-settings-panel="appearance"]>.settings-panel-grid{grid-template-columns:1fr}#settings [data-settings-panel="appearance"] .settings-language-host,#settings [data-settings-panel="appearance"]>.settings-panel-grid>.preference-card{grid-column:1}#settings #settingsDataGrid{grid-template-columns:1fr}#settings #settingsDataGrid>*{grid-column:1!important}#settings #settingsDataGrid .storage-stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:620px){#settings .settings-appearance-complete{display:block!important}#settings .settings-appearance-complete>*{margin-top:7px!important}#settings .settings-appearance-complete .template-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#settings .settings-appearance-complete .custom-color-row,#settings .settings-appearance-complete .motion-preference{display:flex}#settings #settingsDataGrid>.cloud-backup-card{display:flex}#settings .cloud-backup-card>.cloud-actions{padding:8px 0 0;border-top:1px solid var(--settings-line);border-left:0}#settings .referral-reward-card>footer{align-items:flex-start;flex-direction:column}}
+
+/* Configurações: dados legíveis, sobre em dois cards e confirmação local segura */
+#settings #settingsDataGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#settings #settingsDataGrid>.settings-card{padding:20px}
+#settings #settingsDataGrid>.storage-card{grid-column:1/-1}
+#settings #settingsDataGrid>.backup-card,#settings #settingsDataGrid>.cloud-backup-card{grid-column:auto;min-height:310px}
+#settings #settingsDataGrid .storage-stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:15px}
+#settings #settingsDataGrid .storage-stats>span{min-height:67px;padding:12px 9px;border-radius:12px}
+#settings #settingsDataGrid .storage-stats b{font-size:21px}
+#settings #settingsDataGrid .storage-stats small{font-size:8px;line-height:1.25}
+#settings #settingsDataGrid .backup-card{display:flex;flex-direction:column}
+#settings #settingsDataGrid .backup-card>p{max-width:52ch;font-size:10px}
+#settings #settingsDataGrid .backup-actions{grid-template-columns:1fr;gap:8px;margin-top:auto;padding-top:22px}
+#settings #settingsDataGrid .backup-actions button{min-height:43px}
+#settings #settingsDataGrid .backup-card>#backupInfo{display:block;margin-top:12px;color:var(--muted);font-size:8px;line-height:1.45}
+#settings #settingsDataGrid>.cloud-backup-card{display:flex;align-items:stretch;flex-direction:column;padding:20px}
+#settings #settingsDataGrid .cloud-backup-card>*{grid-column:auto;grid-row:auto}
+#settings #settingsDataGrid .cloud-backup-card .cloud-backup-overview{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px 13px;margin:15px 0 9px;padding:12px}
+#settings #settingsDataGrid .cloud-backup-overview>div{min-height:62px}
+#settings #settingsDataGrid .cloud-backup-overview strong{font-size:25px}
+#settings #settingsDataGrid .cloud-backup-card>.cloud-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto;padding:14px 0 0;border-top:1px solid var(--settings-line);border-left:0}
+#settings #settingsDataGrid .cloud-backup-card>.cloud-actions button{min-height:43px}
+#settings #settingsAboutGrid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:14px}
+#settings #settingsAboutGrid>.about-version-card,#settings #settingsAboutGrid>.creator-accordion{grid-column:auto;min-height:100%}
+#settings #settingsAboutGrid>.creator-accordion{display:flex;flex-direction:column}
+#settings #settingsAboutGrid>.creator-accordion summary{min-height:100%;flex:1;padding:20px}
+#settings #settingsAboutGrid>.creator-accordion[open] summary{min-height:72px;flex:0}
+
+.backdrop[data-modal-kind="danger-reset"]{background:rgba(4,5,4,.86);backdrop-filter:blur(16px)}
+.backdrop[data-modal-kind="danger-reset"] .modal{width:min(650px,calc(100vw - 32px));overflow:hidden;padding:0;border-color:rgba(255,107,114,.2);background:radial-gradient(circle at 88% -5%,rgba(255,107,114,.11),transparent 35%),#111412;box-shadow:0 38px 120px rgba(0,0,0,.68)}
+.backdrop[data-modal-kind="danger-reset"] .modal>header{padding:23px 26px 17px;border-bottom:1px solid rgba(255,255,255,.07)}
+.backdrop[data-modal-kind="danger-reset"] .modal>header span{color:#ff858a;font-size:8px;font-weight:900;letter-spacing:.16em}
+.backdrop[data-modal-kind="danger-reset"] .modal>header h3{margin-top:5px;font-size:24px;letter-spacing:-.03em}
+.backdrop[data-modal-kind="danger-reset"] .modal>header button{width:38px;height:38px;border:1px solid rgba(255,255,255,.08);border-radius:11px;background:rgba(255,255,255,.03);color:#bdc4bf;line-height:1;cursor:pointer}
+.backdrop[data-modal-kind="danger-reset"] #entityForm{padding:24px 26px 27px}
+.reset-confirm-card.typed-confirmation{display:block;padding:0}
+.reset-confirm-orbit{position:relative;width:68px;height:68px;display:grid!important;place-items:center;margin:0 0 17px;border:1px solid rgba(255,107,114,.22);border-radius:50%;background:rgba(255,107,114,.06)}
+.reset-confirm-orbit:before,.reset-confirm-orbit span{content:"";position:absolute;inset:8px;border:1px solid rgba(255,107,114,.14);border-radius:50%}
+.reset-confirm-orbit span{inset:auto;right:4px;top:7px;width:8px;height:8px;border:0;background:#ff6b72;box-shadow:0 0 15px rgba(255,107,114,.55)}
+.reset-confirm-orbit>i{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:rgba(255,107,114,.12);color:#ff858a;font:850 18px var(--display);font-style:normal}
+.reset-confirm-intro>strong{display:block;color:#f0f4f1;font:750 20px/1.2 var(--display);letter-spacing:-.025em}
+.reset-confirm-intro>p{max-width:54ch;margin:7px 0 0;color:#929d96;font-size:11px;line-height:1.6}
+.reset-impact-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:9px!important;margin-top:19px}
+.reset-impact-grid article{padding:14px;border:1px solid rgba(255,255,255,.075);border-radius:13px;background:rgba(255,255,255,.018)}
+.reset-impact-grid article>span{display:block;margin-bottom:8px;color:#707b74;font-size:7px;font-weight:900;letter-spacing:.14em}
+.reset-impact-grid article>b{display:block;color:#e4eae6;font-size:11px}
+.reset-impact-grid article>small{display:block;margin-top:4px;color:#7e8982;font-size:8px;line-height:1.4}
+.reset-impact-grid .will-remove{border-color:rgba(255,107,114,.16);background:rgba(255,107,114,.035)}
+.reset-impact-grid .will-remove>span{color:#ff858a}
+.reset-impact-grid .will-keep{border-color:rgba(var(--theme-accent-rgb),.17);background:rgba(var(--theme-accent-rgb),.035)}
+.reset-impact-grid .will-keep>span{color:var(--theme-accent)}
+.reset-cloud-note{display:grid!important;grid-template-columns:36px 1fr!important;align-items:center;gap:11px!important;margin-top:9px;padding:12px;border:1px solid rgba(var(--theme-accent-rgb),.17);border-radius:13px;background:rgba(var(--theme-accent-rgb),.035)}
+.reset-cloud-note>i{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--theme-accent-fade);color:var(--theme-accent);font-style:normal;font-weight:900}
+.reset-cloud-note>span{display:flex;flex-direction:column}.reset-cloud-note b{color:#e3e9e5;font-size:10px}.reset-cloud-note small{margin-top:3px;color:#849087;font-size:8px;line-height:1.45}
+.reset-confirm-card.typed-confirmation>.reset-confirm-field{display:grid;gap:7px;margin:17px 0 0;padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:#0d100e}
+.reset-confirm-field>span{color:#aeb7b1;font-size:9px}.reset-confirm-field>span b{color:#ff858a;letter-spacing:.1em}
+.reset-confirm-card.typed-confirmation .reset-confirm-field input{height:48px;padding:0 14px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#151917;color:#fff;font:850 13px var(--font);letter-spacing:.13em;text-transform:uppercase}
+.reset-confirm-card.typed-confirmation .reset-confirm-field input:focus{border-color:rgba(255,107,114,.5);box-shadow:0 0 0 3px rgba(255,107,114,.08)}
+.reset-confirm-card.typed-confirmation .reset-confirm-field input.valid{border-color:rgba(var(--theme-accent-rgb),.5);box-shadow:0 0 0 3px rgba(var(--theme-accent-rgb),.08)}
+.reset-confirm-field>small{color:#6f7972;font-size:8px;line-height:1.45}
+.reset-confirm-card .reset-confirm-actions{display:grid!important;grid-template-columns:.8fr 1.2fr!important;gap:9px!important;margin-top:13px}
+.reset-confirm-card .reset-confirm-actions button{min-height:47px;border-radius:11px;font-size:9px;transition:.2s}
+.reset-confirm-card .reset-confirm-actions .danger-button:not(:disabled){border-color:rgba(255,107,114,.35);background:#ff6b72;color:#210507}
+.reset-confirm-card .reset-confirm-actions .danger-button:disabled{opacity:.36;cursor:not-allowed}
+
+@media(max-width:900px){#settings #settingsDataGrid,#settings #settingsAboutGrid{grid-template-columns:1fr}#settings #settingsDataGrid>* ,#settings #settingsAboutGrid>*{grid-column:1!important}#settings #settingsDataGrid>.backup-card,#settings #settingsDataGrid>.cloud-backup-card{min-height:0}}
+@media(max-width:620px){#settings #settingsDataGrid .storage-stats{grid-template-columns:repeat(2,minmax(0,1fr))}#settings #settingsDataGrid .cloud-backup-card .cloud-backup-overview{grid-template-columns:1fr}#settings #settingsDataGrid .cloud-backup-card>.cloud-actions{grid-template-columns:1fr}.backdrop[data-modal-kind="danger-reset"] .modal{width:100%;max-height:94dvh;border-radius:22px 22px 0 0}.backdrop[data-modal-kind="danger-reset"] .modal>header{padding:19px 18px 14px}.backdrop[data-modal-kind="danger-reset"] #entityForm{padding:19px 18px 23px}.reset-impact-grid,.reset-confirm-card .reset-confirm-actions{grid-template-columns:1fr!important}.reset-confirm-orbit{width:58px;height:58px;margin-bottom:13px}.reset-confirm-intro>strong{font-size:18px}}

@@ -861,7 +861,49 @@ body.app-mode:not([data-appearance-template="luar"]) .ls-profile-card.effect-uni
 .ls-chart-canvas {
   min-height: 190px;
   overflow: hidden;
+  position: relative;
 }
+
+.ls-chart-tooltip {
+  background: rgba(11, 15, 12, 0.96);
+  border: 1px solid rgba(var(--ls-accent-rgb), 0.3);
+  border-radius: 10px;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.38);
+  color: var(--ls-text);
+  font-size: 8px;
+  font-weight: 650;
+  left: 8px;
+  line-height: 1.55;
+  max-width: 180px;
+  opacity: 0;
+  padding: 8px 10px;
+  pointer-events: none;
+  position: absolute;
+  top: 8px;
+  transform: translateY(4px);
+  transition: opacity .16s ease, transform .16s ease;
+  white-space: pre-line;
+  z-index: 5;
+}
+
+.ls-chart-tooltip.show { opacity: 1; transform: none; }
+.ls-bars > span,
+.ls-grouped-bars > span,
+.ls-goal-line { cursor: crosshair; outline: none; }
+.ls-bars > span:hover i,
+.ls-bars > span:focus-visible i { filter: brightness(1.25); opacity: 1; transform: translateY(-2px); }
+.ls-bars i,
+.ls-grouped-bars u { transition: filter .16s ease, opacity .16s ease, transform .16s ease; }
+.ls-grouped-bars > span:hover u,
+.ls-grouped-bars > span:focus-visible u { filter: brightness(1.25); opacity: 1; }
+.ls-bars > span:focus-visible,
+.ls-grouped-bars > span:focus-visible,
+.ls-goal-line:focus-visible { border-radius: 6px; box-shadow: 0 0 0 2px rgba(var(--ls-accent-rgb), .38); }
+.ls-line-hover { opacity: 0; stroke: rgba(var(--ls-accent-rgb), .48); stroke-dasharray: 4 4; stroke-width: 1; transition: opacity .15s ease; vector-effect: non-scaling-stroke; }
+.ls-line-hover.show { opacity: 1; }
+.ls-chart-canvas svg { cursor: crosshair; }
+.ls-goal-line:hover > i u,
+.ls-goal-line:focus-visible > i u { filter: brightness(1.2); }
 
 .ls-bars,
 .ls-grouped-bars {
