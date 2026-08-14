@@ -118,11 +118,18 @@ function armMonetagOnClickAfterCreation(){
  document.body.appendChild(script);
  monetagOnClickScript=script
 }
-const MONETAG_ONCLICK_TRIGGERS='[data-modal="registro"],[data-modal="lançamento"],[data-modal="tarefa"],[data-modal="meta"],[data-create="transactions"],[data-create="subscriptions"],[data-create="tasks"],[data-create="habits"],[data-create="events"],[data-create="goals"],[data-create="notes"],[data-add-agenda],[data-goal-add],#timerStart,button[data-appearance-template],#restoreNavigationOrder,#exportBackup';
-function prepareMonetagForAction(target){if(!currentUser||lifetimeActive||!target?.closest?.(MONETAG_ONCLICK_TRIGGERS))return;armMonetagOnClickAfterCreation()}
-document.addEventListener('pointerover',event=>prepareMonetagForAction(event.target),true);
-document.addEventListener('pointerdown',event=>prepareMonetagForAction(event.target),true);
-document.addEventListener('focusin',event=>prepareMonetagForAction(event.target),true);
+const MONETAG_RANDOM_CLICK_KEY='luar-monetag-click-cycle-v1';
+const MONETAG_RANDOM_TARGETS='button,a,[role="button"],[data-page],[data-action],.card';
+const MONETAG_RANDOM_EXCLUDED='input,textarea,select,label,[contenteditable="true"],#authLayer *,#paymentLayer *,#backdrop.open *,[data-action="delete"],.danger-button,#resetBtn,#quickSignOut,#closeModal,[data-close-goal-statement]';
+function prepareRandomMonetagClick(event){
+ if(!currentUser||lifetimeActive||event.button!==0||!event.isTrusted)return;
+ const target=event.target instanceof Element?event.target:null;
+ if(!target?.closest(MONETAG_RANDOM_TARGETS)||target.closest(MONETAG_RANDOM_EXCLUDED))return;
+ let count=Math.max(0,Number(sessionStorage.getItem(MONETAG_RANDOM_CLICK_KEY))||0)+1;
+ if(count>=3){count=0;armMonetagOnClickAfterCreation()}
+ sessionStorage.setItem(MONETAG_RANDOM_CLICK_KEY,String(count))
+}
+document.addEventListener('pointerdown',prepareRandomMonetagClick,true);
 function removeMonetagScripts(){monetagOnClickScript?.remove();monetagOnClickScript=null;document.querySelectorAll('[data-monetag-script],[data-monetag-onclick]').forEach(element=>element.remove())}
 function syncMonetagScripts(){if(!currentUser||lifetimeActive)removeMonetagScripts()}
 function syncAdCards(){syncMonetagScripts()}
