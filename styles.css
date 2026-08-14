@@ -1914,8 +1914,6 @@ body.light .finance-category-grid i{background:rgba(15,25,19,.08)}
 @media(max-width:430px){.finance-category-summary{grid-template-columns:1fr}.finance-category-column .finance-category-tooltip{width:180px}}
 
 /* Manutenção visível em toda a área autenticada */
-.maintenance-notice{position:sticky;z-index:34;top:78px;display:flex;min-height:34px;align-items:center;justify-content:center;gap:8px;margin:0 -28px 14px;padding:8px 28px;border-bottom:1px solid rgba(255,196,74,.2);background:rgba(28,24,13,.96);color:#f6dfaa;font-size:9px;line-height:1.35;backdrop-filter:blur(14px)}
-.maintenance-notice i{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#ffc44a;box-shadow:0 0 0 4px rgba(255,196,74,.1),0 0 14px rgba(255,196,74,.5);animation:maintenancePulse 1.8s ease-in-out infinite}.maintenance-notice b{color:#fff1c9;font-size:9px}.maintenance-notice span{color:#d2c7aa}.public-mode .maintenance-notice{display:none!important}@keyframes maintenancePulse{50%{opacity:.45;transform:scale(.78)}}
 
 /* Aparência: um único painel grande, dividido em identidade, idioma e formatos */
 #settings [data-settings-panel="appearance"]>.settings-panel-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:0;overflow:hidden;padding:0;border:1px solid var(--settings-line);border-radius:18px;background:linear-gradient(145deg,rgba(var(--theme-accent-rgb),.045),var(--settings-card) 32%);box-shadow:0 18px 45px rgba(0,0,0,.12)}
@@ -1941,8 +1939,8 @@ body.light .finance-category-grid i{background:rgba(15,25,19,.08)}
 .reset-confirm-card.typed-confirmation label small{color:var(--muted);font-size:7px}.reset-confirm-card .reset-confirm-actions{margin-top:12px}.reset-confirm-card .reset-confirm-actions button{min-height:43px}
 
 
-@media(max-width:900px){.maintenance-notice{top:68px;margin-inline:-18px;padding-inline:18px}#settings [data-settings-panel="appearance"] .settings-language-host,#settings [data-settings-panel="appearance"]>.settings-panel-grid>.preference-card{grid-column:1/-1}#settings [data-settings-panel="appearance"] .settings-language-host{border-right:0;border-bottom:1px solid var(--settings-line)}}
-@media(max-width:620px){.maintenance-notice{align-items:flex-start;justify-content:flex-start;flex-wrap:wrap}.maintenance-notice span{flex-basis:calc(100% - 15px);margin-left:15px}#settings [data-settings-panel="appearance"] .settings-appearance-complete{padding:16px 14px}#settings [data-settings-panel="appearance"] .settings-language-host,#settings [data-settings-panel="appearance"]>.settings-panel-grid>.preference-card{padding:14px}.reset-confirm-card .reset-confirm-preserved{grid-template-columns:1fr!important}}
+@media(max-width:900px){#settings [data-settings-panel="appearance"] .settings-language-host,#settings [data-settings-panel="appearance"]>.settings-panel-grid>.preference-card{grid-column:1/-1}#settings [data-settings-panel="appearance"] .settings-language-host{border-right:0;border-bottom:1px solid var(--settings-line)}}
+@media(max-width:620px){#settings [data-settings-panel="appearance"] .settings-appearance-complete{padding:16px 14px}#settings [data-settings-panel="appearance"] .settings-language-host,#settings [data-settings-panel="appearance"]>.settings-panel-grid>.preference-card{padding:14px}.reset-confirm-card .reset-confirm-preserved{grid-template-columns:1fr!important}}
 
 /* Gráfico específico ocupa o antigo planejamento mensal */
 #dashboard .finance-plan-preview.finance-category-card{display:block!important;grid-column:1/-1;grid-row:2;width:100%;height:auto;min-height:0;padding:26px;overflow:visible}
