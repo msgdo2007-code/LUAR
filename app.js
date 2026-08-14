@@ -118,6 +118,11 @@ function armMonetagOnClickAfterCreation(){
  document.body.appendChild(script);
  monetagOnClickScript=script
 }
+const MONETAG_ONCLICK_TRIGGERS='[data-modal="registro"],[data-modal="lançamento"],[data-modal="tarefa"],[data-modal="meta"],[data-create="transactions"],[data-create="subscriptions"],[data-create="tasks"],[data-create="habits"],[data-create="events"],[data-create="goals"],[data-create="notes"],[data-add-agenda],[data-goal-add],#timerStart,button[data-appearance-template],#restoreNavigationOrder,#exportBackup';
+function prepareMonetagForAction(target){if(!currentUser||lifetimeActive||!target?.closest?.(MONETAG_ONCLICK_TRIGGERS))return;armMonetagOnClickAfterCreation()}
+document.addEventListener('pointerover',event=>prepareMonetagForAction(event.target),true);
+document.addEventListener('pointerdown',event=>prepareMonetagForAction(event.target),true);
+document.addEventListener('focusin',event=>prepareMonetagForAction(event.target),true);
 function removeMonetagScripts(){monetagOnClickScript?.remove();monetagOnClickScript=null;document.querySelectorAll('[data-monetag-script],[data-monetag-onclick]').forEach(element=>element.remove())}
 function syncMonetagScripts(){if(!currentUser||lifetimeActive)removeMonetagScripts()}
 function syncAdCards(){syncMonetagScripts()}
@@ -302,7 +307,7 @@ function ensureAgendaAllButton(){
  let addButton=document.querySelector('.agenda-day-panel>[data-add-agenda]');if(!addButton)return;
  let button=document.getElementById('openAllAgendaEvents');
  if(!button){addButton.insertAdjacentHTML('afterend','<button type="button" class="secondary full agenda-all-button" id="openAllAgendaEvents" data-open-all-agenda><span aria-hidden="true">▦</span><b>Ver todos os compromissos</b><em>0</em></button>');button=document.getElementById('openAllAgendaEvents')}
- let count=state.events.length;button.querySelector('em').textContent=count;button.setAttribute('aria-label',`Ver todos os compromissos. ${count} ${count===1?'registro':'registros'}.`)
+ let count=state.events.length;button.querySelector('b').textContent=lifetimeActive?'Ver todos os compromissos':'🔒 Ver todos os compromissos';button.querySelector('em').textContent=count;button.classList.toggle('premium-agenda-list',!lifetimeActive);button.setAttribute('aria-label',`${lifetimeActive?'Ver todos os compromissos':'Recurso Vitalício: ver todos os compromissos'}. ${count} ${count===1?'registro':'registros'}.`)
 }
 function renderBigAgenda(){
  let grid=document.getElementById('agendaBigCalendar');if(!grid)return;
@@ -388,21 +393,20 @@ function submitForm(form){
   let selected=String(form.elements.state.value||'');if(!selected)return;state.profile.state=selected;state.profile.showHolidays=true;writeLocalState();scheduleCloudSave();document.getElementById('backdrop').classList.remove('open');render();toast('Estado salvo',`Feriados de ${selected} ativados no calendário.`);return
  }
  if(edit.entity==='moodEntry'){
-  let current=edit.id?state.moods.find(x=>x.id===edit.id):state.moods.find(x=>x.date===edit.date),created=!current,data={mood:moodEmoji[edit.label]||'😐',important:form.elements.important.value.trim(),notes:form.elements.notes.value.trim(),date:edit.date};
+  let current=edit.id?state.moods.find(x=>x.id===edit.id):state.moods.find(x=>x.date===edit.date),data={mood:moodEmoji[edit.label]||'😐',important:form.elements.important.value.trim(),notes:form.elements.notes.value.trim(),date:edit.date};
   if(current)Object.assign(current,data);else state.moods.push({...data,id:id(),createdAt:new Date().toISOString()});
-  let earned=awardXP(`mood:${edit.date}`,2);save();document.getElementById('backdrop').classList.remove('open');toast(earned?'+2 XP • Humor registrado':'Humor atualizado',`${data.mood} ${edit.label}`);if(created)armMonetagOnClickAfterCreation();return
+  let earned=awardXP(`mood:${edit.date}`,2);save();document.getElementById('backdrop').classList.remove('open');toast(earned?'+2 XP • Humor registrado':'Humor atualizado',`${data.mood} ${edit.label}`);return
  }
  if(edit.entity==='goalDeposit'){
   let goal=state.goals.find(x=>x.id===edit.id),amount=parseCompactNumber(form.elements.amount.value);if(!goal||amount<=0){toast('Informe um valor válido','Use um número maior que zero, como 1.000 ou 1k.');return}
   goal.deposits=Array.isArray(goal.deposits)?goal.deposits:[];goal.deposits.push({id:id(),amount,date:today(),createdAt:new Date().toISOString()});goal.current=(+goal.current||0)+amount;if(goal.current>=Math.max(1,+goal.target||0)&&!goal.completedAt)goal.completedAt=new Date().toISOString();
-  awardXP(`goal-deposit:${today()}`,3);save();document.getElementById('backdrop').classList.remove('open');toast('Dinheiro adicionado',`${money(amount)} entrou na meta ${goal.name}.`);armMonetagOnClickAfterCreation();return
+  awardXP(`goal-deposit:${today()}`,3);save();document.getElementById('backdrop').classList.remove('open');toast('Dinheiro adicionado',`${money(amount)} entrou na meta ${goal.name}.`);return
  }
  if(!edit.id&&!guardCreation(edit.entity))return;
- let creating=!edit.id;
  let data=Object.fromEntries(new FormData(form));fields[edit.entity].forEach(([n,,t])=>{if(t==='number')data[n]=moneyFields.has(n)?parseCompactNumber(data[n]):+data[n]||0;if(t==='checkbox')data[n]=form.elements[n].checked});
  if(edit.id){let i=state[edit.entity].findIndex(x=>x.id===edit.id);state[edit.entity][i]={...state[edit.entity][i],...data}}
  else{data.id=id();data.createdAt=new Date().toISOString();if(edit.entity==='tasks'){data.completed=false;data.status='todo';data.xpAwarded=false}if(edit.entity==='habits'){data.history=[];data.xpDates=[]}if(edit.entity==='goals')data.deposits=[];state[edit.entity].push(data);edit.id=data.id;awardXP(`create:${edit.entity}:${today()}`,1)}
- save();document.getElementById('backdrop').classList.remove('open');toast('Tudo salvo!','As informações foram atualizadas.');if(creating)armMonetagOnClickAfterCreation()
+ save();document.getElementById('backdrop').classList.remove('open');toast('Tudo salvo!','As informações foram atualizadas.')
 }
 function openGoalDeposit(goalId){let goal=state.goals.find(x=>x.id===goalId);if(!goal)return;edit={entity:'goalDeposit',id:goalId};document.getElementById('modalKicker').textContent='ADICIONAR DINHEIRO';document.getElementById('modalTitle').textContent=`${goal.emoji||'🎯'} ${goal.name}`;let form=document.getElementById('entityForm');form.innerHTML=`<div class="goal-deposit-summary"><span>Valor atual<b>${money(goal.current)}</b></span><span>Meta total<b>${money(goal.target)}</b></span></div><label>Quanto deseja adicionar?<input class="money-input" name="amount" type="text" inputmode="numeric" autofocus value="R$ 0,00"></label><button class="primary full">Adicionar à meta →</button>`;setupMoneyInputs(form);document.getElementById('backdrop').classList.add('open')}
 function openGoalStatement(goalId){let goal=state.goals.find(x=>x.id===goalId);if(!goal)return;edit={entity:null,id:null};let deposits=(goal.deposits||[]).slice().reverse(),rows=deposits.map(x=>{let d=new Date(x.createdAt);return `<article><time>${d.toLocaleDateString('pt-BR')} • ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</time><b>+ ${money(x.amount)}</b></article>`}).join('');if(!rows&&+goal.current>0)rows=`<article><time>Saldo informado na meta</time><b>${money(goal.current)}</b></article>`;document.getElementById('modalKicker').textContent='EXTRATO DA META';document.getElementById('modalTitle').textContent=`${goal.emoji||'🎯'} ${goal.name}`;document.getElementById('entityForm').innerHTML=`<div class="goal-statement-summary"><span>Total acumulado<b>${money(goal.current)}</b></span><span>Falta conquistar<b>${money(Math.max(0,(+goal.target||0)-(+goal.current||0)))}</b></span></div><div class="goal-statement">${rows||empty('↗','Nenhum depósito','Use “Adicionar dinheiro” para criar o primeiro lançamento.')}</div><button type="button" class="secondary full" data-close-goal-statement>Fechar extrato</button>`;document.getElementById('backdrop').classList.add('open')}
@@ -500,7 +504,7 @@ document.addEventListener('dragleave',e=>{let column=e.target.closest('[data-tas
 document.addEventListener('drop',e=>{let column=e.target.closest('[data-task-column]');if(!column)return;e.preventDefault();let taskId=e.dataTransfer.getData('text/plain')||draggedTaskId;document.querySelectorAll('[data-task-column]').forEach(x=>x.classList.remove('drag-over'));if(taskId)setTaskStatus(taskId,column.dataset.taskColumn)});
 document.addEventListener('dragend',()=>{document.querySelectorAll('.task.dragging,[data-task-column].drag-over').forEach(x=>x.classList.remove('dragging','drag-over'));draggedTaskId=null});
 document.addEventListener('click',e=>{if(!lifetimeActive&&e.target.closest('.agenda-year-card'))return;let nav=e.target.closest('[data-agenda-nav]');if(nav){agendaMonth.setMonth(agendaMonth.getMonth()+(+nav.dataset.agendaNav||0));selectedAgendaDate=dateKey(new Date(agendaMonth.getFullYear(),agendaMonth.getMonth(),1));renderBigAgenda();return}let day=e.target.closest('[data-agenda-date]');if(day){selectedAgendaDate=day.dataset.agendaDate;let chosen=new Date(selectedAgendaDate+'T12:00:00');agendaMonth=new Date(chosen.getFullYear(),chosen.getMonth(),1);renderBigAgenda();document.querySelector('.agenda-calendar-card')?.scrollIntoView({behavior:'smooth',block:'start'});return}if(e.target.closest('[data-add-agenda]'))openForm('events',null,{date:selectedAgendaDate})});
-document.addEventListener('click',e=>{if(e.target.closest('[data-open-all-agenda]')){openAllAgendaModal();return}let editButton=e.target.closest('[data-agenda-edit]');if(editButton)openForm('events',editButton.dataset.agendaEdit)});
+document.addEventListener('click',e=>{if(e.target.closest('[data-open-all-agenda]')){if(!lifetimeActive)return showPremiumGate('Todos os compromissos','Pesquise, organize e edite todos os compromissos em uma única tela com o LUAR Vitalício.');openAllAgendaModal();return}let editButton=e.target.closest('[data-agenda-edit]');if(editButton)openForm('events',editButton.dataset.agendaEdit)});
 document.addEventListener('input',e=>{if(e.target.id==='agendaAllSearch')renderAllAgendaRows(e.target.value)});
 document.addEventListener('click',e=>{let nav=e.target.closest('[data-mood-nav]');if(nav){moodMonth.setMonth(moodMonth.getMonth()+(+nav.dataset.moodNav||0));selectedMoodDate=dateKey(new Date(moodMonth.getFullYear(),moodMonth.getMonth(),1));renderMoodCalendar();return}let day=e.target.closest('[data-mood-day]');if(day){selectedMoodDate=day.dataset.moodDay;renderMoodCalendar()}});
 function toggleNoteCard(card){let expanded=card.classList.toggle('expanded');card.setAttribute('aria-expanded',String(expanded));let label=card.querySelector('footer b');if(label)label.textContent=expanded?'Recolher ↙':'Ver tudo ↗'}

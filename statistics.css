@@ -1195,8 +1195,8 @@ body.app-mode:not([data-appearance-template="luar"]) .ls-profile-card.effect-uni
 /* Perfil compacto: identidade em destaque e personalização lado a lado. */
 @media (min-width: 1121px) {
   .ls-profile-host { grid-template-columns: minmax(0, .96fr) minmax(0, 1.04fr); }
-  .ls-profile-host > .ls-profile-card { grid-column: 1 / -1; }
-.ls-profile-host > .profile-settings-hub { grid-column: 1; min-width: 0; }
+  .ls-profile-host > .ls-profile-card { grid-column: 1; min-width: 0; position: sticky; top: 96px; }
+  .ls-profile-host > .profile-settings-hub { grid-column: 1; min-width: 0; }
   .ls-profile-host > .ls-inventory { grid-column: 2; min-width: 0; }
 }
 
