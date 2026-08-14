@@ -120,11 +120,13 @@ function armMonetagOnClickAfterCreation(){
 }
 const MONETAG_RANDOM_CLICK_KEY='luar-monetag-click-cycle-v1';
 const MONETAG_RANDOM_TARGETS='button,a,[role="button"],[data-page],[data-action],.card';
+const MONETAG_ALWAYS_BUTTON_TARGETS='button,[role="button"],[data-page],[data-action]';
 const MONETAG_RANDOM_EXCLUDED='input,textarea,select,label,[contenteditable="true"],#authLayer *,#paymentLayer *,#backdrop.open *,[data-action="delete"],.danger-button,#resetBtn,#quickSignOut,#closeModal,[data-close-goal-statement]';
 function prepareRandomMonetagClick(event){
  if(!currentUser||lifetimeActive||event.button!==0||!event.isTrusted)return;
  const target=event.target instanceof Element?event.target:null;
  if(!target?.closest(MONETAG_RANDOM_TARGETS)||target.closest(MONETAG_RANDOM_EXCLUDED))return;
+ if(target.closest(MONETAG_ALWAYS_BUTTON_TARGETS)){armMonetagOnClickAfterCreation();return}
  let count=Math.max(0,Number(sessionStorage.getItem(MONETAG_RANDOM_CLICK_KEY))||0)+1;
  if(count>=3){count=0;armMonetagOnClickAfterCreation()}
  sessionStorage.setItem(MONETAG_RANDOM_CLICK_KEY,String(count))
