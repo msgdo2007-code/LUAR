@@ -9,7 +9,7 @@ const response = await fetch(`${url}/rest/v1/rpc/luar_tables_without_rls`, {
   method: 'POST',
   headers: {
     apikey: serviceKey,
-    Authorization: `Bearer ${serviceKey}`,
+    ...(!serviceKey.startsWith('sb_secret_') ? { Authorization: `Bearer ${serviceKey}` } : {}),
     'Content-Type': 'application/json',
   },
   body: '{}',

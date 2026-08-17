@@ -4,7 +4,7 @@
 
 - Nunca coloque webhooks, `service_role`, tokens de pagamento ou senhas em HTML, JavaScript público, commits, mensagens ou screenshots.
 - Configure segredos somente nos ambientes protegidos da Vercel.
-- Os nomes usados pelo backend são `DISCORD_LOGIN_WEBHOOK_URL`, `DISCORD_PAYMENT_WEBHOOK_URL`, `DISCORD_FEEDBACK_WEBHOOK_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `PUSHINPAY_TOKEN` e `LIFETIME_SIGNING_SECRET`.
+- Os nomes usados pelo backend são `DISCORD_LOGIN_WEBHOOK_URL`, `DISCORD_PAYMENT_WEBHOOK_URL`, `DISCORD_FEEDBACK_WEBHOOK_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `PUSHINPAY_TOKEN` e `LIFETIME_SIGNING_SECRET`. Em `SUPABASE_SERVICE_ROLE_KEY`, prefira uma Secret key atual no formato `sb_secret_...`; o nome da variável foi mantido por compatibilidade.
 - Qualquer webhook enviado em chat deve ser excluído no Discord e recriado antes do uso.
 
 ## Banco

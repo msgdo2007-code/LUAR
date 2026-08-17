@@ -87,6 +87,11 @@ const requireUser = async (req) => {
   return response.json();
 };
 
+const elevatedSupabaseHeaders = (key) => ({
+  apikey: key,
+  ...(!String(key).startsWith("sb_secret_") ? { authorization: `Bearer ${key}` } : {}),
+});
+
 const canonicalEmail = (user) => {
   const email = String(user?.email || "").trim().toLowerCase();
   if (!email || !user?.email_confirmed_at) throw new Error("EMAIL_REQUIRED");
@@ -114,7 +119,7 @@ const getAuthUserById = async (userId) => {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceKey || !/^[0-9a-f-]{20,64}$/i.test(String(userId || ""))) return null;
-  const response = await fetch(`${url}/auth/v1/admin/users/${encodeURIComponent(userId)}`, { headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}` } });
+  const response = await fetch(`${url}/auth/v1/admin/users/${encodeURIComponent(userId)}`, { headers: elevatedSupabaseHeaders(serviceKey) });
   if (!response.ok) return null;
   return response.json().catch(() => null);
 };
@@ -157,7 +162,7 @@ const adminRequest = async (path, options = {}) => {
   if (!url || !serviceKey) throw new Error("SERVER_CONFIG");
   const response = await fetch(`${url}/rest/v1/${path}`, {
     ...options,
-    headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "Content-Type": "application/json", ...(options.headers || {}) },
+    headers: { ...elevatedSupabaseHeaders(serviceKey), "Content-Type": "application/json", ...(options.headers || {}) },
   });
   const text = await response.text();
   let body = null;
