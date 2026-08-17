@@ -77,8 +77,7 @@ jobs:
           persist-credentials: false
       - name: Fail when a public table has RLS disabled
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SECURITY_HEALTH_URL: https://luarhub.site/api/security-health
         run: node scripts/check-rls.mjs
 
   zap:

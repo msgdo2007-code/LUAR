@@ -16,7 +16,7 @@ Execute `supabase/migrations/20260817120000_security_hardening.sql` no SQL Edito
 - cria o rate limit compartilhado das APIs;
 - cria a auditoria que falha quando uma tabela pública está sem RLS.
 
-Depois, configure no repositório GitHub os secrets `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`. O workflow `.github/workflows/security.yml` verificará RLS em cada push para `main`.
+O workflow `.github/workflows/security.yml` verifica RLS em cada push para `main` usando `/api/security-health`. A rota informa apenas sucesso ou falha e mantém a Secret key exclusivamente na Vercel.
 
 ## Testes automáticos
 
