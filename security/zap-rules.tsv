@@ -1,0 +1,7 @@
+10020	FAIL	X-Frame-Options or CSP frame-ancestors must prevent clickjacking
+10021	WARN	Review X-Content-Type-Options findings
+10035	FAIL	No sensitive data may be disclosed in responses
+10038	FAIL	Content-Security-Policy must remain enabled
+10054	WARN	Review cookie attributes
+10055	WARN	Review CSP directives
+10096	FAIL	Timestamp disclosure must not expose sensitive internals

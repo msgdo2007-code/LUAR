@@ -3,8 +3,8 @@ const { json, readBody, requireUser, requireSameOrigin, rateLimit, canonicalEmai
 module.exports = async (req, res) => {
   if (req.method !== "POST") return json(res, 405, { error: "Método não permitido." });
   try {
-    requireSameOrigin(req);
-    rateLimit(req, "activity-event", 20, 60 * 60 * 1000);
+    requireSameOrigin(req, true);
+    await rateLimit(req, "activity-event", 20, 60 * 60 * 1000);
     const [user, body] = await Promise.all([requireUser(req), readBody(req, 4_096)]);
     if (!["login", "feedback"].includes(body.event)) return json(res, 400, { error: "Evento inválido." });
     const email = canonicalEmail(user);
@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
       if (/^https:\/\/discord\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]+$/.test(webhook)) {
         const labels = { suggestion: "Sugestão", problem: "Problema", review: "Avaliação" };
         try {
-          const response = await fetch(webhook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [{ title: `${labels[kind]} enviada pelo LUAR`, color: kind === "problem" ? 15158332 : 3342206, fields: [{ name: "Usuário", value: String(user.user_metadata?.name || user.email?.split("@")[0] || "Usuário").slice(0, 200), inline: true }, { name: "E-mail", value: email.slice(0, 200), inline: true }, ...(kind === "review" ? [{ name: "Nota", value: rating ? `${rating}/5` : "Não informada", inline: true }, { name: "Autorizou publicação", value: body.publishAuthorized === true ? "Sim" : "Não", inline: true }] : []), { name: "Mensagem", value: message.slice(0, 1024) }], timestamp: new Date().toISOString() }] }) });
+          const response = await fetch(webhook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ allowed_mentions: { parse: [] }, embeds: [{ title: `${labels[kind]} enviada pelo LUAR`, color: kind === "problem" ? 15158332 : 3342206, fields: [{ name: "Usuário", value: String(user.user_metadata?.name || user.email?.split("@")[0] || "Usuário").slice(0, 200), inline: true }, { name: "E-mail", value: email.slice(0, 200), inline: true }, ...(kind === "review" ? [{ name: "Nota", value: rating ? `${rating}/5` : "Não informada", inline: true }, { name: "Autorizou publicação", value: body.publishAuthorized === true ? "Sim" : "Não", inline: true }] : []), { name: "Mensagem", value: message.slice(0, 1024) }], timestamp: new Date().toISOString() }] }) });
           notified = response.ok;
         } catch (webhookError) { console.error("Discord feedback notification failed", webhookError.message); }
       }

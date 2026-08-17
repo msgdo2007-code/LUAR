@@ -11,8 +11,8 @@ const amountInCents = (payment) => {
 module.exports = async (req, res) => {
   if (req.method !== "POST") return json(res, 405, { error: "Método não permitido." });
   try {
-    requireSameOrigin(req);
-    rateLimit(req, "check-payment", 30, 10 * 60 * 1000);
+    requireSameOrigin(req, true);
+    await rateLimit(req, "check-payment", 30, 10 * 60 * 1000);
     if (!process.env.PUSHINPAY_TOKEN) throw new Error("SERVER_CONFIG");
     const [user, body] = await Promise.all([requireUser(req), readBody(req)]);
     const email = canonicalEmail(user);

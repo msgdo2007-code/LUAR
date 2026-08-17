@@ -40,19 +40,37 @@ const requestOriginAllowed = (req) => {
   return allowed.has(origin);
 };
 
-const requireSameOrigin = (req) => {
+const requireSameOrigin = (req, required = false) => {
+  if (required && !String(req.headers.origin || "")) throw new Error("ORIGIN_INVALID");
   if (!requestOriginAllowed(req)) throw new Error("ORIGIN_INVALID");
 };
 
 const buckets = new Map();
-const rateLimit = (req, namespace, limit = 20, windowMs = 60_000) => {
-  const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown").split(",")[0].trim();
-  const key = `${namespace}:${ip}`;
+const memoryRateLimit = (key, limit, windowMs) => {
   const now = Date.now();
   const hits = (buckets.get(key) || []).filter((time) => now - time < windowMs);
   if (hits.length >= limit) throw new Error("RATE_LIMITED");
   hits.push(now);
   buckets.set(key, hits);
+};
+
+const rateLimit = async (req, namespace, limit = 20, windowMs = 60_000) => {
+  const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown").split(",")[0].trim();
+  const rawKey = `${String(namespace).slice(0, 80)}:${ip.slice(0, 80)}`;
+  const secret = process.env.RATE_LIMIT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  const key = secret ? crypto.createHmac("sha256", secret).update(rawKey).digest("hex") : crypto.createHash("sha256").update(rawKey).digest("hex");
+  try {
+    const result = await adminRequest("rpc/consume_luar_rate_limit", {
+      method: "POST",
+      body: JSON.stringify({ p_key: key, p_limit: Math.max(1, Math.min(limit, 10_000)), p_window_seconds: Math.max(1, Math.ceil(windowMs / 1000)) }),
+    });
+    const allowed = Array.isArray(result) ? result[0] : result;
+    if (allowed !== true) throw new Error("RATE_LIMITED");
+  } catch (error) {
+    if (error.message === "RATE_LIMITED") throw error;
+    console.error("Distributed rate limit unavailable; using local fallback", error.message);
+    memoryRateLimit(key, limit, windowMs);
+  }
 };
 
 const requireUser = async (req) => {
@@ -105,8 +123,8 @@ const sendDiscordEvent = async ({ type, user, email, transactionId = "", amountC
   try {
     const configured = String(
       type === "login"
-        ? process.env.DISCORD_LOGIN_WEBHOOK_URL || process.env.DISCORD_ACTIVITY_WEBHOOK_URL || ""
-        : process.env.DISCORD_PAYMENT_WEBHOOK_URL || process.env.DISCORD_ACTIVITY_WEBHOOK_URL || ""
+        ? process.env.DISCORD_LOGIN_WEBHOOK_URL || ""
+        : process.env.DISCORD_PAYMENT_WEBHOOK_URL || ""
     ).trim();
     if (!configured) return false;
     const webhook = new URL(configured);

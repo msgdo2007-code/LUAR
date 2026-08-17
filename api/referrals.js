@@ -17,8 +17,8 @@ async function ensureProfile(user) {
 
 module.exports = async function handler(req, res) {
   try {
-    requireSameOrigin(req);
-    rateLimit(req, 'referrals', req.method === 'POST' ? 15 : 60, 10 * 60 * 1000);
+    requireSameOrigin(req, req.method === 'POST');
+    await rateLimit(req, 'referrals', req.method === 'POST' ? 15 : 60, 10 * 60 * 1000);
     const user = await requireUser(req);
     const profile = await ensureProfile(user);
     if (req.method === 'POST') {

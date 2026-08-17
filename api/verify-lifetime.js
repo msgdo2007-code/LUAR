@@ -3,8 +3,8 @@ const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload
 module.exports = async (req, res) => {
   if (req.method !== "POST") return json(res, 405, { error: "Método não permitido." });
   try {
-    requireSameOrigin(req);
-    rateLimit(req, "verify-lifetime", 60, 10 * 60 * 1000);
+    requireSameOrigin(req, true);
+    await rateLimit(req, "verify-lifetime", 60, 10 * 60 * 1000);
     const [user, body] = await Promise.all([requireUser(req), readBody(req)]);
     const email = canonicalEmail(user);
     let account = await getLuarAccount(email);

@@ -1,0 +1,37 @@
+rules:
+  - id: javascript-eval
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Dynamic JavaScript execution can enable XSS or code injection.
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: new Function(...)
+
+  - id: document-write
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: document.write can turn untrusted content into executable markup.
+    pattern: document.write(...)
+
+  - id: discord-webhook-literal
+    languages: [generic]
+    severity: ERROR
+    message: Discord webhook must be stored only in a protected server environment variable.
+    paths:
+      exclude:
+        - security/opengrep.yml
+    pattern-regex: 'https://discord(?:app)?\\.com/api/webhooks/[0-9]+/[A-Za-z0-9_-]+'
+
+  - id: service-role-in-public-file
+    languages: [generic]
+    severity: ERROR
+    message: Supabase service-role credentials must never be present in public browser files.
+    paths:
+      include:
+        - "*.html"
+        - "app.js"
+        - "config.js"
+        - "growth-tracking.js"
+        - "tracking-config.js"
+    pattern-regex: '(?i)(service[_-]?role|SUPABASE_SERVICE_ROLE_KEY)'

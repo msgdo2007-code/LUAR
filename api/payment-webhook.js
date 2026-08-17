@@ -11,7 +11,7 @@ const amountInCents = (payment) => {
 module.exports = async (req, res) => {
   if (req.method !== "POST") return json(res, 405, { error: "Método não permitido." });
   try {
-    rateLimit(req, "payment-webhook", 120, 10 * 60 * 1000);
+    await rateLimit(req, "payment-webhook", 120, 10 * 60 * 1000);
     if (!process.env.PUSHINPAY_TOKEN) throw new Error("SERVER_CONFIG");
     const body = await readBody(req, 32_768);
     const transactionId = String(body.id || body.transaction_id || body.transactionId || body.data?.id || body.data?.transaction_id || "");

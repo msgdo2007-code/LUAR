@@ -3,8 +3,8 @@ const { json, readBody, requireSameOrigin, rateLimit } = require('./_lib');
 module.exports = async function handler(req, res) {
   try {
     if (req.method !== 'POST') return json(res, 405, { error: 'Método não permitido.' });
-    requireSameOrigin(req);
-    rateLimit(req, 'create-account', 8, 15 * 60 * 1000);
+    requireSameOrigin(req, true);
+    await rateLimit(req, 'create-account', 8, 15 * 60 * 1000);
     const body = await readBody(req, 8_192);
     const email = String(body.email || '').trim().toLowerCase().slice(0, 254);
     const password = String(body.password || '');
@@ -28,11 +28,11 @@ module.exports = async function handler(req, res) {
     if (!response.ok) {
       const detail = String(data.msg || data.message || data.error_description || '');
       const duplicate = response.status === 422 || /already|registered|exists/i.test(detail);
-      return json(res, duplicate ? 409 : 400, { error: duplicate ? 'Este e-mail já possui uma conta no LUAR.' : 'Não foi possível criar a conta.' });
+      if (!duplicate) return json(res, 400, { error: 'Não foi possível processar o cadastro.' });
     }
-    const duplicate = Array.isArray(data.user?.identities) && data.user.identities.length === 0;
-    if (duplicate) return json(res, 409, { error: 'Este e-mail já possui uma conta no LUAR.' });
-    return json(res, 201, { created: true, requiresConfirmation: !data.access_token });
+    // A mesma resposta é usada para conta nova e e-mail já cadastrado. Isso evita
+    // que esta rota seja usada para descobrir quais pessoas possuem conta no LUAR.
+    return json(res, 202, { accepted: true, requiresConfirmation: true });
   } catch (error) {
     if (error.message === 'ORIGIN_INVALID') return json(res, 403, { error: 'Origem não autorizada.' });
     if (error.message === 'RATE_LIMITED') return json(res, 429, { error: 'Muitas tentativas. Aguarde alguns minutos.' });

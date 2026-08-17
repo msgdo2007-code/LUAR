@@ -72,11 +72,11 @@ module.exports = async (req, res) => {
     // Esta rota existe apenas para o painel web; uma origem ausente também é rejeitada.
     if (!String(req.headers.origin || "")) throw new Error("ORIGIN_INVALID");
     requireSameOrigin(req);
-    rateLimit(req, "admin-lifetime-auth", 60, 10 * 60 * 1000);
+    await rateLimit(req, "admin-lifetime-auth", 60, 10 * 60 * 1000);
 
     const user = await requireUser(req);
     requireOwner(req, user);
-    rateLimit(req, `admin-lifetime:${user.id}`, 12, 10 * 60 * 1000);
+    await rateLimit(req, `admin-lifetime:${user.id}`, 12, 10 * 60 * 1000);
     const body = await readBody(req, 2_048);
     if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("TARGET_INVALID");
     const action = String(body.action || "").trim().toLowerCase();

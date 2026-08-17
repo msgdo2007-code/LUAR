@@ -1,0 +1,100 @@
+name: Security checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  secrets:
+    name: Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  javascript:
+    name: JavaScript and dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: admin-console/package-lock.json
+      - name: Check serverless and browser JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check app.js
+          find api -maxdepth 1 -type f -name '*.js' -print0 | xargs -0 -n1 node --check
+          node scripts/test-state-schema.mjs
+      - name: Audit production dependencies
+        working-directory: admin-console
+        run: npm audit --omit=dev --audit-level=high
+
+  static-analysis:
+    name: Opengrep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Install Opengrep
+        shell: bash
+        run: curl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/v1.22.0/install.sh | bash
+      - name: Scan source
+        shell: bash
+        run: opengrep scan --error --sarif-output=opengrep.sarif --config=security/opengrep.yml .
+      - name: Upload SARIF
+        if: always() && hashFiles('opengrep.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: opengrep.sarif
+
+  rls:
+    name: Supabase RLS guard
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Fail when a public table has RLS disabled
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/check-rls.mjs
+
+  zap:
+    name: OWASP ZAP baseline
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: https://luarhub.site
+          rules_file_name: security/zap-rules.tsv
+          allow_issue_writing: false
+          fail_action: true
+          cmd_options: -a

@@ -1,4 +1,5 @@
 const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat } = require("./_lib");
+const { sanitizeAccountState } = require("./_state-schema");
 
 const cleanState = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
 const stateHasContent = (state) => ["transactions", "tasks", "habits", "goals", "subscriptions", "wishlist", "investments", "events", "moods", "notes", "focusSessions"].some((key) => Array.isArray(state?.[key]) && state[key].length);
@@ -54,8 +55,8 @@ const ensureAccount = async (user) => {
 module.exports = async (req, res) => {
   try {
     if (!["GET", "PUT", "POST"].includes(req.method)) return json(res, 405, { error: "Método não permitido." });
-    requireSameOrigin(req);
-    rateLimit(req, "account-state", req.method === "GET" ? 90 : 45, 10 * 60 * 1000);
+    requireSameOrigin(req, req.method !== "GET");
+    await rateLimit(req, "account-state", req.method === "GET" ? 90 : 45, 10 * 60 * 1000);
     const user = await requireUser(req);
     let account = await ensureAccount(user);
 
@@ -89,8 +90,8 @@ module.exports = async (req, res) => {
 
     if (req.method === "PUT") {
       const body = await readBody(req, 2_000_000);
-      const incoming = cleanState(body.state);
-      if (!incoming.profile || !Array.isArray(incoming.transactions) || !Array.isArray(incoming.tasks)) return json(res, 400, { error: "Estado da conta inválido." });
+      const lifetime = account?.plan === "lifetime";
+      const incoming = sanitizeAccountState(body.state, { lifetime, previousState: cleanState(account.state) });
       const serialized = JSON.stringify(incoming);
       if (Buffer.byteLength(serialized) > 1_500_000) return json(res, 413, { error: "O backup excedeu o tamanho permitido." });
       const updatedAt = new Date().toISOString();
@@ -107,7 +108,6 @@ module.exports = async (req, res) => {
           backups: account?.plan === "lifetime" ? backupSummaries(account.backups) : [],
         });
       }
-      const lifetime = account?.plan === "lifetime";
       const existingBackups = cleanBackups(account.backups);
       const changed = JSON.stringify(previous) !== serialized;
       const automaticRollback = changed && stateHasContent(previous) ? [{ savedAt: updatedAt, state: snapshotState(previous), manual: false }] : [];
@@ -123,6 +123,9 @@ module.exports = async (req, res) => {
     if (error.message === "RATE_LIMITED") return json(res, 429, { error: "Muitas solicitações. Aguarde alguns minutos." });
     if (error.message === "BODY_TOO_LARGE") return json(res, 413, { error: "Backup muito grande." });
     if (error.message === "BODY_INVALID") return json(res, 400, { error: "Solicitação inválida." });
+    if (error.message === "PLAN_LIMIT") return json(res, 403, { error: "Este estado ultrapassa os limites permitidos pelo seu plano." });
+    if (error.message === "STATE_LIMIT") return json(res, 413, { error: "O estado contém registros demais." });
+    if (error.message === "STATE_INVALID") return json(res, 400, { error: "O estado da conta contém dados inválidos." });
     const auth = String(error.message).startsWith("AUTH_") || error.message === "EMAIL_REQUIRED";
     return json(res, auth ? 401 : 500, { error: auth ? "Sessão ou e-mail não confirmado." : "Não foi possível acessar os dados da conta." });
   }
