@@ -1,4 +1,4 @@
-const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat } = require("./_lib");
+const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, adminRequest } = require("./_lib");
 const { sanitizeAccountState } = require("./_state-schema");
 
 const cleanState = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -55,6 +55,13 @@ const ensureAccount = async (user) => {
 module.exports = async (req, res) => {
   try {
     if (!["GET", "PUT", "POST"].includes(req.method)) return json(res, 405, { error: "Método não permitido." });
+    const requestUrl = new URL(req.url || "/", "https://luarhub.site");
+    if (req.method === "GET" && requestUrl.searchParams.get("securityHealth") === "rls") {
+      await rateLimit(req, "security-health", 15, 10 * 60 * 1000);
+      const tables = await adminRequest("rpc/luar_tables_without_rls", { method: "POST", body: "{}" });
+      if (!Array.isArray(tables) || tables.length) return json(res, 503, { ok: false, rls: false });
+      return json(res, 200, { ok: true, rls: true });
+    }
     requireSameOrigin(req, req.method !== "GET");
     await rateLimit(req, "account-state", req.method === "GET" ? 90 : 45, 10 * 60 * 1000);
     const user = await requireUser(req);

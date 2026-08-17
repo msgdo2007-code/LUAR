@@ -27,6 +27,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/security-health",
+      "destination": "/api/account-state?securityHealth=rls"
+    },
+    {
       "source": "/admin",
       "destination": "https://luar-admin.vercel.app/admin"
     },
