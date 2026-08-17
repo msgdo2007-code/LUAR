@@ -1,0 +1,16 @@
+10015	IGNORE	Public SEO and static resources intentionally use their own cache policy
+10017	IGNORE	Pinned Supabase CDN script is protected by SRI and the CSP allowlist
+10020	FAIL	Anti-clickjacking protection is required
+10021	FAIL	X-Content-Type-Options is required
+10024	FAIL	Credentials and personal data must not be sent in a URL
+10035	FAIL	Strict-Transport-Security is required
+10038	FAIL	Content-Security-Policy is required
+10049	IGNORE	Public and API responses intentionally include non-storable content
+10050	IGNORE	Public static resources may be served from Vercel cache
+10055	IGNORE	Host-scoped wildcards are required for configured analytics and user images
+10094	IGNORE	The detected Base64 value is the public Supabase anon key
+10098	IGNORE	CORS on public static resources does not grant access to authenticated APIs
+10111	IGNORE	The public login form is intentionally recognized as authentication
+90003	FAIL	External static scripts must use Subresource Integrity
+90004	IGNORE	COEP require-corp is incompatible with OAuth and embedded product integrations
+90005	IGNORE	Sec-Fetch-Dest is a browser request header, not a server response control

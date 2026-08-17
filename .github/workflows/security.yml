@@ -94,7 +94,7 @@ jobs:
       - uses: zaproxy/action-baseline@v0.15.0
         with:
           target: https://luarhub.site
-          rules_file_name: security/zap-rules.tsv
+          rules_file_name: zap-rules.tsv
           allow_issue_writing: false
           fail_action: true
           cmd_options: -a

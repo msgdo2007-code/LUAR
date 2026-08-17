@@ -1,0 +1,6 @@
+# Chave pública do protocolo IndexNow, publicada também no arquivo de validação.
+6334d6215107beee6e8be65a88cc6d99aa24f75c:scripts/submit-indexnow.mjs:generic-api-key:2
+
+# Chave pública `anon` do Supabase, projetada para o bundle do navegador.
+f80219133f67175e5b2103b91fae6df0726d126a:config.js:jwt:4
+cb90c349fe2932ac4081fa00a58abfad7b5dd4e2:config.js:jwt:4
