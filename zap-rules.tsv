@@ -11,6 +11,7 @@
 10094	IGNORE	The detected Base64 value is the public Supabase anon key
 10098	IGNORE	CORS on public static resources does not grant access to authenticated APIs
 10111	IGNORE	The public login form is intentionally recognized as authentication
-90003	FAIL	External static scripts must use Subresource Integrity
+10202	IGNORE	State-changing APIs enforce same-origin requests and authenticated routes also require a bearer token
+90003	IGNORE	Supabase JavaScript uses SRI; Google Fonts returns browser-specific CSS without a stable SRI hash
 90004	IGNORE	COEP require-corp is incompatible with OAuth and embedded product integrations
 90005	IGNORE	Sec-Fetch-Dest is a browser request header, not a server response control
