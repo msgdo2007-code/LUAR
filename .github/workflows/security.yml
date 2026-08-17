@@ -57,10 +57,10 @@ jobs:
           persist-credentials: false
       - name: Install Opengrep
         shell: bash
-        run: curl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/v1.22.0/install.sh | bash
+        run: curl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/v1.22.0/install.sh | bash -s -- -v v1.22.0
       - name: Scan source
         shell: bash
-        run: opengrep scan --error --sarif-output=opengrep.sarif --config=security/opengrep.yml .
+        run: ~/.opengrep/cli/v1.22.0/opengrep scan --error --sarif-output=opengrep.sarif --config=security/opengrep.yml .
       - name: Upload SARIF
         if: always() && hashFiles('opengrep.sarif') != ''
         uses: github/codeql-action/upload-sarif@v4
