@@ -1,4 +1,4 @@
-const { json, readBody, rateLimit, getAuthUserById, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat } = require("./_lib");
+const { json, readBody, rateLimit, getAuthUserById, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat, recordPaymentVerification } = require("./_lib");
 
 const amountInCents = (payment) => {
   const raw = payment.value ?? payment.amount ?? payment.amount_cents;
@@ -22,17 +22,15 @@ module.exports = async (req, res) => {
     const response = await fetch(`https://api.pushinpay.com.br/api/transactions/${encodeURIComponent(transactionId)}`, { headers: { Authorization: `Bearer ${process.env.PUSHINPAY_TOKEN}`, Accept: "application/json", "Content-Type": "application/json" } });
     const payment = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error("PAYMENT_LOOKUP_FAILED");
-    const status = String(payment.status || "created").toLowerCase();
-    const paid = status === "paid" && amountInCents(payment) === stored.amount_cents && stored.amount_cents === 3990;
+    const verification = await recordPaymentVerification({ transactionId, storedPayment: stored, providerStatus: payment.status, providerAmountCents: amountInCents(payment) });
     const now = new Date().toISOString();
-    await adminRequest(`luar_payments?transaction_id=eq.${encodeURIComponent(transactionId)}`, { method: "PATCH", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ status, updated_at: now, ...(paid ? { paid_at: stored.paid_at || now } : {}) }) });
-    if (paid) {
+    if (verification.paid) {
       const account = await getLuarAccount(stored.account_email);
       await upsertLuarAccountCompat(
-        { email: stored.account_email, user_ids: [...new Set([...(account?.user_ids || []), stored.user_id])], plan: "lifetime", lifetime_paid_at: account?.lifetime_paid_at || stored.paid_at || now, lifetime_transaction_id: account?.lifetime_transaction_id || transactionId, updated_at: now },
+        { email: stored.account_email, user_ids: [...new Set([...(account?.user_ids || []), stored.user_id])], plan: "lifetime", lifetime_paid_at: account?.lifetime_paid_at || verification.paidAt || now, lifetime_transaction_id: account?.lifetime_transaction_id || transactionId, updated_at: now },
         { lifetime_source: "purchase" },
       );
-      if (!stored.paid_at) {
+      if (verification.newlyPaid) {
         const user = await getAuthUserById(stored.user_id);
         await sendDiscordEvent({ type: "payment_paid", user, email: stored.account_email, transactionId, amountCents: stored.amount_cents });
       }

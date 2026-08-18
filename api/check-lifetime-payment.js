@@ -1,4 +1,4 @@
-const { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible } = require("./_lib");
+const { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible, recordPaymentVerification } = require("./_lib");
 
 const amountInCents = (payment) => {
   const raw = payment.value ?? payment.amount ?? payment.amount_cents;
@@ -15,6 +15,7 @@ module.exports = async (req, res) => {
     await rateLimit(req, "check-payment", 30, 10 * 60 * 1000);
     if (!process.env.PUSHINPAY_TOKEN) throw new Error("SERVER_CONFIG");
     const [user, body] = await Promise.all([requireUser(req), readBody(req)]);
+    await rateLimit(req, "check-payment-user", 20, 10 * 60 * 1000, user.id);
     const email = canonicalEmail(user);
     const transactionId = String(body.id || "");
     if (!/^[a-zA-Z0-9_-]{8,128}$/.test(transactionId)) return json(res, 400, { error: "Identificador de cobrança inválido." });
@@ -34,17 +35,15 @@ module.exports = async (req, res) => {
     });
     const payment = await response.json().catch(() => ({}));
     if (!response.ok) return json(res, 502, { error: "Não foi possível consultar o pagamento." });
-    const status = String(payment.status || "created").toLowerCase();
-    const paid = status === "paid" && amountInCents(payment) === 3990;
-    await adminRequest(`luar_payments?transaction_id=eq.${encodeURIComponent(transactionId)}`, { method: "PATCH", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ status, updated_at: new Date().toISOString(), ...(paid ? { paid_at: new Date().toISOString() } : {}) }) });
-    if (!paid) return json(res, 200, { paid: false, status });
+    const verification = await recordPaymentVerification({ transactionId, storedPayment, providerStatus: payment.status, providerAmountCents: amountInCents(payment) });
+    if (!verification.paid) return json(res, 200, { paid: false, status: verification.status });
     const account = await getLuarAccount(email);
-    const paidAt = storedPayment.paid_at || new Date().toISOString();
+    const paidAt = verification.paidAt || new Date().toISOString();
     await upsertLuarAccountCompat(
       { email, user_ids: [...new Set([...(account?.user_ids || []), user.id])], plan: "lifetime", lifetime_paid_at: account?.lifetime_paid_at || paidAt, lifetime_transaction_id: account?.lifetime_transaction_id || transactionId, updated_at: paidAt },
       { lifetime_source: "purchase" },
     );
-    if (!storedPayment.paid_at) await sendDiscordEvent({ type: "payment_paid", user, email, transactionId, amountCents: 3990 });
+    if (verification.newlyPaid) await sendDiscordEvent({ type: "payment_paid", user, email, transactionId, amountCents: 3990 });
     try {
       const referralRows = await adminRequest(`luar_referrals?referred_user_id=eq.${encodeURIComponent(user.id)}&status=eq.verified&select=referrer_user_id&limit=1`);
       if (referralRows?.[0]?.referrer_user_id) await grantReferralLifetimeIfEligible(referralRows[0].referrer_user_id);

@@ -1,8 +1,12 @@
-param([switch]$ValidateOnly)
+param(
+  [switch]$ValidateOnly,
+  [string]$MigrationPath = 'supabase\migrations\20260817120000_security_hardening.sql'
+)
 
 $ErrorActionPreference = 'Stop'
-$migrationPath = Join-Path $PSScriptRoot '..\supabase\migrations\20260817120000_security_hardening.sql'
+$migrationPath = if ([System.IO.Path]::IsPathRooted($MigrationPath)) { $MigrationPath } else { Join-Path (Join-Path $PSScriptRoot '..') $MigrationPath }
 $migrationPath = [System.IO.Path]::GetFullPath($migrationPath)
+if (-not (Test-Path -LiteralPath $migrationPath -PathType Leaf)) { throw "Migração não encontrada: $migrationPath" }
 
 Add-Type @'
 using System;
@@ -69,6 +73,11 @@ select
   $row = @($result)[0]
   if (-not $row.rate_limit_table -or -not $row.rate_limit_rpc -or -not $row.rate_limit_denies_anon -or -not $row.rate_limit_denies_authenticated -or -not $row.all_public_tables_use_rls) {
     throw 'SECURITY_MIGRATION_POSTCONDITION_FAILED'
+  }
+  if ([System.IO.Path]::GetFileName($migrationPath) -like '*authorization_posture*') {
+    $posture = Invoke-DatabaseQuery 'select public.luar_security_posture() as posture;' $true
+    $postureValue = @($posture)[0].posture
+    if ($null -eq $postureValue -or -not $postureValue.ok) { throw 'AUTHORIZATION_POSTURE_FAILED' }
   }
   Write-Output 'security_migration_valid=true'
   Write-Output 'security_migration_applied=true'

@@ -77,9 +77,11 @@ const memoryRateLimit = (key, limit, windowMs) => {
   buckets.set(key, hits);
 };
 
-const rateLimit = async (req, namespace, limit = 20, windowMs = 60_000) => {
+const rateLimit = async (req, namespace, limit = 20, windowMs = 60_000, subject = "") => {
   const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown").split(",")[0].trim();
-  const rawKey = `${String(namespace).slice(0, 80)}:${ip.slice(0, 80)}`;
+  const rawKey = subject
+    ? `${String(namespace).slice(0, 80)}:subject:${String(subject).slice(0, 254)}`
+    : `${String(namespace).slice(0, 80)}:ip:${ip.slice(0, 80)}`;
   const secret = process.env.RATE_LIMIT_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
   const key = secret ? crypto.createHmac("sha256", secret).update(rawKey).digest("hex") : crypto.createHash("sha256").update(rawKey).digest("hex");
   try {
@@ -201,6 +203,35 @@ const adminRequest = async (path, options = {}) => {
   return body;
 };
 
+const normalizePaymentStatus = (value) => {
+  const status = String(value || "unknown").trim().toLowerCase();
+  return /^[a-z0-9_-]{1,40}$/.test(status) ? status : "unknown";
+};
+
+const recordPaymentVerification = async ({ transactionId, storedPayment, providerStatus, providerAmountCents, expectedAmountCents = 3990 }) => {
+  const status = normalizePaymentStatus(providerStatus);
+  const paid = status === "paid"
+    && Number(providerAmountCents) === expectedAmountCents
+    && Number(storedPayment?.amount_cents) === expectedAmountCents;
+  if (storedPayment?.paid_at) return { paid: true, newlyPaid: false, status: "paid", paidAt: storedPayment.paid_at };
+  const path = `luar_payments?transaction_id=eq.${encodeURIComponent(transactionId)}`;
+  const now = new Date().toISOString();
+  if (!paid) {
+    await adminRequest(path, { method: "PATCH", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ status, updated_at: now }) });
+    return { paid: false, newlyPaid: false, status, paidAt: null };
+  }
+  const transitioned = await adminRequest(`${path}&paid_at=is.null`, {
+    method: "PATCH",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({ status: "paid", paid_at: now, updated_at: now }),
+  });
+  const row = Array.isArray(transitioned) ? transitioned[0] : null;
+  if (row) return { paid: true, newlyPaid: true, status: "paid", paidAt: row.paid_at || now };
+  const current = await adminRequest(`${path}&select=paid_at,status&limit=1`);
+  const currentRow = Array.isArray(current) ? current[0] : null;
+  return { paid: Boolean(currentRow?.paid_at), newlyPaid: false, status: currentRow?.paid_at ? "paid" : normalizePaymentStatus(currentRow?.status), paidAt: currentRow?.paid_at || null };
+};
+
 const authenticatedRpcRequest = async (req, functionName, args = {}) => {
   const url = process.env.SUPABASE_URL;
   const anonKey = process.env.SUPABASE_ANON_KEY;
@@ -301,4 +332,4 @@ const verifyPayload = (token) => {
   }
 };
 
-module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, displayName, authProvider, getAuthUserById, sendDiscordEvent, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible, requestCookies, authCookieNames, requestAccessToken };
+module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, displayName, authProvider, getAuthUserById, sendDiscordEvent, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible, recordPaymentVerification, requestCookies, authCookieNames, requestAccessToken };

@@ -140,6 +140,7 @@ module.exports = async function handler(req, res) {
       await rateLimit(req, 'auth-login', 10, 15 * 60 * 1000);
       const email = validEmail(body.email), password = String(body.password || '');
       if (!email || password.length < 8 || password.length > 128) return json(res, 400, { error: 'E-mail ou senha incorretos.' });
+      await rateLimit(req, 'auth-login-account', 5, 15 * 60 * 1000, email);
       const response = await authRequest('token?grant_type=password', { method: 'POST', body: JSON.stringify({ email, password }) });
       if (!response.ok) return json(res, 400, { error: 'E-mail ou senha incorretos.' });
       const payload = await response.json();
@@ -149,6 +150,7 @@ module.exports = async function handler(req, res) {
     if (action === 'recovery') {
       await rateLimit(req, 'auth-recovery', 6, 15 * 60 * 1000);
       const email = validEmail(body.email);
+      if (email) await rateLimit(req, 'auth-recovery-account', 3, 15 * 60 * 1000, email);
       if (!email) return json(res, 400, { error: 'Informe um e-mail válido.' });
       const { verifier, challenge } = verifierPair(), names = authCookieNames();
       setCookies(res, [cookie(names.verifier, verifier, 900)]);
@@ -185,6 +187,7 @@ module.exports = async function handler(req, res) {
     await rateLimit(req, 'create-account', 8, 15 * 60 * 1000);
     const email = validEmail(body.email), password = String(body.password || '');
     const name = String(body.name || '').trim().replace(/[\u0000-\u001f\u007f]/g, '').slice(0, 80);
+    if (email) await rateLimit(req, 'create-account-email', 4, 15 * 60 * 1000, email);
     if (!email) return json(res, 400, { error: 'Informe um e-mail válido.' });
     if (password.length < 8 || password.length > 128) return json(res, 400, { error: 'A senha deve ter entre 8 e 128 caracteres.' });
     if (!name) return json(res, 400, { error: 'Informe seu nome.' });

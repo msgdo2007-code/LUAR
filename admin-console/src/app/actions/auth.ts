@@ -72,7 +72,7 @@ const passwordSchema = z.object({
 export async function changePasswordAction(_: AuthActionState, formData: FormData): Promise<AuthActionState> {
   const parsed = passwordSchema.safeParse({ password: formData.get("password"), confirmation: formData.get("confirmation") });
   if (!parsed.success) return { error: "Use pelo menos 10 caracteres com letras e números e repita a mesma senha." };
-  const { supabase } = await requireAdmin(true);
+  const { supabase } = await requireAdmin({ recentMfaSeconds: 600 });
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) return { error: "Não foi possível alterar a senha. Entre novamente e tente outra vez." };
   await supabase.rpc("admin_record_security_event", { p_action: "password_changed" });

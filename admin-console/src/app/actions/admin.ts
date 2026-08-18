@@ -10,7 +10,7 @@ const lifetimeSchema = z.object({ email: z.string().trim().email().max(254), act
 export async function setLifetimeAction(_: MutationState, formData: FormData): Promise<MutationState> {
   const parsed = lifetimeSchema.safeParse({ email: formData.get("email"), action: formData.get("action"), confirmation: formData.get("confirmation") });
   if (!parsed.success) return { error: "Confirmação inválida." };
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireAdmin({ recentMfaSeconds: 600 });
   const { error } = await supabase.rpc("admin_set_lifetime", { p_target_email: parsed.data.email, p_action: parsed.data.action });
   if (error) return { error: "A alteração não foi concluída." };
   revalidatePath("/dashboard/users");

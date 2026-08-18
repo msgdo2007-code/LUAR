@@ -58,13 +58,16 @@ module.exports = async (req, res) => {
     const requestUrl = new URL(req.url || "/", "https://luarhub.site");
     if (req.method === "GET" && requestUrl.searchParams.get("securityHealth") === "rls") {
       await rateLimit(req, "security-health", 15, 10 * 60 * 1000);
-      const tables = await adminRequest("rpc/luar_tables_without_rls", { method: "POST", body: "{}" });
-      if (!Array.isArray(tables) || tables.length) return json(res, 503, { ok: false, rls: false });
-      return json(res, 200, { ok: true, rls: true });
+      const posture = await adminRequest("rpc/luar_security_posture", { method: "POST", body: "{}" });
+      if (!posture || posture.ok !== true || !Array.isArray(posture.violations) || posture.violations.length) {
+        return json(res, 503, { ok: false, rls: false, authorization: false });
+      }
+      return json(res, 200, { ok: true, rls: true, authorization: true });
     }
     requireSameOrigin(req, req.method !== "GET");
     await rateLimit(req, "account-state", req.method === "GET" ? 90 : 45, 10 * 60 * 1000);
     const user = await requireUser(req);
+    await rateLimit(req, "account-state-user", req.method === "GET" ? 120 : 50, 10 * 60 * 1000, user.id);
     let account = await ensureAccount(user);
 
     if (req.method === "POST") {

@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   assetPrefix: process.env.NODE_ENV === "production" ? "https://luar-admin.vercel.app/admin" : undefined,
   poweredByHeader: false,
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      allowedOrigins: ["luarhub.site", "luar-admin.vercel.app"],
+      bodySizeLimit: "64kb",
+    },
+  },
   async headers() {
     return [{
       source: "/:path*",

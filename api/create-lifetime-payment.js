@@ -8,6 +8,7 @@ module.exports = async (req, res) => {
     await rateLimit(req, "create-payment", 6, 10 * 60 * 1000);
     if (!process.env.PUSHINPAY_TOKEN) throw new Error("SERVER_CONFIG");
     const user = await requireUser(req);
+    await rateLimit(req, "create-payment-user", 3, 10 * 60 * 1000, user.id);
     const email = canonicalEmail(user);
     const existingAccount = await getLuarAccount(email);
     if (existingAccount?.plan === "lifetime") return json(res, 409, { error: "O Vitalício já está ativo nesta conta." });
@@ -15,13 +16,17 @@ module.exports = async (req, res) => {
     const publicSite = new URL(process.env.PUBLIC_SITE_URL || "https://luarhub.site");
     if (publicSite.protocol !== "https:") throw new Error("SERVER_CONFIG");
     const now = Date.now();
+    const idempotencySecret = String(process.env.PAYMENT_IDEMPOTENCY_SECRET || process.env.LIFETIME_SIGNING_SECRET || "");
+    if (idempotencySecret.length < 32) throw new Error("SERVER_CONFIG");
+    const idempotencyWindow = Math.floor(now / (10 * 60 * 1000));
+    const idempotencyKey = crypto.createHmac("sha256", idempotencySecret).update(`${user.id}:${email}:${idempotencyWindow}`).digest("hex");
     const response = await fetch("https://api.pushinpay.com.br/api/pix/cashIn", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.PUSHINPAY_TOKEN}`,
         Accept: "application/json",
         "Content-Type": "application/json",
-        "Idempotency-Key": crypto.randomUUID(),
+        "Idempotency-Key": idempotencyKey,
       },
       body: JSON.stringify({
         value: 3990,
@@ -31,7 +36,7 @@ module.exports = async (req, res) => {
     });
     const payment = await response.json().catch(() => ({}));
     if (!response.ok || !payment.id) {
-      console.error("Pushin Pay create error", response.status, payment);
+      console.error("Pushin Pay create error", response.status, String(payment?.code || payment?.error || "provider_error").slice(0, 80));
       return json(res, 502, { error: payment.message || "Não foi possível gerar o Pix agora." });
     }
     await adminRequest("luar_payments?on_conflict=transaction_id", {

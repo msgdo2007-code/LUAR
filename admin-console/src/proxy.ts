@@ -37,6 +37,7 @@ export async function proxy(request: NextRequest) {
   });
   const pathname = request.nextUrl.pathname;
   const isLogin = pathname === "/admin/login" || pathname === "/login";
+  const explicitReauthentication = isLogin && request.nextUrl.searchParams.get("step") === "mfa" && request.nextUrl.searchParams.get("reauth") === "1";
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return isLogin ? response : secure(NextResponse.redirect(new URL("/admin/login", request.url)));
   const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
@@ -46,7 +47,7 @@ export async function proxy(request: NextRequest) {
   }
   const { data: assurance } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
   if (assurance?.currentLevel !== "aal2") return isLogin ? response : secure(NextResponse.redirect(new URL("/admin/login?step=mfa", request.url)));
-  if (isLogin) return secure(NextResponse.redirect(new URL("/admin/dashboard", request.url)));
+  if (isLogin && !explicitReauthentication) return secure(NextResponse.redirect(new URL("/admin/dashboard", request.url)));
   return response;
 }
 

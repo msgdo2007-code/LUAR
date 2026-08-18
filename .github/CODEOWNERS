@@ -1,0 +1,7 @@
+# Autenticação, autorização, pagamentos, banco e deploy exigem revisão do proprietário.
+/api/ @msgdo2007-code
+/admin-console/ @msgdo2007-code
+/supabase/ @msgdo2007-code
+/.github/workflows/ @msgdo2007-code
+/vercel.json @msgdo2007-code
+/SECURITY.md @msgdo2007-code
