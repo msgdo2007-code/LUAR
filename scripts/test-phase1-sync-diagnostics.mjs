@@ -109,9 +109,10 @@ test('Diagnostico: relogio adiantado do dispositivo influencia a escolha e agend
   assert.equal(selected.upload, true);
 });
 
-test('Diagnostico: falha de salvamento fica no console sem estado visivel persistente', () => {
+test('Fase 2: falha de salvamento continua registrada e agora possui estado visivel', () => {
   assert.match(appSource, /console\.warn\('LUAR cloud save:'/);
-  assert.doesNotMatch(appSource, /syncStatus\s*=|cloudSyncStatus\s*=|ALTERA(?:C|Ç)(?:O|Õ)ES PENDENTES/iu);
+  assert.match(appSource, /setCloudSyncStatus\(navigator\.onLine\?'error':'offline'\)/);
+  assert.match(appSource, /Altera(?:c|ç)(?:o|õ)es pendentes/iu);
 });
 
 test('Diagnostico: recarregar durante envio nao possui fila duravel nem protecao de saida', () => {

@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, adminRequest } = require("./_lib");
 const { sanitizeAccountState } = require("./_state-schema");
 
@@ -28,6 +29,38 @@ const cleanBackups = (value) => {
   return kept;
 };
 const backupSummaries = (value) => cleanBackups(value).filter((backup) => backup.manual).map((backup) => ({ savedAt: backup.savedAt, manual: true, size: Buffer.byteLength(JSON.stringify(backup.state)) }));
+const STATE_SCHEMA_VERSION = 1;
+const SYNC_V2_ENABLED = process.env.ACCOUNT_SYNC_V2_ENABLED === "true";
+const OPERATION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const DEVICE_LABELS = new Set(["Celular", "Computador", "Outro dispositivo"]);
+const requestFingerprint = (value) => crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex");
+const deterministicOperationId = (fingerprint) => `${fingerprint.slice(0, 8)}-${fingerprint.slice(8, 12)}-${fingerprint.slice(12, 16)}-${fingerprint.slice(16, 20)}-${fingerprint.slice(20, 32)}`;
+const syncMetadata = (account) => ({
+  revision: Math.max(0, Number(account?.state_revision) || 0),
+  schemaVersion: Math.max(1, Number(account?.state_schema_version) || STATE_SCHEMA_VERSION),
+  lastSyncedAt: account?.last_synced_at || account?.state_updated_at || null,
+  lastSyncDevice: DEVICE_LABELS.has(account?.last_sync_device_label) ? account.last_sync_device_label : null,
+});
+const requestedRevision = (body, account) => {
+  if (Number.isSafeInteger(body.baseRevision) && body.baseRevision >= 0) return body.baseRevision;
+  const current = syncMetadata(account).revision;
+  const suppliedTimestamp = body.baseUpdatedAt || null;
+  const currentTimestamp = account?.state_updated_at || null;
+  if (suppliedTimestamp === currentTimestamp || (!suppliedTimestamp && !currentTimestamp)) return current;
+  return -1;
+};
+const saveStateAtomically = async ({ user, account, operationId, fingerprint, expectedRevision, state, backups, schemaVersion, deviceLabel }) => {
+  let rows;
+  try {
+    rows = await adminRequest("rpc/save_luar_account_state_v2", { method: "POST", body: JSON.stringify({ p_email: canonicalEmail(user), p_user_id: user.id, p_operation_id: operationId, p_operation_fingerprint: fingerprint, p_expected_revision: expectedRevision, p_state: state, p_backups: backups, p_state_schema_version: schemaVersion, p_device_label: deviceLabel }) });
+  } catch (error) {
+    if (String(error.storageMessage || "").includes("SYNC_IDEMPOTENCY_MISMATCH")) throw new Error("SYNC_IDEMPOTENCY_MISMATCH");
+    throw error;
+  }
+  const result = Array.isArray(rows) ? rows[0] : null;
+  if (!result) throw new Error("SYNC_STORAGE_INVALID");
+  return { ...account, state: cleanState(result.result_state), backups: cleanBackups(result.result_backups), state_revision: Number(result.result_revision) || 0, state_schema_version: schemaVersion, state_updated_at: result.result_state_updated_at || null, last_synced_at: result.result_last_synced_at || null, last_sync_device_label: result.result_device_label || null, syncStatus: result.result_status };
+};
 
 const ensureAccount = async (user) => {
   const email = canonicalEmail(user);
@@ -81,19 +114,25 @@ module.exports = async (req, res) => {
       const updatedAt = new Date().toISOString();
       const rollback = { savedAt: updatedAt, state: snapshotState(account.state), manual: true };
       const backups = cleanBackups([rollback, ...existingBackups]);
-      account = await upsertLuarAccount({
-        email: canonicalEmail(user),
-        user_ids: [...new Set([...(account.user_ids || []), user.id])],
-        plan: "lifetime",
-        state: snapshotState(backup.state),
-        state_updated_at: updatedAt,
-        backups,
-        updated_at: updatedAt,
-      });
+      let operationId = null;
+      if (SYNC_V2_ENABLED) {
+        const expectedRevision = requestedRevision(body, account);
+        if (expectedRevision < 0 || expectedRevision !== syncMetadata(account).revision) return json(res, 409, { error: "Existe uma versão mais recente desta conta.", conflict: true, state: cleanState(account.state), updatedAt: account.state_updated_at || null, ...syncMetadata(account), backups: backupSummaries(account.backups) });
+        const fingerprint = requestFingerprint({ action: "restoreBackup", savedAt, expectedRevision, state: snapshotState(backup.state) });
+        operationId = OPERATION_ID.test(String(body.operationId || "")) ? String(body.operationId) : deterministicOperationId(fingerprint);
+        const deviceLabel = DEVICE_LABELS.has(body.deviceLabel) ? body.deviceLabel : "Outro dispositivo";
+        account = await saveStateAtomically({ user, account, operationId, fingerprint, expectedRevision, state: snapshotState(backup.state), backups, schemaVersion: STATE_SCHEMA_VERSION, deviceLabel });
+      } else {
+        account = await upsertLuarAccount({ email: canonicalEmail(user), user_ids: [...new Set([...(account.user_ids || []), user.id])], plan: "lifetime", state: snapshotState(backup.state), state_updated_at: updatedAt, backups, updated_at: updatedAt });
+      }
       return json(res, 200, {
         savedAt: backup.savedAt,
         state: cleanState(account.state),
         updatedAt: account.state_updated_at || updatedAt,
+        ...syncMetadata(account),
+        operationId,
+        duplicate: account.syncStatus === "duplicate",
+        syncV2Enabled: SYNC_V2_ENABLED,
         backups: backupSummaries(account.backups),
       });
     }
@@ -107,14 +146,16 @@ module.exports = async (req, res) => {
       const updatedAt = new Date().toISOString();
       const previous = cleanState(account.state);
       if (stateHasContent(previous) && !stateHasContent(incoming) && body.allowEmpty !== true) return json(res, 409, { error: "O salvamento vazio foi bloqueado para proteger seus dados." });
-      const currentRevision = account.state_updated_at || null;
-      const requestedRevision = body.baseUpdatedAt || null;
-      if (stateHasContent(previous) && currentRevision && requestedRevision !== currentRevision) {
+      const currentRevision = syncMetadata(account).revision;
+      const baseRevision = requestedRevision(body, account);
+      const legacyConflict = !SYNC_V2_ENABLED && stateHasContent(previous) && account.state_updated_at && body.baseUpdatedAt !== account.state_updated_at;
+      if ((SYNC_V2_ENABLED && (baseRevision < 0 || baseRevision !== currentRevision)) || legacyConflict) {
         return json(res, 409, {
           error: "Existe uma versão mais recente desta conta.",
           conflict: true,
           state: previous,
-          updatedAt: currentRevision,
+          updatedAt: account.state_updated_at || null,
+          ...syncMetadata(account),
           backups: account?.plan === "lifetime" ? backupSummaries(account.backups) : [],
         });
       }
@@ -123,11 +164,20 @@ module.exports = async (req, res) => {
       const automaticRollback = changed && stateHasContent(previous) ? [{ savedAt: updatedAt, state: snapshotState(previous), manual: false }] : [];
       const manualSnapshot = body.createBackup === true ? [{ savedAt: updatedAt, state: snapshotState(incoming), manual: true }] : [];
       const backups = cleanBackups([...manualSnapshot, ...automaticRollback, ...existingBackups]);
-      account = await upsertLuarAccount({ email: canonicalEmail(user), user_ids: [...new Set([...(account.user_ids || []), user.id])], plan: lifetime ? "lifetime" : "free", state: incoming, state_updated_at: updatedAt, backups, updated_at: updatedAt });
+      if (SYNC_V2_ENABLED) {
+        const schemaVersion = Number.isSafeInteger(body.schemaVersion) && body.schemaVersion >= 1 && body.schemaVersion <= 1000 ? body.schemaVersion : STATE_SCHEMA_VERSION;
+        const deviceLabel = DEVICE_LABELS.has(body.deviceLabel) ? body.deviceLabel : "Outro dispositivo";
+        const fingerprint = requestFingerprint({ state: incoming, createBackup: body.createBackup === true, allowEmpty: body.allowEmpty === true, baseRevision, schemaVersion });
+        const operationId = OPERATION_ID.test(String(body.operationId || "")) ? String(body.operationId) : deterministicOperationId(fingerprint);
+        account = await saveStateAtomically({ user, account, operationId, fingerprint, expectedRevision: baseRevision, state: incoming, backups, schemaVersion, deviceLabel });
+        if (account.syncStatus === "conflict") return json(res, 409, { error: "Existe uma versão mais recente desta conta.", conflict: true, state: cleanState(account.state), updatedAt: account.state_updated_at || null, ...syncMetadata(account), backups: lifetime ? backupSummaries(account.backups) : [] });
+      } else {
+        account = await upsertLuarAccount({ email: canonicalEmail(user), user_ids: [...new Set([...(account.user_ids || []), user.id])], plan: lifetime ? "lifetime" : "free", state: incoming, state_updated_at: updatedAt, backups, updated_at: updatedAt });
+      }
     }
 
     const lifetime = account?.plan === "lifetime";
-    return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, backups: lifetime ? backupSummaries(account.backups) : [] });
+    return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, ...syncMetadata(account), duplicate: account.syncStatus === "duplicate", syncV2Enabled: SYNC_V2_ENABLED, backups: lifetime ? backupSummaries(account.backups) : [] });
   } catch (error) {
     if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
     if (error.message === "RATE_LIMITED") return json(res, 429, { error: "Muitas solicitações. Aguarde alguns minutos." });
@@ -136,6 +186,7 @@ module.exports = async (req, res) => {
     if (error.message === "PLAN_LIMIT") return json(res, 403, { error: "Este estado ultrapassa os limites permitidos pelo seu plano." });
     if (error.message === "STATE_LIMIT") return json(res, 413, { error: "O estado contém registros demais." });
     if (error.message === "STATE_INVALID") return json(res, 400, { error: "O estado da conta contém dados inválidos." });
+    if (error.message === "SYNC_IDEMPOTENCY_MISMATCH") return json(res, 409, { error: "O identificador desta operação já foi utilizado com outro conteúdo." });
     const auth = String(error.message).startsWith("AUTH_") || error.message === "EMAIL_REQUIRED";
     return json(res, auth ? 401 : 500, { error: auth ? "Sessão ou e-mail não confirmado." : "Não foi possível acessar os dados da conta." });
   }

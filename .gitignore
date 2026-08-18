@@ -9,3 +9,4 @@ reported-*
 validation-*
 *.log
 *.local
+.security-backups/
