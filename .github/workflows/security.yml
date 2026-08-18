@@ -46,9 +46,22 @@ jobs:
           find api -maxdepth 1 -type f -name '*.js' -print0 | xargs -0 -n1 node --check
           node scripts/test-state-schema.mjs
           node scripts/test-auth-backend.mjs
+          node scripts/check-public-exposure.mjs
+      - name: Install locked admin dependencies
+        working-directory: admin-console
+        run: npm ci
       - name: Audit production dependencies
         working-directory: admin-console
         run: npm audit --omit=dev --audit-level=high
+      - name: Generate CycloneDX software bill of materials
+        working-directory: admin-console
+        run: npm sbom --sbom-format cyclonedx > ../luar-sbom.cdx.json
+      - name: Upload software bill of materials
+        uses: actions/upload-artifact@v4
+        with:
+          name: luar-sbom-cyclonedx
+          path: luar-sbom.cdx.json
+          retention-days: 30
 
   static-analysis:
     name: Opengrep

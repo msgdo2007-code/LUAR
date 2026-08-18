@@ -14,6 +14,13 @@ export async function proxy(request: NextRequest) {
   const secure = (response: NextResponse) => {
     pendingCookies.forEach(({ name, value, options }) => response.cookies.set(name, value, { ...options, httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/" }));
     response.headers.set("Content-Security-Policy", csp);
+    response.headers.set("Strict-Transport-Security", "max-age=31536000");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("X-Frame-Options", "DENY");
+    response.headers.set("Referrer-Policy", "no-referrer");
+    response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
+    response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
     return response;
   };
   let response = secure(NextResponse.next({ request: { headers: requestHeaders } }));

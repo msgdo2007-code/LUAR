@@ -35,8 +35,19 @@ const safeHttpsUrl = (value) => {
 const safeImage = (value, maxLength) => {
   const raw = String(value || "").trim();
   if (!raw) return "";
-  if (/^data:image\/(?:png|jpe?g|webp);base64,[a-z0-9+/=]+$/i.test(raw)) {
-    return raw.length <= maxLength ? raw : "";
+  const match = raw.match(/^data:image\/(png|jpe?g|webp);base64,([a-z0-9+/=]+)$/i);
+  if (match) {
+    if (raw.length > maxLength) return "";
+    try {
+      const bytes = Buffer.from(match[2], "base64");
+      const type = match[1].toLowerCase();
+      const isPng = type === "png" && bytes.length >= 8 && bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+      const isJpeg = (type === "jpg" || type === "jpeg") && bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+      const isWebp = type === "webp" && bytes.length >= 12 && bytes.subarray(0, 4).toString("ascii") === "RIFF" && bytes.subarray(8, 12).toString("ascii") === "WEBP";
+      return isPng || isJpeg || isWebp ? raw : "";
+    } catch {
+      return "";
+    }
   }
   return safeHttpsUrl(raw);
 };

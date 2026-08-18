@@ -32,4 +32,12 @@ const unsafeUrl = { ...emptyState, wishlist: [{ id: '1', name: 'Bad', link: 'jav
 const cleaned = sanitizeAccountState(unsafeUrl, { lifetime: true });
 assert.equal(cleaned.wishlist[0].link, '');
 
+const pngPixel = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB';
+const imageState = sanitizeAccountState({ ...emptyState, profile: { avatar: pngPixel } }, { lifetime: true });
+assert.equal(imageState.profile.avatar, pngPixel);
+
+const disguisedScript = Buffer.from('<script>alert(1)</script>').toString('base64');
+const hostileImage = sanitizeAccountState({ ...emptyState, profile: { avatar: `data:image/png;base64,${disguisedScript}` } }, { lifetime: true });
+assert.equal(hostileImage.profile.avatar, '');
+
 console.log('Account-state schema security tests passed.');
