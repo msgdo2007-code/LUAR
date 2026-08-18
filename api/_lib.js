@@ -45,6 +45,29 @@ const requireSameOrigin = (req, required = false) => {
   if (!requestOriginAllowed(req)) throw new Error("ORIGIN_INVALID");
 };
 
+const requestCookies = (req) => Object.fromEntries(
+  String(req.headers.cookie || "")
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const separator = part.indexOf("=");
+      const key = separator < 0 ? part : part.slice(0, separator);
+      const value = separator < 0 ? "" : part.slice(separator + 1);
+      try { return [key, decodeURIComponent(value)]; } catch { return [key, value]; }
+    }),
+);
+
+const authCookieNames = () => process.env.VERCEL_ENV === "production"
+  ? { access: "__Host-luar_at", refresh: "__Host-luar_rt", verifier: "__Host-luar_pkce" }
+  : { access: "luar_at", refresh: "luar_rt", verifier: "luar_pkce" };
+
+const requestAccessToken = (req) => {
+  const authorization = String(req.headers.authorization || "");
+  if (authorization.startsWith("Bearer ")) return authorization.slice(7).trim();
+  return requestCookies(req)[authCookieNames().access] || "";
+};
+
 const buckets = new Map();
 const memoryRateLimit = (key, limit, windowMs) => {
   const now = Date.now();
@@ -75,12 +98,12 @@ const rateLimit = async (req, namespace, limit = 20, windowMs = 60_000) => {
 
 const requireUser = async (req) => {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) throw new Error("SERVER_CONFIG");
-  const authorization = req.headers.authorization || "";
-  if (!authorization.startsWith("Bearer ")) throw new Error("AUTH_REQUIRED");
+  const accessToken = requestAccessToken(req);
+  if (!accessToken) throw new Error("AUTH_REQUIRED");
   const response = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
     headers: {
       apikey: process.env.SUPABASE_ANON_KEY,
-      authorization,
+      authorization: `Bearer ${accessToken}`,
     },
   });
   if (!response.ok) throw new Error("AUTH_INVALID");
@@ -181,15 +204,15 @@ const adminRequest = async (path, options = {}) => {
 const authenticatedRpcRequest = async (req, functionName, args = {}) => {
   const url = process.env.SUPABASE_URL;
   const anonKey = process.env.SUPABASE_ANON_KEY;
-  const authorization = String(req.headers.authorization || "");
+  const accessToken = requestAccessToken(req);
   if (!url || !anonKey) throw new Error("SERVER_CONFIG");
-  if (!authorization.startsWith("Bearer ")) throw new Error("AUTH_REQUIRED");
+  if (!accessToken) throw new Error("AUTH_REQUIRED");
   if (!/^[a-z0-9_]+$/.test(functionName)) throw new Error("RPC_INVALID");
   const response = await fetch(`${url}/rest/v1/rpc/${functionName}`, {
     method: "POST",
     headers: {
       apikey: anonKey,
-      authorization,
+      authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
       Accept: "application/json",
     },
@@ -278,4 +301,4 @@ const verifyPayload = (token) => {
   }
 };
 
-module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, displayName, authProvider, getAuthUserById, sendDiscordEvent, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible };
+module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, displayName, authProvider, getAuthUserById, sendDiscordEvent, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible, requestCookies, authCookieNames, requestAccessToken };

@@ -6,7 +6,7 @@ type PendingCookie = { name: string; value: string; options: CookieOptions };
 
 export async function proxy(request: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
-  const csp = [`default-src 'self'`, `base-uri 'self'`, `object-src 'none'`, `frame-ancestors 'none'`, `form-action 'self'`, `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`, `style-src 'self' 'unsafe-inline' https://luar-admin.vercel.app`, `img-src 'self' data:`, `connect-src 'self' https://thdocebzzvxrwaefzufm.supabase.co`, `font-src 'self'`, `upgrade-insecure-requests`].join("; ");
+  const csp = [`default-src 'self'`, `base-uri 'self'`, `object-src 'none'`, `frame-ancestors 'none'`, `form-action 'self'`, `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`, `style-src 'self' 'unsafe-inline' https://luar-admin.vercel.app`, `img-src 'self' data:`, `connect-src 'self'`, `font-src 'self'`, `upgrade-insecure-requests`].join("; ");
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", csp);
@@ -18,7 +18,7 @@ export async function proxy(request: NextRequest) {
   };
   let response = secure(NextResponse.next({ request: { headers: requestHeaders } }));
   const env = getSupabaseEnv();
-  const supabase = createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+  const supabase = createServerClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll(values) {

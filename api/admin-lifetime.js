@@ -6,6 +6,7 @@ const {
   rateLimit,
   canonicalEmail,
   authenticatedRpcRequest,
+  requestAccessToken,
 } = require("./_lib");
 
 const OWNER_EMAIL = "msgdo.2007@gmail.com";
@@ -26,7 +27,7 @@ const currentIdentityProvider = (user) => {
 
 const bearerClaims = (req) => {
   try {
-    const token = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+    const token = requestAccessToken(req);
     const encoded = token.split(".")[1];
     return encoded ? JSON.parse(Buffer.from(encoded, "base64url").toString("utf8")) : {};
   } catch {

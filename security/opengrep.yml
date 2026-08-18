@@ -31,7 +31,6 @@ rules:
       include:
         - "*.html"
         - "app.js"
-        - "config.js"
         - "growth-tracking.js"
         - "tracking-config.js"
     pattern-regex: '(?i)(service[_-]?role|SUPABASE_SERVICE_ROLE_KEY)'

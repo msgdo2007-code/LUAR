@@ -34,7 +34,10 @@ public static class LuarSecurityMigrationCredentialReader {
 
 $accessToken = [LuarSecurityMigrationCredentialReader]::Read('Supabase CLI:supabase')
 $headers = @{ Authorization = "Bearer $accessToken"; 'Content-Type' = 'application/json' }
-$endpoint = 'https://api.supabase.com/v1/projects/thdocebzzvxrwaefzufm/database/query'
+[string]$projectRef = $env:SUPABASE_PROJECT_REF
+$projectRef = $projectRef.Trim()
+if ($projectRef -notmatch '^[a-z0-9]{20}$') { throw 'Defina SUPABASE_PROJECT_REF antes de executar este script.' }
+$endpoint = "https://api.supabase.com/v1/projects/$projectRef/database/query"
 
 function Invoke-DatabaseQuery([string]$Query, [bool]$ReadOnly) {
   $body = @{ query = $Query; read_only = $ReadOnly } | ConvertTo-Json -Compress
