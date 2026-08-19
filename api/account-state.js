@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, adminRequest } = require("./_lib");
 const { sanitizeAccountState } = require("./_state-schema");
+const { handleCategories } = require("../server/categories");
 
 const cleanState = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
 const stateHasContent = (state) => ["transactions", "tasks", "habits", "goals", "subscriptions", "wishlist", "investments", "events", "moods", "notes", "focusSessions"].some((key) => Array.isArray(state?.[key]) && state[key].length);
@@ -87,7 +88,7 @@ const ensureAccount = async (user) => {
 
 module.exports = async (req, res) => {
   try {
-    if (!["GET", "PUT", "POST"].includes(req.method)) return json(res, 405, { error: "Método não permitido." });
+    if (!["GET", "PUT", "POST", "DELETE"].includes(req.method)) return json(res, 405, { error: "Método não permitido." });
     const requestUrl = new URL(req.url || "/", "https://luarhub.site");
     if (req.method === "GET" && requestUrl.searchParams.get("securityHealth") === "rls") {
       await rateLimit(req, "security-health", 15, 10 * 60 * 1000);
@@ -95,13 +96,19 @@ module.exports = async (req, res) => {
       if (!posture || posture.ok !== true || !Array.isArray(posture.violations) || posture.violations.length) {
         return json(res, 503, { ok: false, rls: false, authorization: false });
       }
-      return json(res, 200, { ok: true, rls: true, authorization: true });
+      const categoryTable = await adminRequest("luar_categories?select=id&limit=1");
+      return json(res, 200, { ok: true, rls: true, authorization: true, categories: Array.isArray(categoryTable) });
     }
     requireSameOrigin(req, req.method !== "GET");
     await rateLimit(req, "account-state", req.method === "GET" ? 90 : 45, 10 * 60 * 1000);
     const user = await requireUser(req);
     await rateLimit(req, "account-state-user", req.method === "GET" ? 120 : 50, 10 * 60 * 1000, user.id);
     let account = await ensureAccount(user);
+
+    if (requestUrl.searchParams.get("resource") === "categories") {
+      return handleCategories(req, res, user, requestUrl);
+    }
+    if (req.method === "DELETE") return json(res, 405, { error: "Método não permitido." });
 
     if (req.method === "POST") {
       const body = await readBody(req, 4_096);
@@ -187,6 +194,9 @@ module.exports = async (req, res) => {
     if (error.message === "STATE_LIMIT") return json(res, 413, { error: "O estado contém registros demais." });
     if (error.message === "STATE_INVALID") return json(res, 400, { error: "O estado da conta contém dados inválidos." });
     if (error.message === "SYNC_IDEMPOTENCY_MISMATCH") return json(res, 409, { error: "O identificador desta operação já foi utilizado com outro conteúdo." });
+    if (error.categoryCode === "CATEGORY_DUPLICATE") return json(res, 409, { error: "Já existe uma categoria com esse nome nesta área." });
+    if (error.categoryCode === "CATEGORY_NOT_FOUND") return json(res, 404, { error: "Categoria não encontrada." });
+    if (String(error.categoryCode || "").startsWith("CATEGORY_")) return json(res, 400, { error: "Os dados da categoria são inválidos." });
     const auth = String(error.message).startsWith("AUTH_") || error.message === "EMAIL_REQUIRED";
     return json(res, auth ? 401 : 500, { error: auth ? "Sessão ou e-mail não confirmado." : "Não foi possível acessar os dados da conta." });
   }

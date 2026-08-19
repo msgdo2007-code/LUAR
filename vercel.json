@@ -111,6 +111,12 @@
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
         { "key": "Service-Worker-Allowed", "value": "/" }
       ]
+    },
+    {
+      "source": "/features/categories/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=0, must-revalidate" }
+      ]
     }
   ]
 }
