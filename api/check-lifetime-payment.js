@@ -45,8 +45,19 @@ module.exports = async (req, res) => {
     );
     if (verification.newlyPaid) await sendDiscordEvent({ type: "payment_paid", user, email, transactionId, amountCents: 3990 });
     try {
-      const referralRows = await adminRequest(`luar_referrals?referred_user_id=eq.${encodeURIComponent(user.id)}&status=eq.verified&select=referrer_user_id&limit=1`);
-      if (referralRows?.[0]?.referrer_user_id) await grantReferralLifetimeIfEligible(referralRows[0].referrer_user_id);
+      const referralRows = await adminRequest(`luar_referrals?referred_user_id=eq.${encodeURIComponent(user.id)}&status=in.(verified,approved)&select=id,referrer_user_id,status&limit=1`);
+      const referral = referralRows?.[0];
+      if (referral) {
+        if (referral.status === 'verified') {
+          const approvedAt = new Date().toISOString();
+          const approved = await adminRequest(`luar_referrals?id=eq.${encodeURIComponent(referral.id)}&status=eq.verified`, { method: 'PATCH', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ status: 'approved', approved_at: approvedAt, updated_at: approvedAt, status_reason: 'eligible_lifetime_payment_confirmed' }) });
+          if (approved?.[0]) {
+            try { await adminRequest('luar_referral_audit', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ referral_id: referral.id, actor_user_id: user.id, actor_type: 'payment', previous_status: 'verified', new_status: 'approved', reason: 'eligible_lifetime_payment_confirmed' }) }); }
+            catch (auditError) { console.error('Referral payment audit failed', auditError.message); }
+          }
+        }
+        await grantReferralLifetimeIfEligible(referral.referrer_user_id);
+      }
     } catch (referralError) {
       console.error("Referral reward check failed", referralError.message);
     }

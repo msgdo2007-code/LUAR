@@ -285,12 +285,10 @@ const upsertLuarAccountCompat = async (account, provenance = {}) => {
 };
 
 const grantReferralLifetimeIfEligible = async (referrerUserId) => {
-  const referrals = await adminRequest(`luar_referrals?referrer_user_id=eq.${encodeURIComponent(referrerUserId)}&status=eq.verified&select=referred_user_id&limit=100`);
+  const referrals = await adminRequest(`luar_referrals?referrer_user_id=eq.${encodeURIComponent(referrerUserId)}&status=eq.approved&select=referred_user_id&limit=100`);
   const referredIds = [...new Set((referrals || []).map(item => item.referred_user_id).filter(Boolean))];
-  if (!referredIds.length) return { purchased: 0, goal: 2, rewardUnlocked: false };
-  const ids = referredIds.map(value => `"${String(value).replace(/["\\]/g, "")}"`).join(",");
-  const payments = await adminRequest(`luar_payments?user_id=in.(${encodeURIComponent(ids)})&status=eq.paid&select=user_id&limit=100`);
-  const purchased = new Set((payments || []).map(item => item.user_id).filter(Boolean)).size;
+  const purchased = referredIds.length;
+  if (!purchased) return { purchased: 0, goal: 2, rewardUnlocked: false };
   if (purchased < 2) return { purchased, goal: 2, rewardUnlocked: false };
   const profiles = await adminRequest(`luar_referral_profiles?user_id=eq.${encodeURIComponent(referrerUserId)}&select=email&limit=1`);
   const email = String(profiles?.[0]?.email || "").trim().toLowerCase();

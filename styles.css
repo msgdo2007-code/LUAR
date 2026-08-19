@@ -1390,6 +1390,11 @@ body[data-appearance-template="christmas"] :is(.nav.active,.settings-theme-toggl
 #settings .referral-identity>span{font-size:7px;font-weight:900;letter-spacing:.12em}.referral-identity>b{justify-self:end;color:var(--theme-accent);font:750 17px var(--display)}
 #settings .referral-identity label{grid-column:1/-1;display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:7px}
 #settings .referral-identity input{height:36px;padding:0 10px;border:1px solid var(--settings-line);border-radius:9px;background:#0b0e0c;color:var(--text);font-size:9px}
+#settings .referral-manual-code{display:grid;gap:8px;margin:14px 20px;padding:14px;border:1px solid rgba(var(--theme-accent-rgb),.2);border-radius:12px;background:rgba(var(--theme-accent-rgb),.05)}
+#settings .referral-manual-code>span{color:var(--theme-accent);font-size:8px;font-weight:900;letter-spacing:.12em}
+#settings .referral-manual-code p,#settings .referral-manual-code small{margin:0;color:var(--muted);font-size:9px;line-height:1.55}
+#settings .referral-manual-code>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+#settings .referral-manual-code input{min-width:0;height:38px;padding:0 11px;border:1px solid var(--settings-line);border-radius:9px;background:#0b0e0c;color:var(--text);font:700 10px var(--display);letter-spacing:.08em;text-transform:uppercase}
 #settings .support-actions-card{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
 #settings .support-actions-card>a{min-height:58px;display:grid;grid-template-columns:34px minmax(0,1fr) 15px;align-items:center;gap:10px;padding:10px;border:1px solid var(--settings-line);border-radius:11px;color:var(--text);text-decoration:none;transition:.2s}
 #settings .support-actions-card>a:hover{border-color:rgba(var(--theme-accent-rgb),.3);background:rgba(var(--theme-accent-rgb),.025);transform:translateY(-1px)}
@@ -2054,7 +2059,7 @@ body.light .finance-pie-visual>div{background:rgba(255,255,255,.94)}
 #settings .referral-purchase-progress{padding:14px 20px}
 #settings .referral-purchase-progress ol{margin-top:11px}
 #settings .referral-reward-card>.referral-metrics,#settings .referral-reward-card>.referral-identity,#settings .referral-reward-card>.referral-share,#settings .referral-reward-card>.referral-list,#settings .referral-reward-card>footer{margin-inline:20px}
-#settings .referral-reward-card>.referral-metrics{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:14px}
+#settings .referral-reward-card>.referral-metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:14px}
 #settings .referral-metrics>span{padding:10px}
 #settings .referral-identity{grid-template-columns:1fr;gap:7px;padding:11px}
 #settings .referral-identity>div{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -2099,7 +2104,7 @@ body.light .finance-pie-visual>div{background:rgba(255,255,255,.94)}
 .reset-confirm-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
 
 @media(max-width:900px){#settings .settings-appearance-complete .template-presets{grid-template-columns:repeat(2,minmax(0,1fr))}.finance-category-pie{grid-template-columns:1fr}.finance-history-layout>.card{height:auto}}
-@media(max-width:620px){#settings .referral-reward-card>.referral-metrics{grid-template-columns:1fr}#settings .referral-share{grid-template-columns:repeat(2,minmax(0,1fr))}#settings .feedback-stars label{min-height:42px}#settings .feedback-actions{display:grid!important;grid-template-columns:1fr!important}#settings .feedback-actions button{min-width:0}.reset-confirm-preserved,.reset-confirm-actions{grid-template-columns:1fr!important}}
+@media(max-width:620px){#settings .referral-reward-card>.referral-metrics{grid-template-columns:1fr}#settings .referral-share{grid-template-columns:repeat(2,minmax(0,1fr))}#settings .referral-manual-code>div{grid-template-columns:1fr}#settings .feedback-stars label{min-height:42px}#settings .feedback-actions{display:grid!important;grid-template-columns:1fr!important}#settings .feedback-actions button{min-width:0}.reset-confirm-preserved,.reset-confirm-actions{grid-template-columns:1fr!important}}
 
 /* Configurações compactas: mais informação visível, sem perder controles. */
 #settings [data-settings-panel="appearance"]>.settings-panel-grid{grid-template-columns:repeat(12,minmax(0,1fr));gap:9px}
