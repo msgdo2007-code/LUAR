@@ -70,6 +70,27 @@ test('interface so mostra salvo depois de resposta bem sucedida', () => {
   assert.match(client, /Erro ao sincronizar/);
 });
 
+test('login nao envia recuperacao local antes de confirmar o estado oficial', () => {
+  assert.match(client, /cloudBootstrapConfirmed=false/);
+  assert.match(client, /cloudBootstrapConfirmed=true;cloudAccount=result/);
+  assert.match(client, /cloudBootstrapConfirmed&&stateHasContent\(state\)&&\(choice\.upload\|\|accountEncodingRepaired\)/);
+});
+
+test('revalidacao nao substitui alteracoes ainda pendentes', () => {
+  const start = client.indexOf('async function revalidateCloudState');
+  const end = client.indexOf('function stopCloudRevalidation', start);
+  const source = client.slice(start, end);
+  assert.match(source, /await refreshOfflineQueueStatus/);
+  assert.match(source, /if\(offlineQueueCount>0\)/);
+  assert.ok(source.indexOf('if(offlineQueueCount>0)') < source.indexOf("accountApiFetch('/api/account-state'"));
+});
+
+test('rate limit vira espera recuperavel sem reduzir a protecao do servidor', () => {
+  assert.match(endpoint, /Retry-After", "60"/);
+  assert.match(client, /error\.status===429\?'pending':'error'/);
+  assert.match(endpoint, /req\.method === "GET" \? 90 : 45/);
+});
+
 test('rollback remove somente estruturas adicionadas nesta fase', () => {
   assert.match(rollback, /drop function if exists public\.save_luar_account_state_v2/i);
   assert.match(rollback, /drop table if exists public\.luar_account_state_operations/i);

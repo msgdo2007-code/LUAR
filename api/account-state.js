@@ -188,7 +188,10 @@ module.exports = async (req, res) => {
     return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, ...syncMetadata(account), duplicate: account.syncStatus === "duplicate", syncV2Enabled: SYNC_V2_ENABLED, backups: lifetime ? backupSummaries(account.backups) : [] });
   } catch (error) {
     if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
-    if (error.message === "RATE_LIMITED") return json(res, 429, { error: "Muitas solicitações. Aguarde alguns minutos." });
+    if (error.message === "RATE_LIMITED") {
+      res.setHeader("Retry-After", "60");
+      return json(res, 429, { error: "Muitas solicitações. Aguarde alguns minutos." });
+    }
     if (error.message === "BODY_TOO_LARGE") return json(res, 413, { error: "Backup muito grande." });
     if (error.message === "BODY_INVALID") return json(res, 400, { error: "Solicitação inválida." });
     if (error.message === "PLAN_LIMIT") return json(res, 403, { error: "Este estado ultrapassa os limites permitidos pelo seu plano." });
