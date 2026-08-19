@@ -53,6 +53,9 @@ assert.ok(ui.includes("createPicker"));
 assert.ok(ui.includes("enhanceNoteForm"));
 assert.ok(ui.includes("data-note-category-filter"));
 assert.ok(ui.includes("luar:categories-changed"));
+assert.ok(ui.includes("enhanceTransactionForm"));
+assert.ok(ui.includes("data-finance-category-filter"));
+assert.ok(ui.includes("financeReusableCategoryTotals"));
 assert.ok(ui.includes("textContent = category.name"), "Nome do usuário deve ser renderizado como texto, não HTML.");
 assert.ok(!/innerHTML\s*=.*category\.(?:name|icon)/.test(ui), "Conteúdo da categoria não pode entrar em innerHTML.");
 
@@ -60,5 +63,6 @@ const html = await readFile("index.html", "utf8");
 assert.ok(html.includes("features/categories/categories.css"));
 assert.ok(html.includes("features/categories/categories.js"));
 assert.ok(html.includes("features/categories/notes-categories.css"));
+assert.ok(html.includes("features/categories/finance-categories.css"));
 
 console.log("Categorias: validação, RLS, API, CSP local e interface reutilizável verificados.");

@@ -1,0 +1,114 @@
+.finance-category-filter {
+  min-width: 190px;
+  max-width: 230px;
+  padding: 9px 34px 9px 12px;
+  border: 1px solid rgba(var(--green-rgb), .15);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .18);
+  color: inherit;
+}
+
+.transactions > div[data-category-decorated] {
+  border-left-color: var(--transaction-category, var(--border));
+}
+
+.finance-reusable-category-card {
+  margin-top: 0;
+  min-width: 0;
+}
+
+.finance-reusable-category-card .panel-head p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.finance-reusable-category-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.finance-reusable-category {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 11px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: rgba(var(--green-rgb), .035);
+  color: inherit;
+  text-align: left;
+}
+
+.finance-reusable-category:hover,
+.finance-reusable-category.active {
+  border-color: color-mix(in srgb, var(--category-color) 42%, transparent);
+  background: color-mix(in srgb, var(--category-color) 9%, transparent);
+}
+
+.finance-reusable-category > i {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--category-color) 13%, transparent);
+  color: var(--category-color);
+  font-style: normal;
+}
+
+.finance-reusable-category > span,
+.finance-reusable-category > span > b,
+.finance-reusable-category > span > small {
+  display: block;
+}
+
+.finance-reusable-category > span > small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.finance-category-values {
+  max-width: 185px;
+  text-align: right;
+}
+
+.finance-category-values > b {
+  color: var(--category-color);
+  font-size: 11px;
+}
+
+.dynamic-fields [data-finance-category-field="true"] .category-picker select {
+  width: 100%;
+  min-height: 44px;
+}
+
+@media (max-width: 760px) {
+  #finance .finance-history-layout .panel-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .finance-category-filter {
+    width: 100%;
+    max-width: none;
+  }
+
+  .finance-reusable-category {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .finance-category-values {
+    grid-column: 2;
+    max-width: none;
+    text-align: left;
+  }
+
+  .dynamic-fields [data-finance-category-field="true"] .category-picker {
+    grid-template-columns: 1fr;
+  }
+}

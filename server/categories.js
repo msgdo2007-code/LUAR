@@ -81,21 +81,21 @@ const removeCategory = async (user, body) => {
 };
 
 const validateStateCategoryOwnership = async (user, state) => {
-  const references = new Set(
-    (Array.isArray(state?.notes) ? state.notes : [])
-      .map((note) => note?.categoryId)
-      .filter(Boolean)
-      .map((value) => cleanId(value, true)),
-  );
-  if (!references.size) return true;
-  const ids = [...references];
-  const owned = new Set();
-  for (let offset = 0; offset < ids.length; offset += 80) {
-    const batch = ids.slice(offset, offset + 80);
-    const rows = await adminRequest(`luar_categories?user_id=eq.${encodeURIComponent(user.id)}&domain=eq.knowledge&id=in.(${batch.join(",")})&select=id`);
-    (Array.isArray(rows) ? rows : []).forEach((row) => owned.add(row.id));
+  const domains = new Map([
+    ["knowledge", Array.isArray(state?.notes) ? state.notes : []],
+    ["finance", Array.isArray(state?.transactions) ? state.transactions : []],
+  ]);
+  for (const [domain, records] of domains) {
+    const references = new Set(records.map((record) => record?.categoryId).filter(Boolean).map((value) => cleanId(value, true)));
+    if (!references.size) continue;
+    const ids = [...references], owned = new Set();
+    for (let offset = 0; offset < ids.length; offset += 80) {
+      const batch = ids.slice(offset, offset + 80);
+      const rows = await adminRequest(`luar_categories?user_id=eq.${encodeURIComponent(user.id)}&domain=eq.${domain}&id=in.(${batch.join(",")})&select=id`);
+      (Array.isArray(rows) ? rows : []).forEach((row) => owned.add(row.id));
+    }
+    if (ids.some((id) => !owned.has(id))) throw categoryError("CATEGORY_FORBIDDEN");
   }
-  if (ids.some((id) => !owned.has(id))) throw categoryError("CATEGORY_FORBIDDEN");
   return true;
 };
 
