@@ -29,7 +29,6 @@ test('mudancas simultaneas viram conflito e nao sobrescrita', () => {
 });
 
 test('loop para ao sair e inicia depois do login', () => {
-  assert.match(app, /enterApp\(\);startCloudRevalidation\(\);revalidateCloudState\('login',\{force:true\}\)/);
+  assert.match(app, /enterApp\(\);startCloudRevalidation\(\);refreshOfflineQueueStatus[^\n]+revalidateCloudState\('login',\{force:true\}\)/);
   assert.match(app, /function resolveGuestSession\(\)[^\n]+stopCloudRevalidation\(\)/);
 });
-

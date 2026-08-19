@@ -115,12 +115,14 @@ test('Fase 2: falha de salvamento continua registrada e agora possui estado visi
   assert.match(appSource, /Altera(?:c|ç)(?:o|õ)es pendentes/iu);
 });
 
-test('Diagnostico: recarregar durante envio nao possui fila duravel nem protecao de saida', () => {
+test('Fase 5: recarregar durante envio preserva operacao em fila duravel', () => {
   assert.match(appSource, /cloudSaveInFlight/);
   const unloadHandler = appSource.match(/window\.addEventListener\('beforeunload',[^\n]+/)?.[0] || '';
   assert.match(unloadHandler, /writeLocalState\(\)/);
   assert.doesNotMatch(unloadHandler, /await\s+pushCloudState|sendBeacon/);
-  assert.doesNotMatch(appSource, /objectStoreNames\.contains\(['"](?:sync|outbox|pending)/);
+  assert.match(appSource, /BROWSER_SYNC_QUEUE_STORE='syncQueue'/);
+  assert.match(appSource, /await putSyncQueueItem\(operation\)[^\n]+accountApiFetch/);
+  assert.match(appSource, /await removeSyncQueueItem\(operation\.id\)/);
   assert.match(accountSource, /baseUpdatedAt/);
 });
 
