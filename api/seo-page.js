@@ -1,4 +1,5 @@
 const { articles, published } = require('./blog-data');
+const { adminRequest } = require('./_lib');
 const campaigns = {
   habitos: ['Crie hábitos que continuam depois da empolgação.', 'Registre uma vez por dia, acompanhe sequências e conecte hábitos à sua rotina.', ['Até quatro hábitos no gratuito', 'Histórico e sequência', 'XP e evolução pessoal'], '/aplicativo-de-habitos'],
   produtividade: ['Pare de espalhar sua produtividade em vários aplicativos.', 'Tarefas, hábitos, foco, metas e evolução trabalham juntos no LUAR.', ['Visão geral conectada', 'Tarefas e foco', 'Gamificação com propósito'], '/produtividade-com-gamificacao'],
@@ -201,6 +202,17 @@ function sendCampaign(slug,res) {
 }
 
 module.exports = async function handler(req, res) {
+  if (req.query.mode === 'landing-config') {
+    try {
+      const rows = await adminRequest('landing_page_documents?slug=eq.home&select=published,published_revision,published_at&limit=1');
+      const row = Array.isArray(rows) ? rows[0] : null;
+      res.setHeader('Content-Type','application/json; charset=utf-8');
+      res.setHeader('Cache-Control','public, max-age=0, s-maxage=60, stale-while-revalidate=300');
+      return res.status(200).json({content:row?.published||null,revision:row?.published_revision||0,publishedAt:row?.published_at||null});
+    } catch {
+      return res.status(200).json({content:null,revision:0,publishedAt:null});
+    }
+  }
   if (req.query.mode === 'sitemap') return sendSitemap(res);
   if (req.query.mode === 'campaign') return sendCampaign(String(req.query.slug || '').toLowerCase(),res);
   const slug = String(Array.isArray(req.query.slug) ? req.query.slug[0] : req.query.slug || '').toLowerCase();

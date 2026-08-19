@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChartBar, Gauge, ShieldCheck, Trophy, UsersThree, ChatCircleText, UserCircle } from "@phosphor-icons/react";
+import { ChartBar, Gauge, ShieldCheck, Trophy, UsersThree, ChatCircleText, UserCircle, ShareNetwork, PaintBrush } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -10,6 +10,8 @@ const links = [
   ["/dashboard/users", "Usuários", UsersThree],
   ["/dashboard/rankings", "Rankings", Trophy],
   ["/dashboard/feedback", "Feedback", ChatCircleText],
+  ["/dashboard/referrals", "Indicações", ShareNetwork],
+  ["/dashboard/landing", "Landing Page", PaintBrush],
   ["/dashboard/audit", "Auditoria", ShieldCheck],
   ["/dashboard/account", "Conta e segurança", UserCircle],
 ] as const;

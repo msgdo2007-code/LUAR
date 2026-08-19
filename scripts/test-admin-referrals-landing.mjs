@@ -1,0 +1,5 @@
+import fs from "node:fs";import assert from "node:assert/strict";
+const migration=fs.readFileSync(new URL("../supabase/migrations/20260819143000_admin_referrals_landing_editor.sql",import.meta.url),"utf8");
+const action=fs.readFileSync(new URL("../admin-console/src/app/actions/admin.ts",import.meta.url),"utf8");
+const client=fs.readFileSync(new URL("../landing-published.js",import.meta.url),"utf8");
+assert.match(migration,/force row level security/);assert.match(migration,/require_luar_admin\(true\)/);assert.match(migration,/has_admin_permission\('referrals\.correct'/);assert.match(migration,/APPROVED_IRREVERSIBLE/);assert.match(migration,/admin_audit_logs/);assert.match(migration,/draft_revision=p_expected_revision/);assert.match(action,/recentMfaSeconds:600/);assert.doesNotMatch(client,/innerHTML|outerHTML|insertAdjacentHTML|eval\(|new Function/);assert.match(client,/textContent/);assert.match(client,/safeLink/);assert.match(client,/safeImage/);console.log("admin referrals + landing security checks: ok");

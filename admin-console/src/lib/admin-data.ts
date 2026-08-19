@@ -2,7 +2,8 @@ import "server-only";
 import { cache } from "react";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/admin-auth";
-import type { AdminMetrics, AuditRow, FeedbackRow, RankingRow, UserPage } from "@/types/admin";
+import type { AdminMetrics, AuditRow, FeedbackRow, RankingRow, ReferralHistoryRow, ReferralPage, UserPage } from "@/types/admin";
+import {defaultLandingContent,landingContentSchema,type LandingContent} from "@/lib/landing-schema";
 
 const userQuerySchema = z.object({ search: z.string().trim().max(120).default(""), status: z.enum(["all", "active", "banned", "lifetime"]).default("all"), page: z.coerce.number().int().min(1).max(100000).default(1) });
 
@@ -44,3 +45,16 @@ export async function getAuditLogs(): Promise<AuditRow[]> {
   if (error) throw new Error("Não foi possível carregar a auditoria.");
   return (data || []) as AuditRow[];
 }
+
+const referralQuerySchema = z.object({ search:z.string().trim().max(120).default(""), status:z.enum(["all","pending","verified","approved","rejected","cancelled"]).default("all"), page:z.coerce.number().int().min(1).max(100000).default(1), fraudOnly:z.coerce.boolean().default(false) });
+export async function getReferrals(input:unknown):Promise<ReferralPage>{
+  const query=referralQuerySchema.parse(input); const {supabase}=await requireAdmin();
+  const {data,error}=await supabase.rpc("admin_list_referrals",{p_search:query.search,p_status:query.status,p_page:query.page,p_page_size:20,p_fraud_only:query.fraudOnly});
+  if(error) throw new Error("Não foi possível carregar as indicações."); return data as ReferralPage;
+}
+export async function getReferralHistory(id:number):Promise<ReferralHistoryRow[]>{
+  const referralId=z.number().int().positive().parse(id); const {supabase}=await requireAdmin();
+  const {data,error}=await supabase.rpc("admin_referral_history",{p_referral_id:referralId});
+  if(error) throw new Error("Não foi possível carregar o histórico."); return (data||[]) as ReferralHistoryRow[];
+}
+export async function getLandingEditor():Promise<{draft:LandingContent;published:LandingContent;draftRevision:number;publishedRevision:number;publishedAt:string|null;versions:Array<{id:number;revision:number;summary:string;created_at:string}>}>{const{supabase}=await requireAdmin();const{data,error}=await supabase.rpc("admin_get_landing_editor");if(error)throw new Error("Não foi possível carregar o editor da landing page.");const draft=landingContentSchema.safeParse(data?.draft);const published=landingContentSchema.safeParse(data?.published);return {...data,draft:draft.success?draft.data:defaultLandingContent,published:published.success?published.data:defaultLandingContent};}

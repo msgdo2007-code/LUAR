@@ -51,6 +51,10 @@
       "destination": "/api/seo-page?mode=sitemap"
     },
     {
+      "source": "/api/landing-config",
+      "destination": "/api/seo-page?mode=landing-config"
+    },
+    {
       "source": "/blog",
       "destination": "/api/blog"
     },
@@ -100,7 +104,7 @@
       ]
     },
     {
-      "source": "/(app.js|auth-client.js|styles.css|statistics.js|statistics.css|daily-quotes.js|daily-quotes.css|dashboard-free-compact.css|premium-locks.css|landing-seo.css|growth.css|admin-growth.css|heading-fix.css|cookie-consent.js|cookie-consent.css|language.js)",
+      "source": "/(app.js|auth-client.js|styles.css|statistics.js|statistics.css|daily-quotes.js|daily-quotes.css|dashboard-free-compact.css|premium-locks.css|landing-seo.css|landing-published.css|landing-published.js|growth.css|admin-growth.css|heading-fix.css|cookie-consent.js|cookie-consent.css|language.js)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=0, must-revalidate" }
       ]
