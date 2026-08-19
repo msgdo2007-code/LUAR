@@ -121,12 +121,16 @@ function sanitizeAccountState(value, { lifetime = false, previousState = {} } = 
   }
 
   if (!lifetime) {
+    const previousProfile = previousState?.profile && typeof previousState.profile === "object" ? previousState.profile : {};
     if (PREMIUM_TEMPLATES.has(String(state.profile.appearanceTemplate || ""))) {
-      state.profile.appearanceTemplate = "luar";
-      state.profile.accent = "#32ff7e";
+      state.profile.appearanceTemplate = String(previousProfile.appearanceTemplate || "luar");
+      state.profile.accent = String(previousProfile.accent || "#32ff7e");
     }
-    state.profile.animationsEnabled = true;
-    state.profile.financeLineMode = "combined";
+    state.profile.animationsEnabled = previousProfile.animationsEnabled === false ? false : true;
+    state.profile.financeLineMode = previousProfile.financeLineMode === "separate" ? "separate" : "combined";
+    state.profile.financeSeries = Array.isArray(previousProfile.financeSeries) ? sanitizeValue(previousProfile.financeSeries, { maxItems: 8 }) : ["combined"];
+    state.profile.playlistUrl = safeHttpsUrl(previousProfile.playlistUrl);
+    state.profile.lifetimePreferencesMigration = previousProfile.lifetimePreferencesMigration && typeof previousProfile.lifetimePreferencesMigration === "object" ? sanitizeValue(previousProfile.lifetimePreferencesMigration) : null;
     const previousChallenges = Array.isArray(previousState?.profile?.customChallenges) ? previousState.profile.customChallenges.length : 0;
     if (Array.isArray(state.profile.customChallenges) && state.profile.customChallenges.length > previousChallenges) throw invalid("PLAN_LIMIT");
   }
