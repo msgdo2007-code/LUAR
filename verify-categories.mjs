@@ -40,6 +40,7 @@ const route = await readFile("api/account-state.js", "utf8");
 assert.match(route, /resource"\) === "categories"/);
 assert.match(route, /handleCategories\(req, res, user, requestUrl\)/);
 assert.match(route, /CATEGORY_DUPLICATE/);
+assert.match(route, /luar_categories\?select=id&limit=1/);
 
 const ui = await readFile("features/categories/categories.js", "utf8");
 assert.ok(ui.includes("window.LuarCategories"));
