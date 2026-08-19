@@ -100,12 +100,14 @@ module.exports = async (req, res) => {
       return json(res, 200, { ok: true, rls: true, authorization: true, categories: Array.isArray(categoryTable) });
     }
     requireSameOrigin(req, req.method !== "GET");
-    await rateLimit(req, "account-state", req.method === "GET" ? 90 : 45, 10 * 60 * 1000);
+    const categoryRequest = requestUrl.searchParams.get("resource") === "categories";
+    const rateScope = categoryRequest ? "account-categories" : "account-state";
+    await rateLimit(req, rateScope, req.method === "GET" ? 90 : 45, 10 * 60 * 1000);
     const user = await requireUser(req);
-    await rateLimit(req, "account-state-user", req.method === "GET" ? 120 : 50, 10 * 60 * 1000, user.id);
+    await rateLimit(req, `${rateScope}-user`, req.method === "GET" ? 120 : 50, 10 * 60 * 1000, user.id);
     let account = await ensureAccount(user);
 
-    if (requestUrl.searchParams.get("resource") === "categories") {
+    if (categoryRequest) {
       return handleCategories(req, res, user, requestUrl);
     }
     if (req.method === "DELETE") return json(res, 405, { error: "Método não permitido." });
