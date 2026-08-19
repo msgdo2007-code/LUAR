@@ -76,15 +76,15 @@ test('Fase 1: existe uma unica implementacao ativa de syncReferralProgram', () =
   assert.equal(declarations.length, 1);
 });
 
-test('Diagnostico: a sessao B nao recebe automaticamente a alteracao da sessao A', () => {
+test('Fase 4: a sessao B revalida a nuvem ao recuperar foco ou conexao', () => {
   const sessionA = { tasks: [{ id: 'nova', name: 'Criada no celular' }] };
   const sessionB = { tasks: [] };
   sessionA.tasks.push({ id: 'segunda', name: 'Outra alteracao' });
   assert.equal(sessionB.tasks.length, 0);
   const focusHandler = appSource.match(/window\.addEventListener\('focus',[^\n]+/)?.[0] || '';
-  assert.match(focusHandler, /render\(\)/);
-  assert.doesNotMatch(focusHandler, /accountApiFetch|verifyLifetimeStatus|pushCloudState/);
-  assert.doesNotMatch(appSource, /addEventListener\('online'/);
+  assert.match(focusHandler, /revalidateCloudState\('focus'\)/);
+  assert.match(appSource, /addEventListener\('online'[^\n]+revalidateCloudState\('online'/);
+  assert.match(appSource, /accountApiFetch\('\/api\/account-state',\{method:'GET'/);
 });
 
 test('Diagnostico: uma exclusao reaparece na mesclagem atual', () => {
