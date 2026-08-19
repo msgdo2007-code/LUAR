@@ -41,15 +41,24 @@ assert.match(route, /resource"\) === "categories"/);
 assert.match(route, /handleCategories\(req, res, user, requestUrl\)/);
 assert.match(route, /CATEGORY_DUPLICATE/);
 assert.match(route, /luar_categories\?select=id&limit=1/);
+assert.match(route, /validateStateCategoryOwnership\(user, incoming\)/);
+
+const stateSchema = await readFile("api/_state-schema.js", "utf8");
+assert.match(stateSchema, /clean\.categoryId/);
+assert.match(stateSchema, /\[1-5\]\[0-9a-f\]\{3\}/);
 
 const ui = await readFile("features/categories/categories.js", "utf8");
 assert.ok(ui.includes("window.LuarCategories"));
 assert.ok(ui.includes("createPicker"));
+assert.ok(ui.includes("enhanceNoteForm"));
+assert.ok(ui.includes("data-note-category-filter"));
+assert.ok(ui.includes("luar:categories-changed"));
 assert.ok(ui.includes("textContent = category.name"), "Nome do usuário deve ser renderizado como texto, não HTML.");
 assert.ok(!/innerHTML\s*=.*category\.(?:name|icon)/.test(ui), "Conteúdo da categoria não pode entrar em innerHTML.");
 
 const html = await readFile("index.html", "utf8");
 assert.ok(html.includes("features/categories/categories.css"));
 assert.ok(html.includes("features/categories/categories.js"));
+assert.ok(html.includes("features/categories/notes-categories.css"));
 
 console.log("Categorias: validação, RLS, API, CSP local e interface reutilizável verificados.");

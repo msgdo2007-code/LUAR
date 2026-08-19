@@ -1,7 +1,7 @@
 (() => {
   const domains = { knowledge: "Notas e ideias", finance: "Financeiro" };
   const cache = new Map();
-  let activeDomain = "knowledge", editingId = null, modal = null;
+  let activeDomain = "knowledge", editingId = null, modal = null, pendingPicker = null;
   const make = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; };
   const api = async (domain, options = {}) => {
     const request = { method: options.method || "GET", ...(options.body ? { body: JSON.stringify(options.body) } : {}) };
@@ -42,7 +42,7 @@
   };
   const remove = async category => {
     if (!window.confirm(`Excluir a categoria “${category.name}”? Os registros existentes não serão apagados.`)) return;
-    try { await api(activeDomain, { method: "DELETE", body: { id: category.id } }); cache.delete(activeDomain); if (editingId === category.id) resetForm(); await renderList(); if (typeof toast === "function") toast("Categoria removida", "Seus registros continuam preservados."); }
+    try { await api(activeDomain, { method: "DELETE", body: { id: category.id } }); cache.delete(activeDomain); window.dispatchEvent(new CustomEvent("luar:categories-changed", { detail: { domain: activeDomain } })); if (editingId === category.id) resetForm(); await renderList(); if (typeof toast === "function") toast("Categoria removida", "Seus registros continuam preservados."); }
     catch (error) { ensureModal().querySelector(".category-status").textContent = error.message; }
   };
   const renderList = async () => {
@@ -56,14 +56,53 @@
   };
   const submitForm = async event => {
     event.preventDefault(); const form = event.currentTarget, submit = form.querySelector('[type="submit"]'), status = form.querySelector(".category-status"); submit.disabled = true; status.textContent = editingId ? "Atualizando…" : "Criando…";
-    try { await api(activeDomain, { method: editingId ? "PUT" : "POST", body: { id: editingId || undefined, domain: activeDomain, name: form.elements.name.value, icon: form.elements.icon.value, color: form.elements.color.value, isDefault: form.elements.isDefault.checked } }); cache.delete(activeDomain); resetForm(); await renderList(); if (typeof toast === "function") toast("Categoria salva", "A identidade já está disponível nesta área."); }
+    try { const result = await api(activeDomain, { method: editingId ? "PUT" : "POST", body: { id: editingId || undefined, domain: activeDomain, name: form.elements.name.value, icon: form.elements.icon.value, color: form.elements.color.value, isDefault: form.elements.isDefault.checked } }); cache.delete(activeDomain); window.dispatchEvent(new CustomEvent("luar:categories-changed", { detail: { domain: activeDomain, category: result.category || null } })); resetForm(); await renderList(); if (typeof toast === "function") toast("Categoria salva", "A identidade já está disponível nesta área."); }
     catch (error) { status.textContent = error.message; } finally { submit.disabled = false; }
   };
   const switchDomain = async domain => { activeDomain = domain; resetForm(); ensureModal().querySelectorAll("[data-category-domain]").forEach(button => button.classList.toggle("active", button.dataset.categoryDomain === domain)); await renderList(); };
   const open = async (domain = "knowledge") => { if (typeof currentUser !== "undefined" && !currentUser) { if (typeof openAuth === "function") openAuth("login"); return; } const layer = ensureModal(); layer.hidden = false; layer.setAttribute("aria-hidden", "false"); document.body.classList.add("category-manager-open"); await switchDomain(domains[domain] ? domain : "knowledge"); layer.querySelector(".category-close").focus(); };
-  const close = () => { if (!modal) return; modal.hidden = true; modal.setAttribute("aria-hidden", "true"); document.body.classList.remove("category-manager-open"); resetForm(); };
-  const createPicker = async ({ domain = "knowledge", value = "", onChange = () => {} } = {}) => { const wrapper = make("div", "category-picker"), select = make("select"), manage = make("button", "secondary", "Gerenciar"); select.setAttribute("aria-label", "Categoria"); manage.type = "button"; manage.onclick = () => open(domain); const categories = await list(domain, true); select.append(new Option("Sem categoria", ""), ...categories.map(item => new Option(`${item.icon} ${item.name}`, item.id))); select.value = value; select.onchange = () => onChange(select.value || null); wrapper.append(select, manage); return wrapper; };
-  const injectEntryPoints = () => { [["#notes .page-head", "knowledge"], ["#finance .page-head", "finance"]].forEach(([selector, domain]) => { const head = document.querySelector(selector); if (!head || head.querySelector(`[data-open-categories="${domain}"]`)) return; const button = make("button", "secondary category-entry", "Categorias"); button.type = "button"; button.dataset.openCategories = domain; button.onclick = () => open(domain); const primary = head.querySelector(":scope > button.primary"); if (primary) primary.before(button); else head.appendChild(button); }); };
+  const close = () => { if (!modal) return; pendingPicker = null; modal.hidden = true; modal.setAttribute("aria-hidden", "true"); document.body.classList.remove("category-manager-open"); resetForm(); };
+  const createPicker = async ({ domain = "knowledge", value = "", legacyValue = "", fieldName = "categoryId", legacyName = "category", onChange = () => {} } = {}) => {
+    const wrapper = make("div", "category-picker"), select = make("select"), hidden = make("input"), manage = make("button", "secondary", "Gerenciar");
+    select.name = fieldName; select.setAttribute("aria-label", "Categoria"); hidden.type = "hidden"; hidden.name = legacyName; hidden.value = legacyValue || ""; manage.type = "button"; manage.textContent = "＋ Nova"; manage.onclick = () => { pendingPicker = wrapper; open(domain); };
+    wrapper.dataset.categoryPicker = domain;
+    wrapper.refresh = async () => {
+      const categories = await list(domain, true), selectedId = select.value || value;
+      select.replaceChildren(new Option("Sem categoria", ""), ...categories.map(item => new Option(`${item.icon} ${item.name}`, item.id)));
+      if (selectedId && categories.some(item => item.id === selectedId)) select.value = selectedId;
+      else if (hidden.value) { const legacy = new Option(`${hidden.value} · categoria antiga`, ""); legacy.dataset.legacy = hidden.value; select.appendChild(legacy); legacy.selected = true; }
+      else { const preferred = categories.find(item => item.is_default); if (preferred) { select.value = preferred.id; hidden.value = preferred.name; value = preferred.id; } }
+    };
+    select.onchange = () => { const categories = cache.get(domain) || [], category = categories.find(item => item.id === select.value), legacy = select.selectedOptions[0]?.dataset.legacy; value = category?.id || ""; hidden.value = category?.name || legacy || ""; onChange(category?.id || null, category || null); };
+    wrapper.append(select, hidden, manage); await wrapper.refresh();
+    const changed = event => { if (event.detail?.domain === domain && wrapper.isConnected) { if (pendingPicker === wrapper && event.detail.category) { value = event.detail.category.id; hidden.value = event.detail.category.name; pendingPicker = null; } wrapper.refresh().catch(() => null); } else if (!wrapper.isConnected) window.removeEventListener("luar:categories-changed", changed); };
+    window.addEventListener("luar:categories-changed", changed);
+    return wrapper;
+  };
+
+  let noteCategoryFilter = "all";
+  const noteById = id => (typeof state !== "undefined" && Array.isArray(state.notes) ? state.notes.find(note => note.id === id) : null);
+  const refreshNoteFilter = async select => {
+    const current = noteCategoryFilter, categories = await list("knowledge", true), legacy = [...new Set((state.notes || []).filter(note => !note.categoryId && note.category).map(note => note.category))];
+    select.replaceChildren(new Option("Todas as categorias", "all"), new Option("Sem categoria", "none"), ...categories.map(item => new Option(`${item.icon} ${item.name}`, item.id)), ...legacy.map(name => new Option(`${name} · antiga`, `legacy:${name}`)));
+    select.value = [...select.options].some(option => option.value === current) ? current : "all"; noteCategoryFilter = select.value; applyNoteFilter();
+  };
+  const applyNoteFilter = () => document.querySelectorAll("#notesList .note-square[data-record-id]").forEach(card => { const note = noteById(card.dataset.recordId); if (!note) return; card.hidden = !(noteCategoryFilter === "all" || (noteCategoryFilter === "none" && !note.categoryId && !note.category) || note.categoryId === noteCategoryFilter || noteCategoryFilter === `legacy:${note.category || ""}`); });
+  const decorateNotes = async () => {
+    if (typeof state === "undefined") return; const categories = await list("knowledge"), byId = new Map(categories.map(item => [item.id, item]));
+    document.querySelectorAll("#notesList .note-square[data-record-id]").forEach(card => { const note = noteById(card.dataset.recordId), category = note?.categoryId ? byId.get(note.categoryId) : null, signature = `${note?.categoryId || ""}:${category?.updated_at || ""}`; if (!note || card.dataset.categoryDecorated === signature) return; card.dataset.categoryDecorated = signature; const label = card.querySelector(":scope > small"); if (label) label.textContent = category ? `${category.icon} ${category.name}` : note.category || "Sem categoria"; if (category) card.style.setProperty("--category-accent", category.color); else card.style.removeProperty("--category-accent"); }); applyNoteFilter();
+  };
+  const enhanceNoteForm = async () => {
+    if (typeof edit === "undefined" || edit.entity !== "notes") return; const form = document.getElementById("entityForm"), old = form?.elements?.category; if (!form || !old || form.querySelector('[data-note-category-field="true"]')) return;
+    const item = edit.id ? state.notes.find(note => note.id === edit.id) : null, label = old.closest("label"), picker = await createPicker({ domain: "knowledge", value: item?.categoryId || "", legacyValue: item?.category || old.value || "" });
+    label.dataset.noteCategoryField = "true"; label.replaceChildren(document.createTextNode("Categoria"), picker);
+  };
+  const enhanceNotes = () => {
+    const panel = document.querySelector("#notes .notes-board .panel-head"); if (panel && !panel.querySelector("[data-note-category-filter]")) { const select = make("select", "note-category-filter"); select.dataset.noteCategoryFilter = "true"; select.setAttribute("aria-label", "Filtrar notas por categoria"); select.onchange = () => { noteCategoryFilter = select.value; applyNoteFilter(); }; panel.querySelector(".mini-search")?.before(select); refreshNoteFilter(select).catch(() => null); }
+    decorateNotes().catch(() => null); enhanceNoteForm().catch(() => null);
+  };
+  const injectEntryPoints = () => { [["#notes .page-head", "knowledge"], ["#finance .page-head", "finance"]].forEach(([selector, domain]) => { const head = document.querySelector(selector); if (!head || head.querySelector(`[data-open-categories="${domain}"]`)) return; const button = make("button", "secondary category-entry", "Categorias"); button.type = "button"; button.dataset.openCategories = domain; button.onclick = () => open(domain); const primary = head.querySelector(":scope > button.primary"); if (primary) primary.before(button); else head.appendChild(button); }); enhanceNotes(); };
   window.LuarCategories = { list, open, close, createPicker, invalidate: domain => cache.delete(domain) };
   new MutationObserver(injectEntryPoints).observe(document.body, { childList: true, subtree: true }); injectEntryPoints();
+  window.addEventListener("luar:categories-changed", event => { if (event.detail?.domain === "knowledge") { const select = document.querySelector("[data-note-category-filter]"); if (select) refreshNoteFilter(select).catch(() => null); decorateNotes().catch(() => null); } });
 })();

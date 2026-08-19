@@ -89,6 +89,10 @@ const sanitizeRecord = (record) => {
     clean.id = String(clean.id).slice(0, 128);
     if (!/^[a-z0-9:_-]+$/i.test(clean.id)) throw invalid();
   }
+  if (clean.categoryId !== undefined && clean.categoryId !== null && clean.categoryId !== "") {
+    clean.categoryId = String(clean.categoryId).toLowerCase();
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(clean.categoryId)) throw invalid();
+  } else if (clean.categoryId === "") clean.categoryId = null;
   for (const key of ["name", "title", "category", "location"]) {
     if (clean[key] !== undefined && String(clean[key]).length > 180) throw invalid();
   }

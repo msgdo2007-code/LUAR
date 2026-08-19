@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, adminRequest } = require("./_lib");
 const { sanitizeAccountState } = require("./_state-schema");
-const { handleCategories } = require("../server/categories");
+const { handleCategories, validateStateCategoryOwnership } = require("../server/categories");
 
 const cleanState = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
 const stateHasContent = (state) => ["transactions", "tasks", "habits", "goals", "subscriptions", "wishlist", "investments", "events", "moods", "notes", "focusSessions"].some((key) => Array.isArray(state?.[key]) && state[key].length);
@@ -148,6 +148,7 @@ module.exports = async (req, res) => {
       const body = await readBody(req, 2_000_000);
       const lifetime = account?.plan === "lifetime";
       const incoming = sanitizeAccountState(body.state, { lifetime, previousState: cleanState(account.state) });
+      await validateStateCategoryOwnership(user, incoming);
       const serialized = JSON.stringify(incoming);
       if (Buffer.byteLength(serialized) > 1_500_000) return json(res, 413, { error: "O backup excedeu o tamanho permitido." });
       const updatedAt = new Date().toISOString();
@@ -196,6 +197,7 @@ module.exports = async (req, res) => {
     if (error.message === "SYNC_IDEMPOTENCY_MISMATCH") return json(res, 409, { error: "O identificador desta operação já foi utilizado com outro conteúdo." });
     if (error.categoryCode === "CATEGORY_DUPLICATE") return json(res, 409, { error: "Já existe uma categoria com esse nome nesta área." });
     if (error.categoryCode === "CATEGORY_NOT_FOUND") return json(res, 404, { error: "Categoria não encontrada." });
+    if (error.categoryCode === "CATEGORY_FORBIDDEN") return json(res, 403, { error: "A categoria selecionada não pertence a esta conta." });
     if (String(error.categoryCode || "").startsWith("CATEGORY_")) return json(res, 400, { error: "Os dados da categoria são inválidos." });
     const auth = String(error.message).startsWith("AUTH_") || error.message === "EMAIL_REQUIRED";
     return json(res, auth ? 401 : 500, { error: auth ? "Sessão ou e-mail não confirmado." : "Não foi possível acessar os dados da conta." });

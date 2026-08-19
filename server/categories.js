@@ -80,6 +80,25 @@ const removeCategory = async (user, body) => {
   if (result !== true) throw categoryError("CATEGORY_NOT_FOUND");
 };
 
+const validateStateCategoryOwnership = async (user, state) => {
+  const references = new Set(
+    (Array.isArray(state?.notes) ? state.notes : [])
+      .map((note) => note?.categoryId)
+      .filter(Boolean)
+      .map((value) => cleanId(value, true)),
+  );
+  if (!references.size) return true;
+  const ids = [...references];
+  const owned = new Set();
+  for (let offset = 0; offset < ids.length; offset += 80) {
+    const batch = ids.slice(offset, offset + 80);
+    const rows = await adminRequest(`luar_categories?user_id=eq.${encodeURIComponent(user.id)}&domain=eq.knowledge&id=in.(${batch.join(",")})&select=id`);
+    (Array.isArray(rows) ? rows : []).forEach((row) => owned.add(row.id));
+  }
+  if (ids.some((id) => !owned.has(id))) throw categoryError("CATEGORY_FORBIDDEN");
+  return true;
+};
+
 const handleCategories = async (req, res, user, requestUrl) => {
   if (req.method === "GET") {
     const domain = cleanDomain(requestUrl.searchParams.get("domain"));
@@ -98,4 +117,4 @@ const handleCategories = async (req, res, user, requestUrl) => {
   return json(res, 405, { error: "Método não permitido." });
 };
 
-module.exports = { CATEGORY_DOMAINS, cleanDomain, cleanName, cleanColor, cleanIcon, cleanId, handleCategories };
+module.exports = { CATEGORY_DOMAINS, cleanDomain, cleanName, cleanColor, cleanIcon, cleanId, handleCategories, validateStateCategoryOwnership };
