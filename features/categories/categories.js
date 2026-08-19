@@ -1,6 +1,7 @@
 (() => {
   const domains = { knowledge: "Notas e ideias", finance: "Financeiro" };
   const cache = new Map();
+  const pendingLists = new Map();
   let activeDomain = "knowledge", editingId = null, modal = null, pendingPicker = null;
   const make = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; };
   const api = async (domain, options = {}) => {
@@ -13,9 +14,16 @@
   };
   const list = async (domain, force = false) => {
     if (!domains[domain]) throw new Error("Domínio de categoria inválido.");
+    if (pendingLists.has(domain)) return pendingLists.get(domain);
     if (!force && cache.has(domain)) return cache.get(domain);
-    const result = await api(domain), categories = Array.isArray(result.categories) ? result.categories : [];
-    cache.set(domain, categories); return categories;
+    const request = api(domain).then(result => {
+      const categories = Array.isArray(result.categories) ? result.categories : [];
+      cache.set(domain, categories);
+      return categories;
+    });
+    pendingLists.set(domain, request);
+    try { return await request; }
+    finally { if (pendingLists.get(domain) === request) pendingLists.delete(domain); }
   };
   const ensureModal = () => {
     if (modal) return modal;

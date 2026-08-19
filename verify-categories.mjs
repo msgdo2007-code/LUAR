@@ -56,6 +56,9 @@ assert.ok(ui.includes("luar:categories-changed"));
 assert.ok(ui.includes("enhanceTransactionForm"));
 assert.ok(ui.includes("data-finance-category-filter"));
 assert.ok(ui.includes("financeReusableCategoryTotals"));
+assert.ok(ui.includes("const pendingLists = new Map()"));
+assert.ok(ui.includes("if (pendingLists.has(domain)) return pendingLists.get(domain)"));
+assert.ok(ui.includes("pendingLists.set(domain, request)"));
 assert.ok(ui.includes("textContent = category.name"), "Nome do usuário deve ser renderizado como texto, não HTML.");
 assert.ok(!/innerHTML\s*=.*category\.(?:name|icon)/.test(ui), "Conteúdo da categoria não pode entrar em innerHTML.");
 
