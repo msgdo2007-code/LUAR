@@ -115,7 +115,11 @@ select jsonb_build_object(
   'authenticated_audit_select', has_table_privilege('authenticated','public.luar_referral_audit','select'),
   'anon_clicks_select', has_table_privilege('anon','public.luar_referral_clicks','select'),
   'authenticated_clicks_select', has_table_privilege('authenticated','public.luar_referral_clicks','select'),
-  'paid_referrals_not_approved', (select count(*) from public.luar_referrals r join public.luar_payments p on p.user_id=r.referred_user_id and p.status='paid' where r.status <> 'approved')
+  'paid_referrals_not_approved', (select count(*) from public.luar_referrals r join public.luar_payments p on p.user_id=r.referred_user_id and p.status='paid' where r.status <> 'approved'),
+  'sync_operations_table', to_regclass('public.luar_account_state_operations') is not null,
+  'sync_v2_function', to_regprocedure('public.save_luar_account_state_v2(text,uuid,uuid,text,bigint,jsonb,jsonb,integer,text)') is not null,
+  'sync_revision_column', exists (select 1 from information_schema.columns where table_schema='public' and table_name='luar_accounts' and column_name='state_revision'),
+  'authorization_posture_function', to_regprocedure('public.luar_security_posture()') is not null
 ) as verification;
 '@ $true
     $result | ConvertTo-Json -Depth 20 -Compress | Write-Output
