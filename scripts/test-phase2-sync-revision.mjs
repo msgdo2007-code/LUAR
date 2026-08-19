@@ -48,6 +48,8 @@ test('endpoint usa RPC atomica e revisao numerica', () => {
   assert.match(endpoint, /body\.baseRevision/);
   assert.match(endpoint, /operationId/);
   assert.match(endpoint, /syncStatus === "conflict"/);
+  assert.match(endpoint, /stateHasContent\(account\.state\).*state_revision.*=== 0/is);
+  assert.match(endpoint, /upsertLuarAccount\(\{ email, state_revision: 1 \}\)/);
 });
 
 test('cliente nao mescla automaticamente depois de conflito 409', () => {

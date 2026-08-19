@@ -83,6 +83,9 @@ const ensureAccount = async (user) => {
       updated_at: new Date().toISOString(),
     }, legacyLifetime ? { lifetime_source: "legacy" } : {});
   }
+  if (account && stateHasContent(account.state) && Math.max(0, Number(account.state_revision) || 0) === 0) {
+    account = await upsertLuarAccount({ email, state_revision: 1 });
+  }
   return account;
 };
 
