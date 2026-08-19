@@ -31,6 +31,20 @@ async function hasPaidLifetime(userId) {
   return Boolean(rows?.length);
 }
 
+async function recordReferralClick(req, res) {
+  requireSameOrigin(req, true);
+  await rateLimit(req, 'referral-click', 20, 10 * 60 * 1000);
+  const body = await readBody(req, 2048);
+  const code = String(body.code || '').trim().toUpperCase();
+  const eventId = String(body.eventId || '').trim().toLowerCase();
+  const source = safeSource(body.source);
+  if (!/^[A-Z0-9]{8,16}$/.test(code) || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(eventId)) return json(res, 400, { error: 'Convite inválido.' });
+  const profiles = await adminRequest(`luar_referral_profiles?code=eq.${encodeURIComponent(code)}&select=user_id&limit=1`);
+  if (!profiles?.[0]) return json(res, 204, {});
+  await adminRequest('luar_referral_clicks?on_conflict=event_id', { method: 'POST', headers: { Prefer: 'resolution=ignore-duplicates,return=minimal' }, body: JSON.stringify({ event_id: eventId, referrer_user_id: profiles[0].user_id, source }) });
+  return json(res, 204, {});
+}
+
 async function verifyAttribution(referral, user, now = new Date().toISOString()) {
   if (referral.status !== 'pending') return referral;
   const verified = await adminRequest(`luar_referrals?id=eq.${encodeURIComponent(referral.id)}&status=eq.pending`, { method: 'PATCH', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ status: 'verified', verified_at: now, updated_at: now, status_reason: 'authenticated_email_confirmed' }) });
@@ -66,6 +80,7 @@ async function createAttribution(user, code, source) {
 
 module.exports = async function handler(req, res) {
   try {
+    if (req.method === 'POST' && String(req.query?.action || '') === 'click') return await recordReferralClick(req, res);
     requireSameOrigin(req, req.method === 'POST');
     await rateLimit(req, 'referrals', req.method === 'POST' ? 10 : 60, 10 * 60 * 1000);
     const user = await requireUser(req);

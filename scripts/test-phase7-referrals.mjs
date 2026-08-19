@@ -6,7 +6,6 @@ const app = await readFile(new URL('../app.js', import.meta.url), 'utf8');
 const referrals = await readFile(new URL('../api/referrals.js', import.meta.url), 'utf8');
 const payment = await readFile(new URL('../api/check-lifetime-payment.js', import.meta.url), 'utf8');
 const lib = await readFile(new URL('../api/_lib.js', import.meta.url), 'utf8');
-const click = await readFile(new URL('../api/referral-click.js', import.meta.url), 'utf8');
 const migration = await readFile(new URL('../supabase/migrations/20260818170000_referral_state_machine.sql', import.meta.url), 'utf8');
 const rollback = await readFile(new URL('../supabase/rollbacks/20260818170000_referral_state_machine.rollback.sql', import.meta.url), 'utf8');
 
@@ -54,13 +53,15 @@ test('cadastro nasce pending, email confirmado vira verified e compra vira appro
 test('recompensa considera apenas compras aprovadas e exige duas', () => {
   assert.match(lib, /status=eq\.approved/);
   assert.match(lib, /if \(purchased < 2\)/);
-  assert.doesNotMatch(click, /grantReferralLifetimeIfEligible/);
+  const clickHandler = referrals.match(/async function recordReferralClick[\s\S]+?async function verifyAttribution/)?.[0] || '';
+  assert.doesNotMatch(clickHandler, /grantReferralLifetimeIfEligible/);
   assert.doesNotMatch(referrals, /status: 'approved'/);
 });
 
 test('cliques sao idempotentes, nao armazenam IP e nao concedem recompensa', () => {
-  assert.match(click, /on_conflict=event_id/);
-  assert.match(click, /resolution=ignore-duplicates/);
+  assert.match(referrals, /on_conflict=event_id/);
+  assert.match(referrals, /resolution=ignore-duplicates/);
+  assert.match(app, /\/api\/referrals\?action=click/);
   assert.doesNotMatch(migration, /^\s*(ip_address|fingerprint)\s+/im);
   assert.match(migration, /event_id uuid not null unique/);
 });
