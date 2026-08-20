@@ -1,6 +1,7 @@
 (() => {
   "use strict";
   const embeddedPreview=new URLSearchParams(location.search).get("luar-preview")==="1";
+  if(embeddedPreview)document.documentElement.classList.add("luar-embedded-preview");
   const BLOCKS = [
     { id:"widgets", name:"Widgets fixados", category:"Extras", icon:"◫", selector:"#dashboardWidgetZone", group:"widgets" },
     { id:"wealth", name:"Patrimônio total", category:"Finanças", icon:"⌁", selector:"#dashboard .hero-grid>.balance", group:"hero" },
@@ -30,7 +31,7 @@
   const clone=value=>structuredClone(value), blockDefault=(index=0)=>({visible:true,order:index,size:"medium",variant:"default",responsive:{desktop:"medium",tablet:"medium",mobile:"medium"},style:{background:"auto",backgroundColor:"",accent:"",border:"subtle",radius:"medium",shadow:"soft",opacity:100}});
   const defaultLayout=(id="principal",name="Principal")=>({id,name,locked:false,blocks:Object.fromEntries(BLOCKS.map((block,index)=>{const value=blockDefault(index),size=DEFAULT_SIZES[block.id]||"medium";value.size=size;value.responsive={desktop:size,tablet:size==="xl"?"xl":size==="large"?"large":"medium",mobile:size==="small"?"small":"medium"};return[block.id,value]}))});
   const DEFAULT=()=>({version:2,activeLayoutId:"principal",autosave:false,density:"comfortable",globalTheme:{preset:"luar",...THEME_PRESETS.luar,glow:30,blur:8,contrast:100,radius:16},background:{type:"none",preset:"void",color:"#050807",color2:"#102018",image:"",fit:"cover",blur:0,dim:35,opacity:100},sidebar:{size:"normal",labels:"both",order:[],hidden:[]},header:{showName:true,showGreeting:true,showQuote:false,showDate:false,showLevel:true,showAvatar:true,customText:""},shortcuts:[],layouts:[defaultLayout()],history:[]});
-  let draft=null, undoStack=[], redoStack=[], selectedBlock="wealth", activePanel="appearance", activeBreakpoint="desktop", previewMode=false, editMode=false, root=null, autosaveTimer=null;
+  let draft=null, undoStack=[], redoStack=[], selectedBlock="wealth", activePanel="layout", activeBreakpoint="desktop", previewMode=false, editMode=false, root=null, autosaveTimer=null;
   const blockElements=new Map();
 
   const safeHex=(value,fallback="")=>/^#[0-9a-f]{6}$/i.test(String(value||""))?String(value).toLowerCase():fallback;
