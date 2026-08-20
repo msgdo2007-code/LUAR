@@ -37,8 +37,10 @@ test('migracao copia somente campos premium permitidos e cria snapshot', () => {
   assert.match(app, /lifetimePreferencesMigration=\{version:LIFETIME_PREFERENCE_VERSION/);
 });
 
-test('servidor confirmado vence estado local inteiro depois da migracao', () => {
-  assert.match(app, /choice=remote&&\(stateHasContent\(remote\)\|\|cloudAccount\?\.updatedAt\)\?\{source:'cloud',state:remote\}/);
+test('servidor com conteúdo vence, mas nuvem vazia não apaga recuperação local', () => {
+  assert.match(app, /if\(remoteCount\)/);
+  assert.match(app, /choice=chooseSafestAccountState\(recoveryCandidates/);
+  assert.doesNotMatch(app, /stateHasContent\(remote\)\|\|cloudAccount\?\.updatedAt/);
 });
 
 test('preferencias divergentes exigem escolha e preservam alternativa local', () => {
@@ -47,4 +49,3 @@ test('preferencias divergentes exigem escolha e preservam alternativa local', ()
   assert.match(app, /Usar personalização da nuvem/);
   assert.match(app, /Usar deste dispositivo/);
 });
-

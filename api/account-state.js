@@ -29,7 +29,7 @@ const cleanBackups = (value) => {
   }
   return kept;
 };
-const backupSummaries = (value) => cleanBackups(value).filter((backup) => backup.manual).map((backup) => ({ savedAt: backup.savedAt, manual: true, size: Buffer.byteLength(JSON.stringify(backup.state)) }));
+const backupSummaries = (value) => cleanBackups(value).map((backup) => ({ savedAt: backup.savedAt, manual: backup.manual, automatic: !backup.manual, size: Buffer.byteLength(JSON.stringify(backup.state)) }));
 const STATE_SCHEMA_VERSION = 1;
 const SYNC_V2_ENABLED = process.env.ACCOUNT_SYNC_V2_ENABLED === "true";
 const OPERATION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -134,7 +134,7 @@ const handler = async (req, res) => {
       if (account?.plan !== "lifetime" || !account.user_ids?.includes(user.id)) return json(res, 403, { error: "Backup disponível somente no LUAR Vitalício." });
       const savedAt = String(body.savedAt || "");
       const existingBackups = cleanBackups(account.backups);
-      const backup = existingBackups.find((item) => item.manual && item.savedAt === savedAt);
+      const backup = existingBackups.find((item) => item.savedAt === savedAt);
       if (!backup) return json(res, 404, { error: "Esta versão não foi encontrada." });
       const updatedAt = new Date().toISOString();
       const rollback = { savedAt: updatedAt, state: snapshotState(account.state), manual: true };

@@ -62,6 +62,16 @@ test('cliente nao mescla automaticamente depois de conflito 409', () => {
   assert.doesNotMatch(pushSource, /applyAccountState\(/);
 });
 
+test('login não deixa uma nuvem vazia vencer cópias locais com conteúdo', () => {
+  assert.match(client, /choice=chooseSafestAccountState\(recoveryCandidates/);
+  assert.doesNotMatch(client, /stateHasContent\(remote\)\|\|cloudAccount\?\.updatedAt/);
+});
+
+test('snapshots automáticos da própria conta podem ser restaurados', () => {
+  assert.match(endpoint, /automatic: !backup\.manual/);
+  assert.match(endpoint, /existingBackups\.find\(\(item\) => item\.savedAt === savedAt\)/);
+});
+
 test('interface so mostra salvo depois de resposta bem sucedida', () => {
   const pushStart = client.indexOf('async function pushCloudState');
   const pushEnd = client.indexOf('async function sessionHeaders', pushStart);
