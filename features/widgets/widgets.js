@@ -9,6 +9,27 @@
   const complete = (widget, item) => widget.type === "task" ? !!item?.completed : (item?.history || []).includes(today());
   const label = type => type === "task" ? "Tarefa" : "Hábito";
   const icon = type => type === "task" ? "✓" : "✦";
+  const HABIT_MOODS = {
+    happy: { face: "✦‿✦", message: "Você conseguiu!", label: "Feliz" },
+    normal: { face: "•‿•", message: "Tudo tranquilo por enquanto.", label: "Normal" },
+    unhappy: { face: "•︵•", message: "O Luar está esperando...", label: "Insatisfeito" },
+    sad: { face: "╥︵╥", message: "Ele ficou triste sem seu hábito.", label: "Triste" },
+    confused: { face: "?︵?", message: "Será que você esqueceu?", label: "Confuso" },
+    angry: { face: "ಠ︵ಠ", message: "O atraso deixou o Luar bravo.", label: "Raivoso" },
+    extreme: { face: "🔥ಠ益ಠ🔥", message: "Faça agora: raiva lunar máxima!", label: "Raiva extrema" }
+  };
+  function habitMood(item, finished) {
+    if (finished) return "happy";
+    const now = new Date(), key = today(), missedYesterday = (() => { const date = new Date(); date.setDate(date.getDate() - 1); return !(item.history || []).includes(dateKey(date)); })();
+    let due = new Date(`${key}T${item.time && /^\d{2}:\d{2}$/.test(item.time) ? item.time : "12:00"}:00`), hours = (now - due) / 3600000;
+    if (hours <= 0) return "normal";
+    if (missedYesterday && hours > 8) return "extreme";
+    if (hours <= 1) return "unhappy";
+    if (hours <= 3) return "sad";
+    if (hours <= 6) return "confused";
+    if (hours <= 10) return "angry";
+    return "extreme";
+  }
 
   const persist = () => { writeLocalState(); scheduleCloudSave(); render(); };
   const remove = id => { state.profile.dashboardWidgets = widgets().filter(item => item.id !== id); persist(); toast("Widget removido", "O registro continua salvo na área original."); };
@@ -23,10 +44,10 @@
       card.innerHTML = `<div class="widget-orphan"><i>?</i><span><small>ITEM INDISPONÍVEL</small><b>Este registro foi removido</b><em>Escolha outro item ou remova o widget.</em></span></div><button type="button" data-widget-remove>Remover</button>`;
       return card;
     }
-    const streak = widget.type === "habit" ? calculateHabitStreak(item) : 0, finished = complete(widget, item), message = finished ? "Você conseguiu!" : widget.type === "habit" ? streak ? "Continue brilhando!" : "Comece sua sequência!" : item.date ? "Uma missão espera por você!" : "Vamos tirar isso da órbita?", score = widget.type === "habit" ? streak : finished ? 1 : 0;
-    card.dataset.widgetMood = finished ? "happy" : streak ? "focused" : "waiting";
+    const streak = widget.type === "habit" ? calculateHabitStreak(item) : 0, finished = complete(widget, item), mood = widget.type === "habit" ? habitMood(item, finished) : finished ? "happy" : "waiting", moodInfo = HABIT_MOODS[mood], message = widget.type === "habit" ? moodInfo.message : finished ? "Você conseguiu!" : item.date ? "Uma missão espera por você!" : "Vamos tirar isso da órbita?", score = widget.type === "habit" ? streak : finished ? 1 : 0;
+    card.dataset.widgetMood = mood;
     card.tabIndex = 0; card.setAttribute("role", "button"); card.setAttribute("aria-expanded", "false"); card.setAttribute("aria-label", `${label(widget.type)}: ${item.name}. Toque para ver os detalhes.`);
-    card.innerHTML = `<div class="widget-visual"><img src="widget-luar-companion-v1.webp" alt="Mascote Luar"><div class="widget-score"><i>${widget.type === "habit" ? "◆" : finished ? "✓" : "○"}</i><strong>${widget.type === "habit" ? streak : finished ? "Feita" : "Pendente"}</strong></div>${widget.type === "habit" && finished ? '<span class="widget-happy-mark" aria-hidden="true">✦ ☺ ✦</span>' : ""}</div><header><i>${icon(widget.type)}</i><span><small>${label(widget.type).toUpperCase()}</small><b></b><em>${message}</em></span><button type="button" data-widget-config aria-label="Configurar widget">•••</button></header>${widget.type === "habit" ? `<button type="button" class="widget-habit-done" ${finished ? "disabled" : ""}>${finished ? "✓ Feito hoje" : "✓ Já fiz hoje"}</button>` : '<small class="widget-open-hint">Toque para abrir</small>'}<p class="widget-detail-copy"></p><footer><button type="button" class="widget-complete">${finished ? "✓ Concluído hoje" : widget.type === "task" ? "Concluir tarefa" : "Marcar como feito"}</button><span>${widget.type === "habit" ? `${streak} dia${streak === 1 ? "" : "s"} de sequência` : item.date ? `Prazo ${formatDate(item.date)}` : "Sem prazo"}</span></footer><nav aria-label="Ordenar widget"><button type="button" data-widget-move="-1" ${index === 0 ? "disabled" : ""}>←</button><button type="button" data-widget-move="1" ${index === widgets().length - 1 ? "disabled" : ""}>→</button><button type="button" data-widget-remove>Remover</button></nav>`;
+    card.innerHTML = `<div class="widget-visual"><img src="widget-luar-companion-v1.webp" alt="Mascote Luar ${widget.type === "habit" ? moodInfo.label.toLowerCase() : "acompanhando seu progresso"}">${widget.type === "habit" ? `<span class="widget-face" aria-label="Luar ${moodInfo.label}">${moodInfo.face}</span>` : ""}<div class="widget-score"><i>${widget.type === "habit" ? "◆" : finished ? "✓" : "○"}</i><strong>${widget.type === "habit" ? streak : finished ? "Feita" : "Pendente"}</strong></div>${widget.type === "habit" && finished ? '<span class="widget-happy-mark" aria-hidden="true">✦ ✦ ✦</span>' : ""}</div><header><i>${icon(widget.type)}</i><span><small>${widget.type === "habit" ? moodInfo.label.toUpperCase() : label(widget.type).toUpperCase()}</small><b></b><em>${message}</em></span><button type="button" data-widget-config aria-label="Configurar widget">•••</button></header>${widget.type === "habit" ? `<button type="button" class="widget-habit-done" ${finished ? "disabled" : ""}>${finished ? "✓ Feito hoje" : "✓ Já fiz hoje"}</button>` : '<small class="widget-open-hint">Toque para abrir</small>'}<p class="widget-detail-copy"></p><footer><button type="button" class="widget-complete">${finished ? "✓ Concluído hoje" : widget.type === "task" ? "Concluir tarefa" : "Marcar como feito"}</button><span>${widget.type === "habit" ? `${streak} dia${streak === 1 ? "" : "s"} de sequência` : item.date ? `Prazo ${formatDate(item.date)}` : "Sem prazo"}</span></footer><nav aria-label="Ordenar widget"><button type="button" data-widget-move="-1" ${index === 0 ? "disabled" : ""}>←</button><button type="button" data-widget-move="1" ${index === widgets().length - 1 ? "disabled" : ""}>→</button><button type="button" data-widget-remove>Remover</button></nav>`;
     card.querySelector("header b").textContent = item.name;
     card.querySelector(".widget-detail-copy").textContent = item.description || item.category || (widget.type === "task" ? "Seu próximo passo importante." : "Continue construindo sua constância.");
     return card;
@@ -72,4 +93,5 @@
   window.LuarWidgets = { render };
   document.addEventListener("DOMContentLoaded", render, { once: true });
   setTimeout(render, 0);
+  setInterval(() => { if (document.body.classList.contains("app-mode")) renderDashboard(); }, 60000);
 })();
