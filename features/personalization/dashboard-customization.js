@@ -4,10 +4,7 @@
   const BLOCKS = [
     { id:"widgets", name:"Widgets fixados", category:"Extras", icon:"◫", selector:"#dashboardWidgetZone", group:"widgets" },
     { id:"wealth", name:"Patrimônio total", category:"Finanças", icon:"⌁", selector:"#dashboard .hero-grid>.balance", group:"hero" },
-    { id:"income", name:"Ganhos do mês", category:"Finanças", icon:"↗", selector:"#dashboard .overview-stats>.stat:nth-child(1)", group:"summary" },
-    { id:"expense", name:"Gastos do mês", category:"Finanças", icon:"↘", selector:"#dashboard .overview-stats>.stat:nth-child(2)", group:"summary" },
-    { id:"goals", name:"Guardado em metas", category:"Evolução", icon:"◎", selector:"#dashboard .overview-stats>.stat:nth-child(3)", group:"summary" },
-    { id:"balance", name:"Saldo disponível", category:"Finanças", icon:"◈", selector:"#dashboard .overview-stats>.stat:nth-child(4)", group:"summary" },
+    { id:"summary", name:"Resumo financeiro", category:"Finanças", icon:"↗", selector:"#dashboard .overview-stats", group:"summary" },
     { id:"categories", name:"Movimento por categoria", category:"Finanças", icon:"◉", selector:"#dashboard .overview-category-map-grid>.overview-summary-card", group:"categories" },
     { id:"ideaMap", name:"Mapa de ideias", category:"Organização", icon:"✦", selector:"#dashboardIdeaMapSlot", group:"categories" },
     { id:"routine", name:"Rotina e objetivos", category:"Organização", icon:"✓", selector:"#dashboard .main-grid>.day-stack", group:"main" },
@@ -27,11 +24,11 @@
     balanced:{name:"Equilibrado",copy:"Finanças, produtividade e bem-estar.",sizes:{wealth:"large",categories:"large",routine:"large"}},
     productivity:{name:"Produtividade",copy:"Rotina, hábitos, agenda e foco em destaque.",hide:["categories"],sizes:{routine:"xl",calendar:"large",wealth:"small"}},
     financial:{name:"Financeiro",copy:"Patrimônio, movimento e metas financeiras.",hide:["routine"],sizes:{wealth:"xl",categories:"xl",calendar:"small"}},
-    minimal:{name:"Minimalista",copy:"Poucos elementos e mais espaço.",hide:["widgets","income","expense","categories","calendar"],sizes:{wealth:"medium",routine:"medium"}},
-    evolution:{name:"Evolução",copy:"Metas, sequência e progresso.",hide:["income","expense","categories"],sizes:{goals:"large",calendar:"xl",routine:"large"}},
+    minimal:{name:"Minimalista",copy:"Poucos elementos e mais espaço.",hide:["widgets","summary","categories","calendar"],sizes:{wealth:"medium",routine:"medium"}},
+    evolution:{name:"Evolução",copy:"Metas, sequência e progresso.",hide:["summary","categories"],sizes:{calendar:"xl",routine:"large"}},
     complete:{name:"Completo",copy:"Toda a sua órbita visível.",sizes:Object.fromEntries(BLOCKS.map(b=>[b.id,"large"]))}
   };
-  const DEFAULT_SIZES={widgets:"xl",wealth:"xl",income:"small",expense:"small",goals:"small",balance:"small",categories:"large",ideaMap:"small",routine:"large",calendar:"medium"};
+  const DEFAULT_SIZES={widgets:"xl",wealth:"xl",summary:"xl",categories:"large",ideaMap:"medium",routine:"large",calendar:"medium"};
   const clone=value=>structuredClone(value), blockDefault=(index=0)=>({visible:true,order:index,size:"medium",variant:"default",responsive:{desktop:"medium",tablet:"medium",mobile:"medium"},style:{background:"auto",backgroundColor:"",accent:"",border:"subtle",radius:"medium",shadow:"soft",opacity:100}});
   const defaultLayout=(id="principal",name="Principal")=>({id,name,locked:false,blocks:Object.fromEntries(BLOCKS.map((block,index)=>{const value=blockDefault(index),size=DEFAULT_SIZES[block.id]||"medium";value.size=size;value.responsive={desktop:size,tablet:size==="xl"?"xl":size==="large"?"large":"medium",mobile:size==="small"?"small":"medium"};return[block.id,value]}))});
   const DEFAULT=()=>({version:2,activeLayoutId:"principal",autosave:false,density:"comfortable",globalTheme:{preset:"luar",...THEME_PRESETS.luar,glow:30,blur:8,contrast:100,radius:16},background:{type:"none",preset:"void",color:"#050807",color2:"#102018",image:"",fit:"cover",blur:0,dim:35,opacity:100},sidebar:{size:"normal",labels:"both",order:[],hidden:[]},header:{showName:true,showGreeting:true,showQuote:false,showDate:false,showLevel:true,showAvatar:true,customText:""},shortcuts:[],layouts:[defaultLayout()],history:[]});
