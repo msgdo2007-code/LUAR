@@ -4,8 +4,6 @@
   const BLOCKS = [
     { id:"widgets", name:"Widgets fixados", category:"Extras", icon:"◫", selector:"#dashboardWidgetZone", group:"widgets" },
     { id:"wealth", name:"Patrimônio total", category:"Finanças", icon:"⌁", selector:"#dashboard .hero-grid>.balance", group:"hero" },
-    { id:"summary", name:"Resumo financeiro", category:"Finanças", icon:"↗", selector:"#dashboard .overview-stats", group:"summary" },
-    { id:"categories", name:"Movimento por categoria", category:"Finanças", icon:"◉", selector:"#dashboard .overview-category-map-grid>.overview-summary-card", group:"categories" },
     { id:"ideaMap", name:"Mapa de ideias", category:"Organização", icon:"✦", selector:"#dashboardIdeaMapSlot", group:"categories" },
     { id:"routine", name:"Rotina e objetivos", category:"Organização", icon:"✓", selector:"#dashboard .main-grid>.day-stack", group:"main" },
     { id:"calendar", name:"Sequência e calendário", category:"Evolução", icon:"□", selector:"#dashboard .main-grid>.side-stack", group:"main" }
@@ -28,7 +26,7 @@
     evolution:{name:"Evolução",copy:"Metas, sequência e progresso.",hide:["summary","categories"],sizes:{calendar:"xl",routine:"large"}},
     complete:{name:"Completo",copy:"Toda a sua órbita visível.",sizes:Object.fromEntries(BLOCKS.map(b=>[b.id,"large"]))}
   };
-  const DEFAULT_SIZES={widgets:"xl",wealth:"xl",summary:"xl",categories:"large",ideaMap:"medium",routine:"large",calendar:"medium"};
+  const DEFAULT_SIZES={widgets:"medium",wealth:"large",ideaMap:"large",routine:"large",calendar:"medium"};
   const clone=value=>structuredClone(value), blockDefault=(index=0)=>({visible:true,order:index,size:"medium",variant:"default",responsive:{desktop:"medium",tablet:"medium",mobile:"medium"},style:{background:"auto",backgroundColor:"",accent:"",border:"subtle",radius:"medium",shadow:"soft",opacity:100}});
   const defaultLayout=(id="principal",name="Principal")=>({id,name,locked:false,blocks:Object.fromEntries(BLOCKS.map((block,index)=>{const value=blockDefault(index),size=DEFAULT_SIZES[block.id]||"medium";value.size=size;value.responsive={desktop:size,tablet:size==="xl"?"xl":size==="large"?"large":"medium",mobile:size==="small"?"small":"medium"};return[block.id,value]}))});
   const DEFAULT=()=>({version:2,activeLayoutId:"principal",autosave:false,density:"comfortable",globalTheme:{preset:"luar",...THEME_PRESETS.luar,glow:30,blur:8,contrast:100,radius:16},background:{type:"none",preset:"void",color:"#050807",color2:"#102018",image:"",fit:"cover",blur:0,dim:35,opacity:100},sidebar:{size:"normal",labels:"both",order:[],hidden:[]},header:{showName:true,showGreeting:true,showQuote:false,showDate:false,showLevel:true,showAvatar:true,customText:""},shortcuts:[],layouts:[defaultLayout()],history:[]});
