@@ -41,6 +41,18 @@ test("editor possui preview real, drag, undo, presets e salvamento explícito", 
   assert.match(css, /dashboard-editing/);
 });
 
+test("canvas usa os componentes reais e uma grade responsiva sem sobreposição", () => {
+  for (const token of ["ensureDashboardCanvas", "blockElement", "data-breakpoint", "data-direct-size", "data-component-search"]) assert.match(client, new RegExp(token));
+  assert.match(css, /grid-template-columns:repeat\(12,minmax\(0,1fr\)\)/);
+  assert.match(css, /grid-template-columns:repeat\(8,minmax\(0,1fr\)\)/);
+  assert.match(css, /\.dashboard-custom-grid\{display:flex;flex-direction:column/);
+});
+
+test("editor oferece histórico, navegação, cabeçalho e evita salvamento repetido", () => {
+  for (const token of ["data-history", "data-header-field", "data-sidebar-field", "Nenhuma alteração nova para salvar"]) assert.match(client, new RegExp(token));
+  assert.match(client, /visual\(previous\)===visual\(draft\)/);
+});
+
 test("endpoint deriva usuário da sessão e exige entitlement", () => {
   assert.match(endpoint, /requireUser\(req\)/);
   assert.match(endpoint, /account\?\.plan === "lifetime"/);
