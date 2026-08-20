@@ -1,6 +1,7 @@
 .vercel
 supabase/.temp/
 .env*
+!.env.example
 .chrome-*
 qa-*
 preview-*.png

@@ -1,4 +1,4 @@
-const { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible, recordPaymentVerification } = require("./_lib");
+const { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible, recordPaymentVerification, externalFetch } = require("./_lib");
 
 const amountInCents = (payment) => {
   const raw = payment.value ?? payment.amount ?? payment.amount_cents;
@@ -26,13 +26,13 @@ module.exports = async (req, res) => {
     const storedRows = await adminRequest(`luar_payments?transaction_id=eq.${encodeURIComponent(transactionId)}&account_email=eq.${encodeURIComponent(email)}&select=*&limit=1`);
     const storedPayment = Array.isArray(storedRows) ? storedRows[0] : null;
     if (!storedPayment || storedPayment.user_id !== user.id || storedPayment.amount_cents !== 3990) return json(res, 403, { error: "Cobrança não pertence a esta conta." });
-    const response = await fetch(`https://api.pushinpay.com.br/api/transactions/${encodeURIComponent(transactionId)}`, {
+    const response = await externalFetch(`https://api.pushinpay.com.br/api/transactions/${encodeURIComponent(transactionId)}`, {
       headers: {
         Authorization: `Bearer ${process.env.PUSHINPAY_TOKEN}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-    });
+    }, 10_000);
     const payment = await response.json().catch(() => ({}));
     if (!response.ok) return json(res, 502, { error: "Não foi possível consultar o pagamento." });
     const verification = await recordPaymentVerification({ transactionId, storedPayment, providerStatus: payment.status, providerAmountCents: amountInCents(payment) });

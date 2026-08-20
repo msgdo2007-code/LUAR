@@ -1,4 +1,4 @@
-const { json, readBody, rateLimit, getAuthUserById, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat, recordPaymentVerification } = require("./_lib");
+const { json, readBody, rateLimit, getAuthUserById, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccountCompat, recordPaymentVerification, externalFetch } = require("./_lib");
 
 const amountInCents = (payment) => {
   const raw = payment.value ?? payment.amount ?? payment.amount_cents;
@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
     const rows = await adminRequest(`luar_payments?transaction_id=eq.${encodeURIComponent(transactionId)}&select=*&limit=1`);
     const stored = Array.isArray(rows) ? rows[0] : null;
     if (!stored) return json(res, 200, { received: true });
-    const response = await fetch(`https://api.pushinpay.com.br/api/transactions/${encodeURIComponent(transactionId)}`, { headers: { Authorization: `Bearer ${process.env.PUSHINPAY_TOKEN}`, Accept: "application/json", "Content-Type": "application/json" } });
+    const response = await externalFetch(`https://api.pushinpay.com.br/api/transactions/${encodeURIComponent(transactionId)}`, { headers: { Authorization: `Bearer ${process.env.PUSHINPAY_TOKEN}`, Accept: "application/json", "Content-Type": "application/json" } }, 10_000);
     const payment = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error("PAYMENT_LOOKUP_FAILED");
     const verification = await recordPaymentVerification({ transactionId, storedPayment: stored, providerStatus: payment.status, providerAmountCents: amountInCents(payment) });

@@ -1,0 +1,5 @@
+Contact: https://luarhub.site/contato
+Policy: https://luarhub.site/SECURITY.md
+Preferred-Languages: pt-BR, en
+Canonical: https://luarhub.site/.well-known/security.txt
+Expires: 2027-08-20T23:59:59Z

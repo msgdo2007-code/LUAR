@@ -10,10 +10,12 @@ process.env.VERCEL_ENV = 'production';
 const testUser = { id: '11111111-1111-4111-8111-111111111111', email: 'qa@example.com', email_confirmed_at: '2026-08-17T00:00:00Z', app_metadata: { role: 'authenticated' }, user_metadata: { name: 'QA' } };
 const tokenPayload = Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600, amr: [{ method: 'password', timestamp: Math.floor(Date.now() / 1000) }] })).toString('base64url');
 const accessToken = `header.${tokenPayload}.signature`;
-global.fetch = async (url) => {
+let lastAuthUpdate = null;
+global.fetch = async (url, options = {}) => {
   const target = String(url);
   if (target.includes('/rest/v1/rpc/consume_luar_rate_limit')) return new Response('true', { status: 200 });
   if (target.includes('/auth/v1/token?grant_type=password')) return Response.json({ access_token: accessToken, refresh_token: 'refresh-test', expires_in: 3600, user: testUser });
+  if (target.endsWith('/auth/v1/user') && options.method === 'PUT') { lastAuthUpdate = JSON.parse(options.body); return Response.json({ ...testUser, user_metadata: { ...testUser.user_metadata, ...(lastAuthUpdate.data || {}) } }); }
   if (target.endsWith('/auth/v1/user')) return Response.json(testUser);
   throw new Error(`Unexpected fetch: ${target}`);
 };
@@ -56,5 +58,15 @@ assert.equal(blocked.statusCode, 403);
 const anonymous = await invoke({ url: '/api/create-account?action=session' });
 assert.equal(anonymous.statusCode, 200);
 assert.equal(anonymous.body.session, null);
+
+const update = await invoke({ url: '/api/create-account?action=update', cookie: accessCookie, body: { data: { name: 'Nome seguro', onboarding_completed: true, onboarding_goal: 'routine', role: 'admin', isAdmin: true, luar_plan: 'lifetime', xp: 999999 } } });
+assert.equal(update.statusCode, 200);
+assert.deepEqual(lastAuthUpdate.data, { name: 'Nome seguro', onboarding_completed: true, onboarding_goal: 'routine' });
+assert.equal(JSON.stringify(lastAuthUpdate).includes('admin'), false);
+assert.equal(JSON.stringify(lastAuthUpdate).includes('999999'), false);
+
+const forgedLicense = await invoke({ url: '/api/create-account?action=update', cookie: accessCookie, body: { data: { luar_lifetime_license: 'forged.payload' } } });
+assert.equal(forgedLicense.statusCode, 400);
+assert.equal(forgedLicense.body.error, 'Atualização inválida.');
 
 console.log('Backend auth keeps tokens in HttpOnly cookies and out of browser JSON.');

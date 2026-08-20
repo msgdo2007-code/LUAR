@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { json, readBody, requireSameOrigin, rateLimit, requestCookies, authCookieNames } = require('./_lib');
+const { json, readBody, requireSameOrigin, rateLimit, requestCookies, authCookieNames, verifyPayload, externalFetch } = require('./_lib');
 
 const siteOrigin = () => {
   const url = new URL(process.env.PUBLIC_SITE_URL || 'https://luarhub.site');
@@ -16,7 +16,7 @@ const authConfig = () => {
 
 const authRequest = async (path, options = {}) => {
   const { url, key } = authConfig();
-  return fetch(`${url}/auth/v1/${path}`, {
+  return externalFetch(`${url}/auth/v1/${path}`, {
     ...options,
     headers: {
       apikey: key,
@@ -164,8 +164,21 @@ module.exports = async function handler(req, res) {
       await rateLimit(req, 'auth-update', 20, 15 * 60 * 1000);
       const payload = await currentSession(req, res);
       if (!payload?.access_token) return json(res, 401, { error: 'Sessão expirada.' });
-      const update = {};
-      if (body.data && typeof body.data === 'object' && !Array.isArray(body.data)) update.data = body.data;
+      const update = {}, metadata = {};
+      if (body.data && typeof body.data === 'object' && !Array.isArray(body.data)) {
+        if (body.data.name !== undefined) metadata.name = String(body.data.name || '').trim().replace(/[\u0000-\u001f\u007f]/g, '').slice(0, 80);
+        if (typeof body.data.onboarding_completed === 'boolean') metadata.onboarding_completed = body.data.onboarding_completed;
+        if (['routine', 'money', 'goals', 'all'].includes(body.data.onboarding_goal)) metadata.onboarding_goal = body.data.onboarding_goal;
+        const suppliedLicense = String(body.data.luar_lifetime_license || '');
+        if (suppliedLicense) {
+          let license = null;
+          try { license = suppliedLicense.length <= 4096 ? verifyPayload(suppliedLicense) : null; } catch { license = null; }
+          const userEmail = String(payload.user?.email || '').trim().toLowerCase();
+          if (!license || license.type !== 'lifetime' || license.uid !== payload.user?.id || (license.email && String(license.email).trim().toLowerCase() !== userEmail) || license.plan !== 'LUAR_VITALICIO') return json(res, 400, { error: 'Atualização inválida.' });
+          metadata.luar_lifetime_license = suppliedLicense;
+        }
+        if (Object.keys(metadata).length) update.data = metadata;
+      }
       if (body.password !== undefined) {
         const password = String(body.password || '');
         if (password.length < 8 || password.length > 128) return json(res, 400, { error: 'A senha deve ter entre 8 e 128 caracteres.' });

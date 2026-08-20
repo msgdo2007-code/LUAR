@@ -1,5 +1,10 @@
 const crypto = require("crypto");
 
+const externalFetch = (url, options = {}, timeoutMs = 8_000) => fetch(url, {
+  ...options,
+  signal: options.signal || AbortSignal.timeout(Math.max(1_000, Math.min(Number(timeoutMs) || 8_000, 30_000))),
+});
+
 const json = (res, status, body) => {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -102,7 +107,7 @@ const requireUser = async (req) => {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) throw new Error("SERVER_CONFIG");
   const accessToken = requestAccessToken(req);
   if (!accessToken) throw new Error("AUTH_REQUIRED");
-  const response = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
+  const response = await externalFetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
     headers: {
       apikey: process.env.SUPABASE_ANON_KEY,
       authorization: `Bearer ${accessToken}`,
@@ -144,7 +149,7 @@ const getAuthUserById = async (userId) => {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceKey || !/^[0-9a-f-]{20,64}$/i.test(String(userId || ""))) return null;
-  const response = await fetch(`${url}/auth/v1/admin/users/${encodeURIComponent(userId)}`, { headers: elevatedSupabaseHeaders(serviceKey) });
+  const response = await externalFetch(`${url}/auth/v1/admin/users/${encodeURIComponent(userId)}`, { headers: elevatedSupabaseHeaders(serviceKey) });
   if (!response.ok) return null;
   return response.json().catch(() => null);
 };
@@ -172,7 +177,7 @@ const sendDiscordEvent = async ({ type, user, email, transactionId = "", amountC
       fields.push({ name: "Valor", value: `R$ ${(Number(amountCents || 0) / 100).toFixed(2).replace(".", ",")}`, inline: true });
       if (transactionId) fields.push({ name: "Transação", value: String(transactionId).slice(0, 128), inline: false });
     }
-    const response = await fetch(webhook.href, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "LUAR", allowed_mentions: { parse: [] }, embeds: [{ title: event.title, color: event.color, fields, timestamp: new Date().toISOString(), footer: { text: "luarhub.site" } }] }) });
+    const response = await externalFetch(webhook.href, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: "LUAR", allowed_mentions: { parse: [] }, embeds: [{ title: event.title, color: event.color, fields, timestamp: new Date().toISOString(), footer: { text: "luarhub.site" } }] }) }, 5_000);
     if (!response.ok) console.error("Discord activity notification failed", response.status);
     return response.ok;
   } catch (error) {
@@ -185,7 +190,7 @@ const adminRequest = async (path, options = {}) => {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceKey) throw new Error("SERVER_CONFIG");
-  const response = await fetch(`${url}/rest/v1/${path}`, {
+  const response = await externalFetch(`${url}/rest/v1/${path}`, {
     ...options,
     headers: { ...elevatedSupabaseHeaders(serviceKey), "Content-Type": "application/json", ...(options.headers || {}) },
   });
@@ -193,7 +198,7 @@ const adminRequest = async (path, options = {}) => {
   let body = null;
   try { body = text ? JSON.parse(text) : null; } catch { body = text; }
   if (!response.ok) {
-    console.error("Supabase admin request failed", response.status, typeof body === "string" ? body.slice(0, 300) : body?.code || body?.message || "unknown");
+    console.error("Supabase admin request failed", response.status, typeof body === "object" && body ? String(body.code || "STORAGE_ERROR").slice(0, 40) : "STORAGE_ERROR");
     const error = new Error("STORAGE_ERROR");
     error.storageStatus = response.status;
     error.storageCode = typeof body === "object" && body ? body.code : "";
@@ -239,7 +244,7 @@ const authenticatedRpcRequest = async (req, functionName, args = {}) => {
   if (!url || !anonKey) throw new Error("SERVER_CONFIG");
   if (!accessToken) throw new Error("AUTH_REQUIRED");
   if (!/^[a-z0-9_]+$/.test(functionName)) throw new Error("RPC_INVALID");
-  const response = await fetch(`${url}/rest/v1/rpc/${functionName}`, {
+  const response = await externalFetch(`${url}/rest/v1/rpc/${functionName}`, {
     method: "POST",
     headers: {
       apikey: anonKey,
@@ -330,4 +335,4 @@ const verifyPayload = (token) => {
   }
 };
 
-module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, displayName, authProvider, getAuthUserById, sendDiscordEvent, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible, recordPaymentVerification, requestCookies, authCookieNames, requestAccessToken };
+module.exports = { json, readBody, requireUser, requireSameOrigin, rateLimit, signPayload, verifyPayload, canonicalEmail, displayName, authProvider, getAuthUserById, sendDiscordEvent, adminRequest, authenticatedRpcRequest, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, grantReferralLifetimeIfEligible, recordPaymentVerification, requestCookies, authCookieNames, requestAccessToken, externalFetch };

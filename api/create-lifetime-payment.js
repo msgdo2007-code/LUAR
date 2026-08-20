@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { json, requireUser, requireSameOrigin, rateLimit, signPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccount } = require("./_lib");
+const { json, requireUser, requireSameOrigin, rateLimit, signPayload, canonicalEmail, sendDiscordEvent, adminRequest, getLuarAccount, upsertLuarAccount, externalFetch } = require("./_lib");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return json(res, 405, { error: "Método não permitido." });
@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
     if (idempotencySecret.length < 32) throw new Error("SERVER_CONFIG");
     const idempotencyWindow = Math.floor(now / (10 * 60 * 1000));
     const idempotencyKey = crypto.createHmac("sha256", idempotencySecret).update(`${user.id}:${email}:${idempotencyWindow}`).digest("hex");
-    const response = await fetch("https://api.pushinpay.com.br/api/pix/cashIn", {
+    const response = await externalFetch("https://api.pushinpay.com.br/api/pix/cashIn", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.PUSHINPAY_TOKEN}`,
@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
         webhook_url: `${publicSite.origin}/api/payment-webhook`,
         split_rules: [],
       }),
-    });
+    }, 10_000);
     const payment = await response.json().catch(() => ({}));
     if (!response.ok || !payment.id) {
       console.error("Pushin Pay create error", response.status, String(payment?.code || payment?.error || "provider_error").slice(0, 80));
