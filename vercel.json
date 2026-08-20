@@ -43,6 +43,10 @@
       "destination": "/manifest.webmanifest"
     },
     {
+      "source": "/personalizacao",
+      "destination": "/index.html"
+    },
+    {
       "source": "/campanhas/:slug(habitos|produtividade|financas|estudantes|metas|foco|vitalicio)",
       "destination": "/api/seo-page?mode=campaign&slug=:slug"
     },

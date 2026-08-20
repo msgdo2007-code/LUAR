@@ -9,6 +9,7 @@ Todos os outputs JSON privados usam `Cache-Control: no-store`. `Same origin` sig
 | POST `/api/create-account?action=session|refresh|signout|update` | Cookie | usuário da sessão | IP/ação | metadata em allowlist; tokens nunca retornam no JSON |
 | GET `/api/account-state` | Obrigatória | e-mail/id da sessão | IP + usuário | retorna somente conta autenticada |
 | PUT/POST `/api/account-state` | Obrigatória + same-origin | conta autenticada | IP + usuário | esquema fechado, revisão/idempotência, limite de plano |
+| GET/PUT `/api/customization` | Obrigatória + same-origin no PUT | conta Vitalícia autenticada | IP + usuário | entitlement server-side, schema visual fechado, revisão/idempotência; não aceita `userId` do cliente |
 | GET/POST `/api/account-state?resource=categories` | Obrigatória | categoria pertence ao usuário | IP + usuário | domínio/IDs/valores validados |
 | POST `/api/create-lifetime-payment` | Obrigatória + same-origin | usuário autenticado | 6/10 min + usuário | preço/produto definidos no servidor |
 | POST `/api/check-lifetime-payment` | Obrigatória + same-origin | token assinado + user/payment ownership | 30/10 min | ID, valor e provedor verificados |

@@ -15,6 +15,8 @@ const IMAGE_DATA_FIELDS = new Set(["avatar", "customBanner"]);
 const PREMIUM_TEMPLATES = new Set(["halloween", "christmas", "valentines", "stpatricks", "carnival", "custom"]);
 const FREE_WIDGET_LIMIT = 1;
 const LIFETIME_WIDGET_LIMIT = Math.max(1, Math.min(Number(process.env.LIFETIME_WIDGET_LIMIT) || 3, 12));
+const DASHBOARD_BLOCKS = new Set(["widgets", "wealth", "summary", "income", "expense", "goals", "balance", "categories", "ideaMap", "routine", "calendar"]);
+const DASHBOARD_THEMES = new Set(["luar", "eclipse", "nova", "aurora", "midnight", "minimal", "oled", "custom"]);
 
 const invalid = (code = "STATE_INVALID") => {
   const error = new Error(code);
@@ -104,6 +106,71 @@ const sanitizeRecord = (record) => {
   return clean;
 };
 
+const dashboardText = (value, limit = 60) => String(value || "").trim().replace(/[\u0000-\u001f\u007f]/g, "").slice(0, limit);
+const dashboardColor = (value, fallback = "") => /^#[0-9a-f]{6}$/i.test(String(value || "")) ? String(value).toLowerCase() : fallback;
+const dashboardEnum = (value, allowed, fallback) => allowed.includes(value) ? value : fallback;
+const sanitizeDashboardBlock = (value = {}, fallbackOrder = 0) => {
+  const style = value.style && typeof value.style === "object" && !Array.isArray(value.style) ? value.style : {};
+  const responsive = value.responsive && typeof value.responsive === "object" && !Array.isArray(value.responsive) ? value.responsive : {};
+  const sizes = ["small", "medium", "large", "xl"];
+  return {
+    visible: value.visible !== false,
+    order: Math.max(0, Math.min(100, Number.isFinite(+value.order) ? Math.round(+value.order) : fallbackOrder)),
+    size: dashboardEnum(value.size, sizes, "medium"),
+    variant: dashboardEnum(value.variant, ["default", "compact", "list", "chart", "complete", "minimal", "mascot"], "default"),
+    responsive: {
+      desktop: dashboardEnum(responsive.desktop, sizes, dashboardEnum(value.size, sizes, "medium")),
+      tablet: dashboardEnum(responsive.tablet, sizes, "medium"),
+      mobile: dashboardEnum(responsive.mobile, sizes, "medium"),
+    },
+    style: {
+      background: dashboardEnum(style.background, ["auto", "black", "surface", "transparent", "accent", "custom"], "auto"),
+      backgroundColor: dashboardColor(style.backgroundColor),
+      accent: dashboardColor(style.accent),
+      border: dashboardEnum(style.border, ["none", "subtle", "normal", "strong"], "subtle"),
+      radius: dashboardEnum(style.radius, ["small", "medium", "large"], "medium"),
+      shadow: dashboardEnum(style.shadow, ["none", "soft", "glow"], "soft"),
+      opacity: Math.max(40, Math.min(100, Number.isFinite(+style.opacity) ? Math.round(+style.opacity) : 100)),
+    },
+  };
+};
+const sanitizeDashboardLayout = (value, index = 0) => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw invalid("CUSTOMIZATION_INVALID");
+  const id = dashboardText(value.id || `layout-${index + 1}`, 48).toLowerCase().replace(/[^a-z0-9_-]/g, "-") || `layout-${index + 1}`;
+  const sourceBlocks = value.blocks && typeof value.blocks === "object" && !Array.isArray(value.blocks) ? value.blocks : {};
+  const blocks = Object.create(null);
+  [...DASHBOARD_BLOCKS].forEach((blockId, blockIndex) => { blocks[blockId] = sanitizeDashboardBlock(sourceBlocks[blockId], blockIndex); });
+  return { id, name: dashboardText(value.name || `Layout ${index + 1}`, 50), locked: value.locked === true, blocks };
+};
+function sanitizeDashboardCustomization(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const layoutsSource = Array.isArray(value.layouts) && value.layouts.length ? value.layouts.slice(0, 5) : [{ id: "principal", name: "Principal", blocks: value.blocks || {} }];
+  const layouts = layoutsSource.map(sanitizeDashboardLayout);
+  const unique = new Set();
+  layouts.forEach((layout, index) => { if (unique.has(layout.id)) layout.id = `${layout.id}-${index + 1}`; unique.add(layout.id); });
+  const theme = value.globalTheme && typeof value.globalTheme === "object" ? value.globalTheme : {};
+  const background = value.background && typeof value.background === "object" ? value.background : {};
+  const sidebar = value.sidebar && typeof value.sidebar === "object" ? value.sidebar : {};
+  const header = value.header && typeof value.header === "object" ? value.header : {};
+  const allowedNavigation = ["dashboard", "today", "finance", "tasks", "habits", "calendar", "goals", "focus", "mood", "notes", "challenges", "reports", "profile"];
+  const cleanNavigation = (items, limit = allowedNavigation.length) => Array.isArray(items) ? [...new Set(items.filter((item) => allowedNavigation.includes(item)))].slice(0, limit) : [];
+  const history = Array.isArray(value.history) ? value.history.slice(0, 5).map((entry, index) => ({ savedAt: Number.isFinite(Date.parse(entry?.savedAt)) ? new Date(entry.savedAt).toISOString() : new Date(0).toISOString(), layoutId: dashboardText(entry?.layoutId, 48), layout: sanitizeDashboardLayout(entry?.layout || layouts[0], index) })) : [];
+  const activeLayoutId = layouts.some((layout) => layout.id === value.activeLayoutId) ? value.activeLayoutId : layouts[0].id;
+  return {
+    version: 2,
+    activeLayoutId,
+    autosave: value.autosave === true,
+    density: dashboardEnum(value.density, ["compact", "comfortable", "airy"], "comfortable"),
+    globalTheme: { preset: DASHBOARD_THEMES.has(theme.preset) ? theme.preset : "luar", background: dashboardColor(theme.background, "#050807"), cards: dashboardColor(theme.cards, "#101311"), accent: dashboardColor(theme.accent, "#25f47d"), text: dashboardColor(theme.text, "#f5f7f5"), muted: dashboardColor(theme.muted, "#7e8882"), borders: dashboardColor(theme.borders, "#232a25"), glow: Math.max(0, Math.min(100, +theme.glow || 30)), blur: Math.max(0, Math.min(30, +theme.blur || 8)), contrast: Math.max(80, Math.min(130, +theme.contrast || 100)), radius: Math.max(6, Math.min(28, +theme.radius || 16)) },
+    background: { type: dashboardEnum(background.type, ["solid", "gradient", "image", "grid", "stars", "orbits", "none"], "none"), preset: dashboardEnum(background.preset, ["orbit", "nebula", "eclipse", "constellation", "void", "custom"], "void"), color: dashboardColor(background.color, "#050807"), color2: dashboardColor(background.color2, "#102018"), image: safeImage(background.image, 360_000), fit: dashboardEnum(background.fit, ["cover", "contain", "center"], "cover"), blur: Math.max(0, Math.min(24, +background.blur || 0)), dim: Math.max(0, Math.min(90, +background.dim || 35)), opacity: Math.max(10, Math.min(100, +background.opacity || 100)) },
+    sidebar: { size: dashboardEnum(sidebar.size, ["compact", "normal", "large"], "normal"), labels: dashboardEnum(sidebar.labels, ["icons", "both"], "both"), order: cleanNavigation(sidebar.order), hidden: cleanNavigation(sidebar.hidden) },
+    header: { showName: header.showName !== false, showGreeting: header.showGreeting !== false, showQuote: header.showQuote === true, showDate: header.showDate === true, showLevel: header.showLevel !== false, showAvatar: header.showAvatar !== false, customText: dashboardText(header.customText, 100) },
+    shortcuts: cleanNavigation(value.shortcuts, 6),
+    layouts,
+    history,
+  };
+}
+
 const allowedFreeCount = (key, previousState) => {
   const configured = FREE_LIMITS[key];
   if (configured !== undefined) return Math.max(configured, Array.isArray(previousState?.[key]) ? previousState[key].length : 0);
@@ -116,7 +183,10 @@ function sanitizeAccountState(value, { lifetime = false, previousState = {} } = 
   const state = Object.create(null);
   const profile = value.profile && typeof value.profile === "object" && !Array.isArray(value.profile) ? value.profile : null;
   if (!profile) throw invalid();
-  state.profile = sanitizeValue(profile, { stringLimit: 20_000, maxItems: 5000 });
+  const rawDashboardCustomization = profile.dashboardCustomization;
+  const profileWithoutCustomization = { ...profile };
+  delete profileWithoutCustomization.dashboardCustomization;
+  state.profile = sanitizeValue(profileWithoutCustomization, { stringLimit: 20_000, maxItems: 5000 });
 
   for (const key of TOP_LEVEL_COLLECTIONS) {
     const source = value[key];
@@ -176,6 +246,8 @@ function sanitizeAccountState(value, { lifetime = false, previousState = {} } = 
   }
   state.profile.ideaMap = { theme, selectedCategory: String(rawIdeaMap.selectedCategory || "all").slice(0, 128), connections: cleanConnections, positions };
 
+  if (lifetime) state.profile.dashboardCustomization = sanitizeDashboardCustomization(rawDashboardCustomization);
+
   if (!lifetime) {
     const previousProfile = previousState?.profile && typeof previousState.profile === "object" ? previousState.profile : {};
     if (PREMIUM_TEMPLATES.has(String(state.profile.appearanceTemplate || ""))) {
@@ -195,4 +267,4 @@ function sanitizeAccountState(value, { lifetime = false, previousState = {} } = 
   return state;
 }
 
-module.exports = { sanitizeAccountState, safeHttpsUrl, FREE_LIMITS, HARD_LIMITS, FREE_WIDGET_LIMIT, LIFETIME_WIDGET_LIMIT };
+module.exports = { sanitizeAccountState, sanitizeDashboardCustomization, safeHttpsUrl, FREE_LIMITS, HARD_LIMITS, FREE_WIDGET_LIMIT, LIFETIME_WIDGET_LIMIT };

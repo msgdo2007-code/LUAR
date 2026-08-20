@@ -95,7 +95,7 @@ const ensureAccount = async (user) => {
   return account;
 };
 
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
   try {
     if (!["GET", "PUT", "POST", "DELETE"].includes(req.method)) return json(res, 405, { error: "Método não permitido." });
     const requestUrl = new URL(req.url || "/", "https://luarhub.site");
@@ -226,3 +226,6 @@ module.exports = async (req, res) => {
     return json(res, auth ? 401 : 500, { error: auth ? "Sessão ou e-mail não confirmado." : "Não foi possível acessar os dados da conta." });
   }
 };
+
+module.exports = handler;
+module.exports.ensureAccount = ensureAccount;
