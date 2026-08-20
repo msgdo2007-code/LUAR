@@ -40,9 +40,7 @@ Migrations ativam RLS/FORCE RLS, removem grants de tabelas backend-only, fixam `
 
 ## 6. GitHub
 
-Código inclui Gitleaks, Opengrep, npm audit, SBOM, ZAP, Dependabot e CODEOWNERS. Configurações manuais: 2FA, branch protection, secret scanning/push protection, environment approvals e revisão de tokens/apps.
-
-O estado ao vivo da visibilidade do repositório, rulesets e branch protection não foi validado nesta estação: não há GitHub CLI/API autenticada disponível. Portanto, esses controles não são considerados confirmados neste relatório.
+Código inclui Gitleaks, Opengrep, npm audit, SBOM, ZAP, Dependabot e CODEOWNERS. Em 2026-08-20, a API autenticada confirmou repositório público, secret scanning e push protection ativos. Também foram ativados vulnerability alerts, Dependabot security updates e proteção da `main` contra force-push/exclusão, com histórico linear e resolução de conversas. PR obrigatório não foi imposto para não bloquear o mantenedor único; 2FA, environment approvals e revisão de apps continuam manuais.
 
 ## 7. Hospedagem
 
@@ -56,8 +54,8 @@ Consulte `.env.example`. Nenhum valor é documentado. Secrets críticos: service
 
 - Aplicar/verificar migrations e executar testes pgTAP no Supabase.
 - Ativar MFA obrigatório no admin, GitHub, Vercel, Supabase, registrador e provedor de pagamento.
-- Configurar branch protection/ruleset e push protection.
-- Revisar/limitar Vercel OIDC, PATs, GitHub Apps e integrações OAuth.
+- Decidir se PR obrigatório é viável quando houver outro revisor; a proteção básica da `main` já está ativa.
+- Revisar/limitar PATs, GitHub Apps e integrações OAuth. O token Vercel OIDC local não possui acesso administrativo à API (HTTP 403) e deve ser removido/rotacionado depois do uso.
 - Confirmar backups/restauração, retenção, WAF e alertas de 401/403/429/5xx/pagamento.
 - Revisão jurídica de LGPD, retenção e fornecedores.
 
