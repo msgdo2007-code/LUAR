@@ -45,6 +45,17 @@ test("widget órfão previamente válido é preservado após exclusão", () => {
   assert.equal(clean.profile.dashboardWidgets[0].recordId, "task-1");
 });
 
+test("resumo diário e personalização segura são sincronizados", () => {
+  const state = base();
+  state.habits = [{ id: "habit-1", name: "Água" }];
+  state.profile.dashboardWidgets = [{ id: "daily", type: "habit", recordId: "all", size: "large", mascotId: "lumi", background: "violet", phrase: "Ainda dá tempo.", showStreak: true, showXP: false, showProgress: true, showHabitList: true }];
+  const clean = sanitizeAccountState(state, { lifetime: true });
+  assert.equal(clean.profile.dashboardWidgets[0].recordId, "all");
+  assert.equal(clean.profile.dashboardWidgets[0].size, "large");
+  assert.equal(clean.profile.dashboardWidgets[0].background, "violet");
+  assert.equal(clean.profile.dashboardWidgets[0].showXP, false);
+});
+
 test("interface oferece tarefas, hábitos, ordenação e mobile", () => {
   assert.match(client, /data-widget-tab="task"/);
   assert.match(client, /data-widget-tab="habit"/);

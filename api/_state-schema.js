@@ -138,11 +138,13 @@ function sanitizeAccountState(value, { lifetime = false, previousState = {} } = 
     const source = type === "task" ? state.tasks : type === "habit" ? state.habits : [];
     const previousSource = type === "task" ? previousState?.tasks : type === "habit" ? previousState?.habits : [];
     const existedBefore = Array.isArray(previousSource) && previousSource.some((record) => String(record?.id) === recordId) && previousWidgets.some((previous) => previous?.type === type && String(previous?.recordId) === recordId);
-    if (!type || !/^[a-z0-9:_-]+$/i.test(recordId) || (!source.some((record) => record.id === recordId) && !existedBefore)) throw invalid("WIDGET_RECORD_INVALID");
+    const dailyHabitSummary = type === "habit" && recordId === "all";
+    if (!type || !/^[a-z0-9:_-]+$/i.test(recordId) || (!dailyHabitSummary && !source.some((record) => record.id === recordId) && !existedBefore)) throw invalid("WIDGET_RECORD_INVALID");
     const signature = `${type}:${recordId}`;
     if (seenWidgets.has(signature)) throw invalid("WIDGET_DUPLICATE");
     seenWidgets.add(signature);
-    return { id: String(widget.id || signature).slice(0, 128), type, recordId, position: index };
+    const sizes = new Set(["small", "medium", "large"]), mascots = new Set(["lumi", "eclipse", "nova", "void"]), backgrounds = new Set(["green", "black", "violet"]);
+    return { id: String(widget.id || signature).slice(0, 128), type, recordId, position: index, size: sizes.has(widget.size) ? widget.size : "small", mascotId: mascots.has(widget.mascotId) ? widget.mascotId : "lumi", phrase: String(widget.phrase || "dynamic").slice(0, 120), style: "lunar", background: backgrounds.has(widget.background) ? widget.background : "green", showStreak: widget.showStreak !== false, showXP: widget.showXP !== false, showProgress: widget.showProgress !== false, showHabitList: widget.showHabitList !== false };
   });
 
   const rawIdeaMap = state.profile.ideaMap && typeof state.profile.ideaMap === "object" && !Array.isArray(state.profile.ideaMap) ? state.profile.ideaMap : {};
