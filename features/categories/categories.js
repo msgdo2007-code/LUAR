@@ -3,6 +3,17 @@
   const cache = new Map();
   const pendingLists = new Map();
   let activeDomain = "knowledge", editingId = null, modal = null, pendingPicker = null;
+  const normalizedName = value => String(value || "").normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("pt-BR");
+  const legacyCategories = domain => {
+    if (typeof state === "undefined") return [];
+    const records = domain === "finance" ? state.transactions : state.notes, names = new Map();
+    (Array.isArray(records) ? records : []).forEach(record => {
+      if (record?.categoryId || !String(record?.category || "").trim()) return;
+      const name = String(record.category).trim(), key = normalizedName(name);
+      if (key && !names.has(key)) names.set(key, { name, key });
+    });
+    return [...names.values()];
+  };
   const make = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; };
   const api = async (domain, options = {}) => {
     const request = { method: options.method || "GET", ...(options.body ? { body: JSON.stringify(options.body) } : {}) };
@@ -53,13 +64,33 @@
     try { await api(activeDomain, { method: "DELETE", body: { id: category.id } }); cache.delete(activeDomain); window.dispatchEvent(new CustomEvent("luar:categories-changed", { detail: { domain: activeDomain } })); if (editingId === category.id) resetForm(); await renderList(); if (typeof toast === "function") toast("Categoria removida", "Seus registros continuam preservados."); }
     catch (error) { ensureModal().querySelector(".category-status").textContent = error.message; }
   };
-  const renderList = async () => {
+  const importLegacy = async legacy => {
+    const status = ensureModal().querySelector(".category-status");
+    status.textContent = `Reutilizando ${legacy.name}…`;
+    try {
+      const result = await api(activeDomain, { method: "POST", body: { domain: activeDomain, name: legacy.name, icon: "◇", color: "#32ff7e", isDefault: false } });
+      const created = result.category || null, records = activeDomain === "finance" ? state.transactions : state.notes;
+      if (created) {
+        (records || []).forEach(record => { if (!record.categoryId && normalizedName(record.category) === legacy.key) record.categoryId = created.id; });
+        if (typeof writeLocalState === "function") writeLocalState();
+        if (typeof scheduleCloudSave === "function") scheduleCloudSave();
+      }
+      cache.delete(activeDomain);
+      window.dispatchEvent(new CustomEvent("luar:categories-changed", { detail: { domain: activeDomain, category: created } }));
+      await renderList(true);
+      if (typeof toast === "function") toast("Categoria reutilizada", `${legacy.name} agora está disponível em novos registros.`);
+    } catch (error) { status.textContent = error.message; }
+  };
+  const renderList = async (force = false) => {
     const layer = ensureModal(), container = layer.querySelector(".category-list"), empty = layer.querySelector(".category-empty"), query = layer.querySelector(".category-search input").value.trim().toLocaleLowerCase("pt-BR");
     container.replaceChildren(make("div", "category-loading", "Carregando…"));
     try {
-      const categories = (await list(activeDomain)).filter(item => !query || item.name.toLocaleLowerCase("pt-BR").includes(query)); container.replaceChildren();
+      const allCategories = await list(activeDomain, force), knownNames = new Set(allCategories.map(item => normalizedName(item.name)));
+      const categories = allCategories.filter(item => !query || item.name.toLocaleLowerCase("pt-BR").includes(query)); container.replaceChildren();
       categories.forEach(category => { const row = make("article", "category-row"); row.setAttribute("role", "listitem"); const mark = make("i", "category-mark", category.icon); mark.style.setProperty("--category-color", category.color); const identity = make("div", "category-identity"); identity.append(make("b", "", category.name), make("small", "", category.is_default ? "Categoria padrão" : domains[category.domain])); const actions = make("div", "category-row-actions"), editButton = make("button", "", "Editar"), deleteButton = make("button", "category-delete", "Excluir"); editButton.type = deleteButton.type = "button"; editButton.onclick = () => edit(category); deleteButton.onclick = () => remove(category); actions.append(editButton, deleteButton); row.append(mark, identity, actions); container.appendChild(row); });
-      empty.hidden = categories.length > 0;
+      const legacy = legacyCategories(activeDomain).filter(item => !knownNames.has(item.key) && (!query || item.key.includes(query)));
+      legacy.forEach(item => { const row = make("article", "category-row category-row-legacy"); row.setAttribute("role", "listitem"); const mark = make("i", "category-mark", "◇"); mark.style.setProperty("--category-color", "#829087"); const identity = make("div", "category-identity"); identity.append(make("b", "", item.name), make("small", "", "Já usada em registros anteriores")); const actions = make("div", "category-row-actions"), reuse = make("button", "", "Reutilizar"); reuse.type = "button"; reuse.onclick = () => importLegacy(item); actions.append(reuse); row.append(mark, identity, actions); container.appendChild(row); });
+      empty.hidden = categories.length + legacy.length > 0;
     } catch (error) { container.replaceChildren(); empty.hidden = false; empty.textContent = error.message; }
   };
   const submitForm = async event => {
@@ -67,7 +98,7 @@
     try { const result = await api(activeDomain, { method: editingId ? "PUT" : "POST", body: { id: editingId || undefined, domain: activeDomain, name: form.elements.name.value, icon: form.elements.icon.value, color: form.elements.color.value, isDefault: form.elements.isDefault.checked } }); cache.delete(activeDomain); window.dispatchEvent(new CustomEvent("luar:categories-changed", { detail: { domain: activeDomain, category: result.category || null } })); resetForm(); await renderList(); if (typeof toast === "function") toast("Categoria salva", "A identidade já está disponível nesta área."); }
     catch (error) { status.textContent = error.message; } finally { submit.disabled = false; }
   };
-  const switchDomain = async domain => { activeDomain = domain; resetForm(); ensureModal().querySelectorAll("[data-category-domain]").forEach(button => button.classList.toggle("active", button.dataset.categoryDomain === domain)); await renderList(); };
+  const switchDomain = async domain => { activeDomain = domain; resetForm(); ensureModal().querySelectorAll("[data-category-domain]").forEach(button => button.classList.toggle("active", button.dataset.categoryDomain === domain)); await renderList(true); };
   const open = async (domain = "knowledge") => { if (typeof currentUser !== "undefined" && !currentUser) { if (typeof openAuth === "function") openAuth("login"); return; } const layer = ensureModal(); layer.hidden = false; layer.setAttribute("aria-hidden", "false"); document.body.classList.add("category-manager-open"); await switchDomain(domains[domain] ? domain : "knowledge"); layer.querySelector(".category-close").focus(); };
   const close = () => { if (!modal) return; pendingPicker = null; modal.hidden = true; modal.setAttribute("aria-hidden", "true"); document.body.classList.remove("category-manager-open"); resetForm(); };
   const createPicker = async ({ domain = "knowledge", value = "", legacyValue = "", fieldName = "categoryId", legacyName = "category", onChange = () => {} } = {}) => {
@@ -135,7 +166,7 @@
     (state.transactions || []).forEach(item => { const category = item.categoryId ? byId.get(item.categoryId) : null, legacyKey = normalizeCategoryName(item.category), key = category?.id || (legacyKey ? `legacy:${legacyKey}` : "none"), entry = grouped.get(key) || { key, name: category?.name || item.category || "Sem categoria", icon: category?.icon || "◇", color: category?.color || palette[grouped.size % palette.length], total: 0, income: 0, outflow: 0, count: 0 }; const amount = Math.abs(+item.amount || 0); entry.total += amount; entry.count++; if (item.type === "income") entry.income += amount; else entry.outflow += amount; grouped.set(key, entry); });
     host.replaceChildren(); const items = [...grouped.values()].sort((a, b) => b.total - a.total);
     if (!items.length) { host.append(make("p", "category-empty", "Seus lançamentos serão agrupados aqui.")); return; }
-    items.forEach(item => { const button = make("button", "finance-reusable-category"); button.type = "button"; button.style.setProperty("--category-color", item.color); button.classList.toggle("active", financeCategoryFilter === item.key); const icon = make("i", "", item.icon), identity = make("span"); identity.append(make("b", "", item.name), make("small", "", `${item.count} ${item.count === 1 ? "registro" : "registros"}`)); const totals = make("span", "finance-category-values"); totals.append(make("b", "", typeof money === "function" ? money(item.total) : String(item.total)), make("small", "", `Entradas ${typeof money === "function" ? money(item.income) : item.income} · Saídas ${typeof money === "function" ? money(item.outflow) : item.outflow}`)); button.append(icon, identity, totals); button.onclick = () => { financeCategoryFilter = financeCategoryFilter === item.key ? "all" : item.key; const select = document.querySelector("[data-finance-category-filter]"); if (select) select.value = financeCategoryFilter; applyFinanceFilter(); renderFinanceCategoryTotals().catch(() => null); }; host.appendChild(button); });
+    items.forEach(item => { const button = make("button", "finance-reusable-category"); button.type = "button"; button.style.setProperty("--category-color", item.color); button.classList.toggle("active", financeCategoryFilter === item.key); button.setAttribute("aria-pressed", String(financeCategoryFilter === item.key)); const icon = make("i", "finance-category-icon", item.icon), identity = make("span", "finance-category-identity"); identity.append(make("b", "", item.name), make("small", "", `${item.count} ${item.count === 1 ? "movimentação" : "movimentações"}`)); const totals = make("span", "finance-category-values"), totalLabel = make("small", "finance-category-total-label", "Total movimentado"), totalValue = make("b", "", typeof money === "function" ? money(item.total) : String(item.total)), breakdown = make("span", "finance-category-breakdown"), income = make("small", "income", `↑ ${typeof money === "function" ? money(item.income) : item.income}`), outflow = make("small", "outflow", `↓ ${typeof money === "function" ? money(item.outflow) : item.outflow}`), arrow = make("em", "finance-category-arrow", "›"); breakdown.append(income, outflow); totals.append(totalLabel, totalValue, breakdown); button.append(icon, identity, totals, arrow); button.onclick = () => { financeCategoryFilter = financeCategoryFilter === item.key ? "all" : item.key; const select = document.querySelector("[data-finance-category-filter]"); if (select) select.value = financeCategoryFilter; applyFinanceFilter(); renderFinanceCategoryTotals().catch(() => null); }; host.appendChild(button); });
   };
   const enhanceTransactionForm = async () => {
     if (typeof edit === "undefined" || edit.entity !== "transactions") return; const form = document.getElementById("entityForm"), old = form?.elements?.category; if (!form || !old || form.querySelector('[data-finance-category-field="true"]')) return;
@@ -145,7 +176,7 @@
     const historyHead = document.querySelector("#finance .finance-history-layout .table .panel-head");
     if (historyHead && !historyHead.querySelector("[data-finance-category-filter]")) { const select = make("select", "finance-category-filter"); select.dataset.financeCategoryFilter = "true"; select.setAttribute("aria-label", "Filtrar lançamentos por categoria"); select.onchange = () => { financeCategoryFilter = select.value; applyFinanceFilter(); renderFinanceCategoryTotals().catch(() => null); }; historyHead.appendChild(select); refreshFinanceFilter(select).catch(() => null); }
     const layout = document.querySelector("#finance .finance-history-layout");
-    if (layout && !document.getElementById("financeReusableCategoryTotals")) { const card = make("article", "card finance-reusable-category-card"), header = make("div", "panel-head"), title = make("div"); title.append(make("span", "", "CATEGORIAS"), make("h3", "", "Totais separados"), make("p", "", "Registros da mesma categoria são somados automaticamente.")); header.appendChild(title); const body = make("div", "finance-reusable-category-list"); body.id = "financeReusableCategoryTotals"; card.append(header, body); layout.appendChild(card); }
+    if (layout && !document.getElementById("financeReusableCategoryTotals")) { const card = make("article", "card finance-reusable-category-card"), header = make("div", "panel-head finance-category-card-head"), mark = make("i", "finance-category-head-mark", "◫"), title = make("div"), hint = make("small", "finance-category-filter-hint", "Toque em uma categoria para filtrar"); title.append(make("span", "", "CATEGORIAS"), make("h3", "", "Totais por categoria"), make("p", "", "Veja entradas, saídas e o total movimentado em cada grupo.")); header.append(mark, title, hint); const body = make("div", "finance-reusable-category-list"); body.id = "financeReusableCategoryTotals"; card.append(header, body); layout.appendChild(card); }
     decorateTransactions().catch(() => null); renderFinanceCategoryTotals().catch(() => null); enhanceTransactionForm().catch(() => null);
   };
   const injectEntryPoints = () => { [["#notes .page-head", "knowledge"], ["#finance .page-head", "finance"]].forEach(([selector, domain]) => { const head = document.querySelector(selector); if (!head || head.querySelector(`[data-open-categories="${domain}"]`)) return; const button = make("button", "secondary category-entry", "Categorias"); button.type = "button"; button.dataset.openCategories = domain; button.onclick = () => open(domain); const primary = head.querySelector(":scope > button.primary"); if (primary) primary.before(button); else head.appendChild(button); }); enhanceNotes(); enhanceFinance(); };

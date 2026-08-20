@@ -1671,6 +1671,38 @@ body.light .budget-orbit-tooltip>small{color:#7a877d}
 /* A landing preserva o HTML inicial e adia o desenho das seções fora da tela. */
 .landing-main>section:not(.landing-hero){content-visibility:auto;contain-intrinsic-size:auto 760px}
 
+/* Landing mobile hardening: mantém conteúdo, tabelas e CTAs dentro da viewport. */
+@media(max-width:760px){
+  html,body{max-width:100%;overflow-x:clip}
+  .landing-page,.landing-main{width:100%;max-width:100%;overflow-x:clip}
+  .landing-main>section,.landing-main>.landing-cta-break{max-width:calc(100% - 24px);margin-left:auto;margin-right:auto}
+  .landing-hero{min-height:auto;padding:112px 12px 72px}
+  .landing-hero h1,.landing-main h2{overflow-wrap:anywhere}
+  .landing-hero h1 br,.landing-main h2 br{display:none}
+  .hero-actions,.plan-compare-actions,.cloud-actions{width:100%;flex-direction:column;align-items:stretch}
+  .hero-actions>* ,.landing-cta-break .landing-cta{width:100%;justify-content:center;text-align:center}
+  .feature-bento,.orbit-lab-grid,.trust-proof-grid,.landing-advanced-showcase>div,.lifetime-offer,.landing-flow,.landing-roi{grid-template-columns:minmax(0,1fr)}
+  .feature-bento>*,.orbit-lab-grid>*,.trust-proof-grid>*,.landing-advanced-showcase article,.lifetime-offer>*,.landing-flow>*,.landing-roi>*{min-width:0}
+  .feature-large{grid-column:auto}
+  .plan-feature-table{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+  .landing-nav{width:calc(100% - 20px);padding-left:10px;padding-right:10px}
+  .landing-nav-actions .landing-login{display:none}
+  .mobile-signup-cta{max-width:calc(100% - 24px);left:12px;right:12px}
+  .landing-footer{padding-bottom:96px}
+}
+@media(max-width:420px){
+  .landing-hero{padding-top:98px}
+  .landing-hero h1{font-size:clamp(38px,12vw,52px)}
+  .landing-main h2{font-size:clamp(30px,9vw,40px)}
+  .landing-diagnosis-callout,.landing-trust-proof{width:calc(100% - 24px)}
+  .landing-diagnosis-callout>aside{padding:18px}
+  .included-count{align-items:stretch;flex-direction:column}
+  .included-count .landing-cta{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  .landing-page *{scroll-behavior:auto!important}
+}
+
 /* Idioma: seletor compacto na landing e card completo nas configurações. */
 .landing-language-select{height:40px;display:flex;align-items:center;gap:7px;padding:0 9px;border:1px solid rgba(255,255,255,.1);border-radius:11px;background:rgba(255,255,255,.035);color:#eef4ef}.landing-language-select>span{font-size:18px;line-height:1}.landing-language-select select{width:84px;border:0;background:transparent;color:inherit;font-size:10px;font-weight:800;outline:0;cursor:pointer}.landing-language-select option{background:#111512;color:#eef4ef}.language-settings-card{grid-column:1/-1;min-height:0!important}.settings-language-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:16px}.settings-language-options button{min-height:72px;display:grid;grid-template-columns:42px 1fr 20px;align-items:center;gap:10px;padding:11px;border:1px solid var(--border);border-radius:13px;background:rgba(255,255,255,.02);color:var(--text);text-align:left}.settings-language-options button:hover,.settings-language-options button[aria-pressed="true"]{border-color:rgba(var(--theme-accent-rgb),.35);background:var(--theme-accent-fade)}.settings-language-options i{font-style:normal;font-size:27px}.settings-language-options b{display:flex;flex-direction:column;font-size:11px}.settings-language-options small{margin-top:3px;color:var(--muted);font-size:8px}.settings-language-options em{color:var(--theme-accent);font-style:normal;font-weight:900}@media(max-width:760px){.landing-language-select{padding:0 7px}.landing-language-select select{width:25px;color:transparent}.landing-language-select select option{color:#eef4ef}.settings-language-options{grid-template-columns:1fr}.landing-profile{min-width:44px;width:44px;padding:4px}.landing-profile>b{display:none}}
 

@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, adminRequest } = require("./_lib");
-const { sanitizeAccountState } = require("./_state-schema");
+const { sanitizeAccountState, FREE_WIDGET_LIMIT, LIFETIME_WIDGET_LIMIT } = require("./_state-schema");
 const { handleCategories, validateStateCategoryOwnership } = require("../server/categories");
 
 const cleanState = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -34,7 +34,13 @@ const STATE_SCHEMA_VERSION = 1;
 const SYNC_V2_ENABLED = process.env.ACCOUNT_SYNC_V2_ENABLED === "true";
 const OPERATION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DEVICE_LABELS = new Set(["Celular", "Computador", "Outro dispositivo"]);
+const widgetLimitFor = (lifetime) => lifetime ? LIFETIME_WIDGET_LIMIT : FREE_WIDGET_LIMIT;
 const requestFingerprint = (value) => crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex");
+const comparableState = (value) => {
+  const copy = structuredClone(cleanState(value));
+  if (copy.profile && typeof copy.profile === "object" && !Array.isArray(copy.profile)) delete copy.profile.localUpdatedAt;
+  return JSON.stringify(copy);
+};
 const deterministicOperationId = (fingerprint) => `${fingerprint.slice(0, 8)}-${fingerprint.slice(8, 12)}-${fingerprint.slice(12, 16)}-${fingerprint.slice(16, 20)}-${fingerprint.slice(20, 32)}`;
 const syncMetadata = (account) => ({
   revision: Math.max(0, Number(account?.state_revision) || 0),
@@ -104,10 +110,10 @@ module.exports = async (req, res) => {
     }
     requireSameOrigin(req, req.method !== "GET");
     const categoryRequest = requestUrl.searchParams.get("resource") === "categories";
-    const rateScope = categoryRequest ? "account-categories" : "account-state";
-    await rateLimit(req, rateScope, req.method === "GET" ? 90 : 45, 10 * 60 * 1000);
+    const rateScope = `${categoryRequest ? "account-categories" : "account-state"}:${req.method.toLowerCase()}`;
+    await rateLimit(req, rateScope, req.method === "GET" ? 90 : 35, 10 * 60 * 1000);
     const user = await requireUser(req);
-    await rateLimit(req, `${rateScope}-user`, req.method === "GET" ? 120 : 50, 10 * 60 * 1000, user.id);
+    await rateLimit(req, `${rateScope}:user`, req.method === "GET" ? 120 : 40, 10 * 60 * 1000, user.id);
     let account = await ensureAccount(user);
 
     if (categoryRequest) {
@@ -159,6 +165,11 @@ module.exports = async (req, res) => {
       const updatedAt = new Date().toISOString();
       const previous = cleanState(account.state);
       if (stateHasContent(previous) && !stateHasContent(incoming) && body.allowEmpty !== true) return json(res, 409, { error: "O salvamento vazio foi bloqueado para proteger seus dados." });
+      const changed = comparableState(previous) !== comparableState(incoming);
+      if (!changed && body.createBackup !== true) {
+        const lifetime = account?.plan === "lifetime";
+        return json(res, 200, { email: canonicalEmail(user), lifetime, widgetLimit: widgetLimitFor(lifetime), paidAt: lifetime ? account.lifetime_paid_at : null, state: previous, updatedAt: account.state_updated_at || null, ...syncMetadata(account), duplicate: true, unchanged: true, syncV2Enabled: SYNC_V2_ENABLED, backups: lifetime ? backupSummaries(account.backups) : [] });
+      }
       const currentRevision = syncMetadata(account).revision;
       const baseRevision = requestedRevision(body, account);
       const legacyConflict = !SYNC_V2_ENABLED && stateHasContent(previous) && account.state_updated_at && body.baseUpdatedAt !== account.state_updated_at;
@@ -173,7 +184,6 @@ module.exports = async (req, res) => {
         });
       }
       const existingBackups = cleanBackups(account.backups);
-      const changed = JSON.stringify(previous) !== serialized;
       const automaticRollback = changed && stateHasContent(previous) ? [{ savedAt: updatedAt, state: snapshotState(previous), manual: false }] : [];
       const manualSnapshot = body.createBackup === true ? [{ savedAt: updatedAt, state: snapshotState(incoming), manual: true }] : [];
       const backups = cleanBackups([...manualSnapshot, ...automaticRollback, ...existingBackups]);
@@ -190,7 +200,7 @@ module.exports = async (req, res) => {
     }
 
     const lifetime = account?.plan === "lifetime";
-    return json(res, 200, { email: canonicalEmail(user), lifetime, paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, ...syncMetadata(account), duplicate: account.syncStatus === "duplicate", syncV2Enabled: SYNC_V2_ENABLED, backups: lifetime ? backupSummaries(account.backups) : [] });
+    return json(res, 200, { email: canonicalEmail(user), lifetime, widgetLimit: widgetLimitFor(lifetime), paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, ...syncMetadata(account), duplicate: account.syncStatus === "duplicate", syncV2Enabled: SYNC_V2_ENABLED, backups: lifetime ? backupSummaries(account.backups) : [] });
   } catch (error) {
     if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
     if (error.message === "RATE_LIMITED") {
@@ -200,6 +210,11 @@ module.exports = async (req, res) => {
     if (error.message === "BODY_TOO_LARGE") return json(res, 413, { error: "Backup muito grande." });
     if (error.message === "BODY_INVALID") return json(res, 400, { error: "Solicitação inválida." });
     if (error.message === "PLAN_LIMIT") return json(res, 403, { error: "Este estado ultrapassa os limites permitidos pelo seu plano." });
+    if (error.message === "WIDGET_RECORD_INVALID") return json(res, 400, { error: "A tarefa ou hábito selecionado não pertence a esta conta." });
+    if (error.message === "WIDGET_DUPLICATE") return json(res, 409, { error: "Este item já está fixado na Visão Geral." });
+    if (error.message === "IDEA_CONNECTION_INVALID") return json(res, 400, { error: "A conexão deve utilizar ideias pertencentes à sua conta." });
+    if (error.message === "IDEA_CONNECTION_DUPLICATE") return json(res, 409, { error: "Estas ideias já estão conectadas." });
+    if (error.message === "IDEA_POSITION_INVALID") return json(res, 400, { error: "A posição informada para a ideia é inválida." });
     if (error.message === "STATE_LIMIT") return json(res, 413, { error: "O estado contém registros demais." });
     if (error.message === "STATE_INVALID") return json(res, 400, { error: "O estado da conta contém dados inválidos." });
     if (error.message === "SYNC_IDEMPOTENCY_MISMATCH") return json(res, 409, { error: "O identificador desta operação já foi utilizado com outro conteúdo." });

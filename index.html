@@ -31,7 +31,9 @@
   <link rel="stylesheet" href="styles.css?v=20260817-1">
   <link rel="stylesheet" href="features/categories/categories.css?v=20260819-1">
   <link rel="stylesheet" href="features/categories/notes-categories.css?v=20260819-1">
-  <link rel="stylesheet" href="features/categories/finance-categories.css?v=20260819-1">
+  <link rel="stylesheet" href="features/categories/finance-categories.css?v=20260820-1">
+  <link rel="stylesheet" href="features/widgets/widgets.css?v=20260820-1">
+  <link rel="stylesheet" href="features/ideas/idea-map.css?v=20260820-1">
   <link rel="stylesheet" href="daily-quotes.css?v=20260813-3">
   <link rel="stylesheet" href="dashboard-free-compact.css?v=20260813-3">
   <link rel="stylesheet" href="statistics.css?v=20260813-7">
@@ -357,11 +359,12 @@
       <p>BEM-ESTAR</p>
       <button class="nav" data-page="focus" data-icon="timer">Modo foco</button>
       <button class="nav" data-page="mood" data-icon="smile" hidden>Humor</button>
-      <button class="nav" data-page="notes" data-icon="note">Notas</button>
+      <button class="nav" data-page="notes" data-icon="note">Mapa de Ideias</button>
       <p>EVOLUÇÃO</p>
       <button class="nav" data-page="challenges" data-icon="spark">Desafios</button>
       <button class="nav" data-page="reports" data-icon="chart">Relatórios</button>
       <button class="nav profile-nav" id="statisticsNav" data-page="profile"><span class="nav-profile-photo">LU</span><span class="label">Perfil</span></button>
+      <button class="nav" data-page="widgets" data-icon="grid">Widgets</button>
     </nav>
     <div class="sidebar-foot">
       <button class="level" id="levelBtn"><span><b>Nível 1</b><small>0 XP</small></span><i><b style="width:0"></b></i><p>100 XP para o próximo nível</p></button>
@@ -398,6 +401,7 @@
 
     <section class="page active" id="dashboard">
       <div class="page-head"><div><span id="todayLabel">HOJE</span><h2><span id="greetingPeriod">Boa noite</span>, <b id="greetingName">viajante</b> <i>✦</i></h2><p>Comece sua jornada. Cada pequeno passo conta.</p></div><button class="primary" data-modal="registro" data-icon="plus">Adicionar registro</button></div>
+      <section class="dashboard-widget-zone" id="dashboardWidgetZone" aria-label="Widgets fixados"></section>
       <div class="hero-grid">
         <article class="card balance">
           <div class="card-head"><div><small>Patrimônio total</small><h2 id="totalWealth">R$ 0,00</h2></div><em class="up" id="wealthTrend">Comece hoje</em></div>
@@ -497,7 +501,8 @@
     <section class="page generic" id="calendar" data-title="Agenda" data-sub="Tudo no tempo certo, sem sobrecarregar sua mente."></section>
     <section class="page generic" id="goals" data-title="Metas financeiras" data-sub="Transforme sonhos em números alcançáveis."></section>
     <section class="page generic" id="mood" data-title="Diário de humor" data-sub="Entenda seus ciclos e cuide de você."></section>
-    <section class="page generic" id="notes" data-title="Notas" data-sub="Um espaço calmo para todas as suas ideias."></section>
+    <section class="page generic" id="notes" data-title="Mapa de Ideias" data-sub="Conecte pensamentos em uma órbita visual."></section>
+    <section class="page generic" id="widgets" data-title="Widgets" data-sub="Fixe tarefas e hábitos importantes na sua Visão Geral."></section>
     <section class="page generic" id="today"></section>
     <section class="page generic" id="challenges"></section>
     <section class="page generic" id="reports"></section>
@@ -526,12 +531,17 @@
     </section>
   </div>
   <div class="toast" id="toast"><i>✓</i><b>Feito!<small>Seu progresso foi salvo.</small></b></div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+  <script src="landing-scroll.js?v=20260820-1" defer></script>
   <script src="landing-published.js?v=20260819-1" defer></script>
   <script src="auth-client.js?v=20260817-1" defer></script>
   <script src="daily-quotes.js?v=20260813-3" defer></script>
   <script src="pwa-install.js?v=20260813-3" defer></script>
-  <script src="app.js?v=20260817-1" defer></script>
+  <script src="app.js?v=20260820-2" defer></script>
   <script src="features/categories/categories.js?v=20260819-1" defer></script>
+  <script src="features/widgets/widgets.js?v=20260820-1" defer></script>
+  <script src="features/ideas/idea-map.js?v=20260820-1" defer></script>
   <script src="statistics.js?v=20260813-7" defer></script>
   <script src="language.js?v=20260813-10" defer></script>
 </body>

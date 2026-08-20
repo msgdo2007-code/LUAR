@@ -90,9 +90,11 @@ test('revalidacao nao substitui alteracoes ainda pendentes', () => {
 test('rate limit vira espera recuperavel sem reduzir a protecao do servidor', () => {
   assert.match(endpoint, /Retry-After", "60"/);
   assert.match(client, /error\.status===429\?'pending':'error'/);
-  assert.match(endpoint, /rateScope, req\.method === "GET" \? 90 : 45/);
-  assert.match(endpoint, /`\$\{rateScope\}-user`, req\.method === "GET" \? 120 : 50/);
+  assert.match(endpoint, /rateScope, req\.method === "GET" \? 90 : 35/);
+  assert.match(endpoint, /`\$\{rateScope\}:user`, req\.method === "GET" \? 120 : 40/);
   assert.match(endpoint, /categoryRequest \? "account-categories" : "account-state"/);
+  assert.match(endpoint, /req\.method\.toLowerCase\(\)/);
+  assert.match(endpoint, /user\.id/);
 });
 
 test('rollback remove somente estruturas adicionadas nesta fase', () => {

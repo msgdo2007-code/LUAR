@@ -13,6 +13,8 @@ const BLOCKED_KEYS = new Set(["__proto__", "prototype", "constructor"]);
 const HTTPS_FIELDS = new Set(["link", "imageUrl"]);
 const IMAGE_DATA_FIELDS = new Set(["avatar", "customBanner"]);
 const PREMIUM_TEMPLATES = new Set(["halloween", "christmas", "valentines", "stpatricks", "carnival", "custom"]);
+const FREE_WIDGET_LIMIT = 1;
+const LIFETIME_WIDGET_LIMIT = Math.max(1, Math.min(Number(process.env.LIFETIME_WIDGET_LIMIT) || 3, 12));
 
 const invalid = (code = "STATE_INVALID") => {
   const error = new Error(code);
@@ -124,6 +126,54 @@ function sanitizeAccountState(value, { lifetime = false, previousState = {} } = 
     state[key] = source.map(sanitizeRecord);
   }
 
+  const widgets = Array.isArray(state.profile.dashboardWidgets) ? state.profile.dashboardWidgets : [];
+  const previousWidgets = Array.isArray(previousState?.profile?.dashboardWidgets) ? previousState.profile.dashboardWidgets : [];
+  const widgetLimit = lifetime ? LIFETIME_WIDGET_LIMIT : Math.max(FREE_WIDGET_LIMIT, previousWidgets.length);
+  if (widgets.length > widgetLimit) throw invalid("PLAN_LIMIT");
+  const seenWidgets = new Set();
+  state.profile.dashboardWidgets = widgets.map((widget, index) => {
+    if (!widget || typeof widget !== "object" || Array.isArray(widget)) throw invalid();
+    const type = widget.type === "task" ? "task" : widget.type === "habit" ? "habit" : "";
+    const recordId = String(widget.recordId || "").slice(0, 128);
+    const source = type === "task" ? state.tasks : type === "habit" ? state.habits : [];
+    const previousSource = type === "task" ? previousState?.tasks : type === "habit" ? previousState?.habits : [];
+    const existedBefore = Array.isArray(previousSource) && previousSource.some((record) => String(record?.id) === recordId) && previousWidgets.some((previous) => previous?.type === type && String(previous?.recordId) === recordId);
+    if (!type || !/^[a-z0-9:_-]+$/i.test(recordId) || (!source.some((record) => record.id === recordId) && !existedBefore)) throw invalid("WIDGET_RECORD_INVALID");
+    const signature = `${type}:${recordId}`;
+    if (seenWidgets.has(signature)) throw invalid("WIDGET_DUPLICATE");
+    seenWidgets.add(signature);
+    return { id: String(widget.id || signature).slice(0, 128), type, recordId, position: index };
+  });
+
+  const rawIdeaMap = state.profile.ideaMap && typeof state.profile.ideaMap === "object" && !Array.isArray(state.profile.ideaMap) ? state.profile.ideaMap : {};
+  const noteIds = new Set(state.notes.map((note) => String(note.id)));
+  const themes = new Set(["free", "blackhole", "earth", "brain"]);
+  const theme = themes.has(rawIdeaMap.theme) ? rawIdeaMap.theme : "free";
+  const connections = Array.isArray(rawIdeaMap.connections) ? rawIdeaMap.connections : [];
+  if (connections.length > 10_000) throw invalid("STATE_LIMIT");
+  const connectionKeys = new Set();
+  const cleanConnections = connections.map((connection) => {
+    const sourceId = String(connection?.sourceId || ""), targetId = String(connection?.targetId || "");
+    if (!noteIds.has(sourceId) || !noteIds.has(targetId) || sourceId === targetId) throw invalid("IDEA_CONNECTION_INVALID");
+    const key = [sourceId, targetId].sort().join(":");
+    if (connectionKeys.has(key)) throw invalid("IDEA_CONNECTION_DUPLICATE");
+    connectionKeys.add(key);
+    return { id: String(connection?.id || key).slice(0, 128), sourceId, targetId };
+  });
+  const positions = Object.create(null), rawPositions = rawIdeaMap.positions && typeof rawIdeaMap.positions === "object" ? rawIdeaMap.positions : {};
+  for (const currentTheme of themes) {
+    const source = rawPositions[currentTheme] && typeof rawPositions[currentTheme] === "object" ? rawPositions[currentTheme] : {};
+    const cleanTheme = Object.create(null);
+    for (const [noteId, position] of Object.entries(source)) {
+      if (!noteIds.has(noteId) || !position || typeof position !== "object") continue;
+      const x = Number(position.x), y = Number(position.y);
+      if (!Number.isFinite(x) || !Number.isFinite(y) || Math.abs(x) > 100_000 || Math.abs(y) > 100_000) throw invalid("IDEA_POSITION_INVALID");
+      cleanTheme[noteId] = { x, y, locked: position.locked === true };
+    }
+    positions[currentTheme] = cleanTheme;
+  }
+  state.profile.ideaMap = { theme, selectedCategory: String(rawIdeaMap.selectedCategory || "all").slice(0, 128), connections: cleanConnections, positions };
+
   if (!lifetime) {
     const previousProfile = previousState?.profile && typeof previousState.profile === "object" ? previousState.profile : {};
     if (PREMIUM_TEMPLATES.has(String(state.profile.appearanceTemplate || ""))) {
@@ -142,4 +192,4 @@ function sanitizeAccountState(value, { lifetime = false, previousState = {} } = 
   return state;
 }
 
-module.exports = { sanitizeAccountState, safeHttpsUrl, FREE_LIMITS, HARD_LIMITS };
+module.exports = { sanitizeAccountState, safeHttpsUrl, FREE_LIMITS, HARD_LIMITS, FREE_WIDGET_LIMIT, LIFETIME_WIDGET_LIMIT };
