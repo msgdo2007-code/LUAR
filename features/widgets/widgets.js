@@ -62,7 +62,7 @@
   }
 
   function calculateHabitStreak(habit) { let count = 0, cursor = new Date(); const days = new Set(habit.history || []); while (days.has(dateKey(cursor))) { count++; cursor.setDate(cursor.getDate() - 1); } return count; }
-  function render() { renderDashboard(); renderSettings(); }
+  function render() { renderDashboard(); renderSettings(); window.LuarIdeaMap?.renderDashboard?.(); }
   window.LuarWidgets = { render };
   document.addEventListener("DOMContentLoaded", render, { once: true });
   setTimeout(render, 0);
