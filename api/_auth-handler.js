@@ -41,7 +41,7 @@ const storeSession = (res, payload, extraCookies = []) => {
   const names = authCookieNames();
   setCookies(res, [
     cookie(names.access, payload.access_token, Math.min(Number(payload.expires_in) || 3600, 3600)),
-    cookie(names.refresh, payload.refresh_token, 60 * 60 * 24 * 30),
+    cookie(names.refresh, payload.refresh_token, 60 * 60 * 24 * 365),
     ...extraCookies,
   ]);
 };

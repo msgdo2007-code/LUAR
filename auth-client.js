@@ -9,6 +9,7 @@
   const listeners = new Set();
   let cachedSession = null;
   let initialRequest = null;
+  const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
 
   const emit = (event, session = cachedSession) => {
     for (const listener of listeners) {
@@ -27,19 +28,34 @@
     return result;
   };
   const loadSession = async () => {
-    if (!initialRequest) initialRequest = request('session').then(result => {
-      cachedSession = result.session || null;
-      if (cachedSession && location.hash === '#reset-password') setTimeout(() => emit('PASSWORD_RECOVERY', cachedSession), 0);
-      return cachedSession;
-    }).catch(() => null);
+    if (!initialRequest) initialRequest = (async () => {
+      let lastError = null;
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          const result = await request('session');
+          cachedSession = result.session || null;
+          if (cachedSession && location.hash === '#reset-password') setTimeout(() => emit('PASSWORD_RECOVERY', cachedSession), 0);
+          return cachedSession;
+        } catch (error) {
+          lastError = error;
+          if (attempt < 2) await wait(250 * (attempt + 1));
+        }
+      }
+      initialRequest = null;
+      throw lastError || new Error('Não foi possível restaurar sua sessão.');
+    })();
     return initialRequest;
   };
 
   window.luarAuthClient = {
     auth: {
       async getSession() {
-        const session = cachedSession || await loadSession();
-        return { data: { session }, error: null };
+        try {
+          const session = cachedSession || await loadSession();
+          return { data: { session }, error: null };
+        } catch (error) {
+          return { data: { session: cachedSession }, error };
+        }
       },
       async refreshSession() {
         try {
