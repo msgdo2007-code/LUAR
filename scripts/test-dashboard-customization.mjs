@@ -7,7 +7,8 @@ const require = createRequire(import.meta.url);
 const { sanitizeDashboardCustomization, sanitizeAccountState } = require("../api/_state-schema.js");
 const client = readFileSync(new URL("../features/personalization/dashboard-customization.js", import.meta.url), "utf8");
 const css = readFileSync(new URL("../features/personalization/dashboard-customization.css", import.meta.url), "utf8");
-const endpoint = readFileSync(new URL("../api/customization.js", import.meta.url), "utf8");
+const endpoint = readFileSync(new URL("../api/account-state.js", import.meta.url), "utf8");
+const vercel = readFileSync(new URL("../vercel.json", import.meta.url), "utf8");
 const collections = { transactions: [], tasks: [], habits: [], goals: [], subscriptions: [], wishlist: [], investments: [], events: [], moods: [], notes: [], focusSessions: [], portfolioHistory: [] };
 
 test("schema aceita somente opções visuais controladas", () => {
@@ -44,4 +45,6 @@ test("endpoint deriva usuário da sessão e exige entitlement", () => {
   assert.match(endpoint, /requireUser\(req\)/);
   assert.match(endpoint, /account\?\.plan === "lifetime"/);
   assert.doesNotMatch(endpoint, /body\.userId|req\.body\.userId/);
+  assert.match(vercel, /\/api\/customization/);
+  assert.match(vercel, /account-state\?resource=customization/);
 });

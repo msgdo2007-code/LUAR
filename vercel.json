@@ -31,6 +31,10 @@
       "destination": "/api/account-state?securityHealth=rls"
     },
     {
+      "source": "/api/customization",
+      "destination": "/api/account-state?resource=customization"
+    },
+    {
       "source": "/admin",
       "destination": "https://luar-admin.vercel.app/admin"
     },

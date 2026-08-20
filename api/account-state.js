@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, adminRequest } = require("./_lib");
-const { sanitizeAccountState, FREE_WIDGET_LIMIT, LIFETIME_WIDGET_LIMIT } = require("./_state-schema");
+const { sanitizeAccountState, sanitizeDashboardCustomization, FREE_WIDGET_LIMIT, LIFETIME_WIDGET_LIMIT } = require("./_state-schema");
 const { handleCategories, validateStateCategoryOwnership } = require("../server/categories");
 
 const cleanState = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -110,7 +110,8 @@ const handler = async (req, res) => {
     }
     requireSameOrigin(req, req.method !== "GET");
     const categoryRequest = requestUrl.searchParams.get("resource") === "categories";
-    const rateScope = `${categoryRequest ? "account-categories" : "account-state"}:${req.method.toLowerCase()}`;
+    const customizationRequest = requestUrl.searchParams.get("resource") === "customization";
+    const rateScope = `${categoryRequest ? "account-categories" : customizationRequest ? "customization" : "account-state"}:${req.method.toLowerCase()}`;
     await rateLimit(req, rateScope, req.method === "GET" ? 90 : 35, 10 * 60 * 1000);
     const user = await requireUser(req);
     await rateLimit(req, `${rateScope}:user`, req.method === "GET" ? 120 : 40, 10 * 60 * 1000, user.id);
@@ -118,6 +119,12 @@ const handler = async (req, res) => {
 
     if (categoryRequest) {
       return handleCategories(req, res, user, requestUrl);
+    }
+    if (customizationRequest) {
+      const entitled = account?.plan === "lifetime" && Array.isArray(account.user_ids) && account.user_ids.includes(user.id);
+      if (!entitled) return json(res, 403, { error: "Personalização completa disponível somente no LUAR Vitalício." });
+      if (req.method === "GET") return json(res, 200, { lifetime: true, customization: sanitizeDashboardCustomization(account.state?.profile?.dashboardCustomization), updatedAt: account.state_updated_at || null, ...syncMetadata(account) });
+      if (req.method !== "PUT") return json(res, 405, { error: "Método não permitido." });
     }
     if (req.method === "DELETE") return json(res, 405, { error: "Método não permitido." });
 

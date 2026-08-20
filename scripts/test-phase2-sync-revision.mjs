@@ -92,7 +92,7 @@ test('rate limit vira espera recuperavel sem reduzir a protecao do servidor', ()
   assert.match(client, /error\.status===429\?'pending':'error'/);
   assert.match(endpoint, /rateScope, req\.method === "GET" \? 90 : 35/);
   assert.match(endpoint, /`\$\{rateScope\}:user`, req\.method === "GET" \? 120 : 40/);
-  assert.match(endpoint, /categoryRequest \? "account-categories" : "account-state"/);
+  assert.match(endpoint, /categoryRequest \? "account-categories" : customizationRequest \? "customization" : "account-state"/);
   assert.match(endpoint, /req\.method\.toLowerCase\(\)/);
   assert.match(endpoint, /user\.id/);
 });
