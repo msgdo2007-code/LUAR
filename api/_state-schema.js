@@ -184,6 +184,7 @@ function sanitizeAccountState(value, { lifetime = false, previousState = {} } = 
     state.profile.financeLineMode = previousProfile.financeLineMode === "separate" ? "separate" : "combined";
     state.profile.financeSeries = Array.isArray(previousProfile.financeSeries) ? sanitizeValue(previousProfile.financeSeries, { maxItems: 8 }) : ["combined"];
     state.profile.playlistUrl = safeHttpsUrl(previousProfile.playlistUrl);
+    state.profile.dashboardCustomization = previousProfile.dashboardCustomization && typeof previousProfile.dashboardCustomization === "object" ? sanitizeValue(previousProfile.dashboardCustomization, { maxItems: 100 }) : null;
     state.profile.lifetimePreferencesMigration = previousProfile.lifetimePreferencesMigration && typeof previousProfile.lifetimePreferencesMigration === "object" ? sanitizeValue(previousProfile.lifetimePreferencesMigration) : null;
     const previousChallenges = Array.isArray(previousState?.profile?.customChallenges) ? previousState.profile.customChallenges.length : 0;
     if (Array.isArray(state.profile.customChallenges) && state.profile.customChallenges.length > previousChallenges) throw invalid("PLAN_LIMIT");
