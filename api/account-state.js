@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const { json, readBody, requireUser, requireSameOrigin, rateLimit, verifyPayload, canonicalEmail, getLuarAccount, upsertLuarAccount, upsertLuarAccountCompat, adminRequest } = require("./_lib");
 const { sanitizeAccountState, sanitizeDashboardCustomization, FREE_WIDGET_LIMIT, LIFETIME_WIDGET_LIMIT } = require("./_state-schema");
 const { handleCategories, validateStateCategoryOwnership } = require("../server/categories");
+const { dashboardView } = require("../server/dashboard-view");
 
 const cleanState = (value) => value && typeof value === "object" && !Array.isArray(value) ? value : {};
 const stateHasContent = (state) => ["transactions", "tasks", "habits", "goals", "subscriptions", "wishlist", "investments", "events", "moods", "notes", "focusSessions"].some((key) => Array.isArray(state?.[key]) && state[key].length);
@@ -175,7 +176,7 @@ const handler = async (req, res) => {
       const changed = comparableState(previous) !== comparableState(incoming);
       if (!changed && body.createBackup !== true) {
         const lifetime = account?.plan === "lifetime";
-        return json(res, 200, { email: canonicalEmail(user), lifetime, widgetLimit: widgetLimitFor(lifetime), paidAt: lifetime ? account.lifetime_paid_at : null, state: previous, updatedAt: account.state_updated_at || null, ...syncMetadata(account), duplicate: true, unchanged: true, syncV2Enabled: SYNC_V2_ENABLED, backups: lifetime ? backupSummaries(account.backups) : [] });
+        return json(res, 200, { email: canonicalEmail(user), lifetime, widgetLimit: widgetLimitFor(lifetime), paidAt: lifetime ? account.lifetime_paid_at : null, state: previous, viewModel: { dashboard: dashboardView(previous) }, updatedAt: account.state_updated_at || null, ...syncMetadata(account), duplicate: true, unchanged: true, syncV2Enabled: SYNC_V2_ENABLED, backups: lifetime ? backupSummaries(account.backups) : [] });
       }
       const currentRevision = syncMetadata(account).revision;
       const baseRevision = requestedRevision(body, account);
@@ -207,7 +208,8 @@ const handler = async (req, res) => {
     }
 
     const lifetime = account?.plan === "lifetime";
-    return json(res, 200, { email: canonicalEmail(user), lifetime, widgetLimit: widgetLimitFor(lifetime), paidAt: lifetime ? account.lifetime_paid_at : null, state: cleanState(account.state), updatedAt: account.state_updated_at || null, ...syncMetadata(account), duplicate: account.syncStatus === "duplicate", syncV2Enabled: SYNC_V2_ENABLED, backups: lifetime ? backupSummaries(account.backups) : [] });
+    const responseState = cleanState(account.state);
+    return json(res, 200, { email: canonicalEmail(user), lifetime, widgetLimit: widgetLimitFor(lifetime), paidAt: lifetime ? account.lifetime_paid_at : null, state: responseState, viewModel: { dashboard: dashboardView(responseState) }, updatedAt: account.state_updated_at || null, ...syncMetadata(account), duplicate: account.syncStatus === "duplicate", syncV2Enabled: SYNC_V2_ENABLED, backups: lifetime ? backupSummaries(account.backups) : [] });
   } catch (error) {
     if (error.message === "ORIGIN_INVALID") return json(res, 403, { error: "Origem não autorizada." });
     if (error.message === "RATE_LIMITED") {
