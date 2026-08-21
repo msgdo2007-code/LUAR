@@ -27,13 +27,14 @@ body[data-sidebar-size=compact] .sidebar{width:82px}body[data-sidebar-size=compa
 @media(prefers-reduced-motion:reduce){.dashboard-editing #dashboard [data-custom-block],.landing-customization-demo article{transition:none;animation:none}}
 
 /* Composição editorial da Visão Geral baseada na referência aprovada. */
-.dashboard-custom-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;grid-auto-flow:row!important}
-.dashboard-custom-grid>[data-custom-block]{grid-row:auto!important}
+.dashboard-custom-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;grid-auto-flow:row!important;align-items:start!important;overflow:hidden}
+.dashboard-custom-grid>[data-custom-block]{grid-row:auto!important;align-self:start!important;max-width:100%;height:max-content}
 .dashboard-custom-grid>[data-custom-block="wealth"]{grid-column:span 5!important;order:1!important;height:390px!important;min-height:390px!important}
 .dashboard-custom-grid>[data-custom-block="widgets"]{grid-column:span 3!important;order:2!important;min-height:390px!important}
 .dashboard-custom-grid>[data-custom-block="ideaMap"]{grid-column:span 4!important;order:3!important;min-height:390px!important}
 .dashboard-custom-grid>[data-custom-block="routine"]{grid-column:span 8!important;order:4!important}
 .dashboard-custom-grid>[data-custom-block="calendar"]{grid-column:span 4!important;order:5!important}
+.dashboard-custom-grid>[data-custom-block="routine"],.dashboard-custom-grid>[data-custom-block="calendar"]{height:auto!important;min-height:0!important}.dashboard-custom-grid>[data-custom-block="routine"].day-stack{grid-template-rows:auto auto!important}.dashboard-custom-grid>[data-custom-block="calendar"].side-stack{height:auto!important}
 .dashboard-custom-grid>[data-custom-block="widgets"],.dashboard-custom-grid>[data-custom-block="ideaMap"],.dashboard-custom-grid>[data-custom-block="ideaMap"]>.dashboard-idea-map-widget{height:390px!important;min-height:390px!important;margin-bottom:0!important}
 .dashboard-custom-grid>[data-custom-block="widgets"]{grid-template-columns:1fr!important;align-items:stretch!important;overflow:hidden}
 .dashboard-custom-grid>[data-custom-block="widgets"]>.dashboard-record-widget{width:100%!important;max-width:none!important;height:390px!important}
