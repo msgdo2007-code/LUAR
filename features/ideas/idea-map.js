@@ -4,7 +4,7 @@
   let root, canvas, ctx, detail, search, typeFilter, categoryFilter, selectedId = "", hoverId = "";
   let nodes = [], links = [], categories = [], raf = 0, running = false, alpha = 0, last = 0;
   let mainResizeObserver = null, miniResizeObserver = null;
-  let camera = { x: 0, y: 0, zoom: 1 }, gesture = null, pointers = new Map(), longPress = 0, selectionInitialized = false;
+  let camera = { x: 0, y: 0, zoom: 1 }, gesture = null, pointers = new Map(), longPress = 0, selectionInitialized = false, fitPending = false;
 
   const notes = () => Array.isArray(state.notes) ? state.notes : [];
   const config = () => {
@@ -36,15 +36,15 @@
     nodes = notes().map((note, index) => {
       const old = prior.get(note.id), saved = store[note.id], seed = index * 2.399;
       return { id: note.id, note, type: nodeType(note), importance: importance(note), category: categoryKey(note), degree: 0,
-        x: old?.x ?? saved?.x ?? Math.cos(seed) * (40 + Math.sqrt(index) * 25), y: old?.y ?? saved?.y ?? Math.sin(seed) * (40 + Math.sqrt(index) * 25),
+        x: old?.x ?? saved?.x ?? Math.cos(seed) * (130 + Math.sqrt(index) * 82), y: old?.y ?? saved?.y ?? Math.sin(seed) * (110 + Math.sqrt(index) * 68),
         vx: old?.vx || 0, vy: old?.vy || 0, locked: saved?.locked === true, born: old?.born ?? performance.now() };
     });
     const ids = new Set(nodes.map(node => node.id));
     links = config().connections.map(link => { const edge = endpoints(link), old = priorLinks.get(link.id || `${edge.source}:${edge.target}`); return { ...link, ...edge, type: link.type || "related", born: old?.born ?? performance.now() }; }).filter(link => link.source !== link.target && ids.has(link.source) && ids.has(link.target));
     const byId = new Map(nodes.map(node => [node.id, node]));
     links.forEach(link => { byId.get(link.source).degree++; byId.get(link.target).degree++; });
-    if (!selectionInitialized && nodes.length) { selectedId = nodes.slice().sort((a,b) => b.degree - a.degree || b.importance - a.importance)[0].id; selectionInitialized = true; }
-    if (reheat) start(.9);
+    if (!selectionInitialized) selectionInitialized = true;
+    if (reheat) { fitPending = true; start(1); }
     updateStats();
   }
 
@@ -52,8 +52,8 @@
     const mode = config().theme;
     if (mode === "blackhole") { const angle = hash(node.id) * Math.PI * 2, radius = 55 + (5 - node.importance) * 82; return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius * .72, strength: .018 }; }
     if (mode === "earth") { const focus = selectedId || nodes.slice().sort((a, b) => b.degree - a.degree)[0]?.id, depth = graphDepth(focus, node.id), angle = hash(node.id) * Math.PI * 2, radius = depth < 0 ? 360 : depth * 115; return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius * .76, strength: .022 }; }
-    if (mode === "brain") { const groups = [...new Set(nodes.map(item => item.category))], index = Math.max(0, groups.indexOf(node.category)), columns = Math.max(2, Math.ceil(Math.sqrt(groups.length))), col = index % columns, row = Math.floor(index / columns); return { x: (col - (columns - 1) / 2) * 260, y: (row - Math.floor(groups.length / columns) / 2) * 220, strength: .014 }; }
-    return { x: 0, y: 0, strength: .0018 };
+    if (mode === "brain") { const groups = [...new Set(nodes.map(item => item.category))], index = Math.max(0, groups.indexOf(node.category)), side = index % 2 ? 1 : -1, row = Math.floor(index / 2); return { x: side * (190 + row * 42), y: (row - groups.length / 4) * 150 + (hash(node.id)-.5)*95, strength: .012 }; }
+    return { x: 0, y: 0, strength: .00028 };
   }
   function hash(text) { let value = 0; for (const char of text) value = (value * 31 + char.charCodeAt(0)) >>> 0; return (value % 10000) / 10000; }
   function graphDepth(source, target) { if (!source) return -1; if (source === target) return 0; const adjacent = new Map(nodes.map(node => [node.id, []])); links.forEach(link => { adjacent.get(link.source)?.push(link.target); adjacent.get(link.target)?.push(link.source); }); const queue = [[source, 0]], seen = new Set([source]); while (queue.length) { const [id, depth] = queue.shift(); for (const next of adjacent.get(id) || []) { if (next === target) return depth + 1; if (!seen.has(next) && depth < 5) { seen.add(next); queue.push([next, depth + 1]); } } } return -1; }
@@ -64,17 +64,17 @@
     const stride = nodes.length > 300 ? Math.ceil(nodes.length / 220) : 1;
     for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j += stride) {
       const a = nodes[i], b = nodes[j], dx = b.x - a.x || .01, dy = b.y - a.y || .01, d2 = Math.max(64, dx * dx + dy * dy), d = Math.sqrt(d2);
-      const repel = Math.min(2.6, 850 / d2) * alpha, fx = dx / d * repel, fy = dy / d * repel;
+      const repel = Math.min(7.5, 9500 / d2) * alpha, fx = dx / d * repel, fy = dy / d * repel;
       if (!a.locked) { a.vx -= fx; a.vy -= fy; } if (!b.locked) { b.vx += fx; b.vy += fy; }
       const minimum = nodeRadius(a) + nodeRadius(b) + 18;
       if (d < minimum) { const push = (minimum - d) * .035 * alpha; if (!a.locked) { a.vx -= dx / d * push; a.vy -= dy / d * push; } if (!b.locked) { b.vx += dx / d * push; b.vy += dy / d * push; } }
     }
-    links.forEach(link => { const a = byId.get(link.source), b = byId.get(link.target); if (!a || !b) return; const dx = b.x - a.x, dy = b.y - a.y, d = Math.max(1, Math.hypot(dx, dy)), target = link.type === "part-of" ? 90 : 125, force = (d - target) * .0035 * alpha; if (!a.locked) { a.vx += dx / d * force; a.vy += dy / d * force; } if (!b.locked) { b.vx -= dx / d * force; b.vy -= dy / d * force; } });
+    links.forEach(link => { const a = byId.get(link.source), b = byId.get(link.target); if (!a || !b) return; const dx = b.x - a.x, dy = b.y - a.y, d = Math.max(1, Math.hypot(dx, dy)), target = link.type === "part-of" ? 155 : 205, force = (d - target) * .0028 * alpha; if (!a.locked) { a.vx += dx / d * force; a.vy += dy / d * force; } if (!b.locked) { b.vx -= dx / d * force; b.vy -= dy / d * force; } });
     nodes.forEach(node => { const target = modeTarget(node); if (!node.locked) { node.vx += (target.x - node.x) * target.strength * alpha; node.vy += (target.y - node.y) * target.strength * alpha; node.vx *= .83; node.vy *= .83; node.x += node.vx; node.y += node.vy; } });
     alpha *= .975;
   }
   function start(value = .7) { alpha = Math.max(alpha, value); if (!running) { running = true; last = 0; raf = requestAnimationFrame(frame); } }
-  function frame(time) { if (!canvas?.isConnected) { running = false; return; } if (!last || time - last > 13) { tick(); last = time; } draw(); if (alpha > .008 || gesture) raf = requestAnimationFrame(frame); else { running = false; savePositions(); } }
+  function frame(time) { if (!canvas?.isConnected) { running = false; return; } if (!last || time - last > 13) { tick(); last = time; } draw(); if (alpha > .008 || gesture) raf = requestAnimationFrame(frame); else { running = false; if(fitPending){fitPending=false;center(true)} savePositions(); } }
   function savePositions() { const store = config().positions[config().theme]; nodes.forEach(node => store[node.id] = { x: Math.round(node.x * 10) / 10, y: Math.round(node.y * 10) / 10, locked: node.locked }); persist(); }
 
   function filtered() { const type = typeFilter?.value || "all", cat = categoryFilter?.value || "all"; return nodes.filter(node => (type === "all" || node.type === type) && (cat === "all" || node.category === cat)); }
